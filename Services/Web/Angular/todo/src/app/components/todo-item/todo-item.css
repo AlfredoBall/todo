@@ -1,0 +1,127 @@
+.app-todo-item {
+    border: 1px solid var(--border-primary);
+    padding: 1rem 1.25rem;
+    margin: 0.75rem 0;
+    border-radius: 6px;
+    background-color: var(--bg-tertiary);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    position: relative;
+}
+
+.app-todo-item.editing {
+    background-color: var(--bg-editing);
+    border-color: var(--border-dark);
+    padding-bottom: 3rem;
+}
+
+.app-todo-item.completed {
+    background-color: var(--bg-completed);
+    border-color: var(--border-completed);
+}
+
+.app-todo-item:hover {
+    background-color: var(--bg-white);
+    border-color: var(--border-hover);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    transform: translateY(-1px);
+}
+
+.app-todo-item.completed:hover {
+    background-color: #dff0df;
+    border-color: #8ab88a;
+}
+
+.app-todo-item textarea {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-weight: 500;
+    flex: 1;
+    min-width: 0;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    font-family: 'Brush Script MT', 'Lucida Handwriting', 'Segoe Script', cursive;
+}
+
+.app-todo-item textarea {
+    border: none;
+    background: transparent;
+    resize: none;
+    padding: 0;
+    outline: none;
+    overflow: hidden;
+    cursor: default;
+}
+
+.app-todo-item.editing textarea {
+    cursor: text;
+    border: 1px solid var(--border-primary);
+    padding: 0.5rem;
+    border-radius: 4px;
+    background-color: var(--bg-white);
+}
+
+.save-button {
+    position: absolute;
+    bottom: 0.5rem;
+    right: 0.5rem;
+    background-color: var(--btn-blue) !important;
+    color: white !important;
+    border-radius: 4px !important;
+}
+
+.save-button:hover {
+    background-color: var(--btn-blue-hover) !important;
+}
+
+.save-button:disabled {
+    background-color: var(--btn-disabled) !important;
+    color: #e0e0e0 !important;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.button-group {
+    display: flex;
+    gap: 0.25rem;
+    flex-shrink: 0;
+    margin-top: -0.25rem;
+}
+
+.button-group button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.app-todo-item button {
+    transition: color 0.2s, background-color 0.2s;
+}
+
+.button-group button:first-child {
+    color: var(--color-complete);
+}
+
+.button-group button:first-child.active {
+    color: var(--color-complete-hover);
+    background-color: var(--color-complete-bg);
+}
+
+.button-group button:first-child:hover {
+    color: var(--color-complete-hover);
+    background-color: var(--color-complete-bg-hover);
+}
+
+.button-group button:last-child {
+    color: var(--color-delete);
+}
+
+.button-group button:last-child:hover {
+    color: var(--color-delete-hover);
+    background-color: var(--color-delete-bg);
+}

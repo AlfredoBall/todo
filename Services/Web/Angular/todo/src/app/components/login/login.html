@@ -1,0 +1,10 @@
+<div class="login-container">
+  @if (isAuthenticated()) {
+    <div class="user-info">
+      <span class="user-name">{{ userDisplayName() }}</span>
+      <button class="btn btn-logout" (click)="logout()">Sign Out</button>
+    </div>
+  } @else {
+    <button class="btn btn-login" (click)="login()">Sign In</button>
+  }
+</div>

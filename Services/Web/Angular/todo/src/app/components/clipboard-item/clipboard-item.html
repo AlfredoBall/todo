@@ -1,0 +1,23 @@
+<div class="clipboard-item" [class.selected]="isSelected()" [class.editing]="isEditing()">
+  <div class="clipboard-content" (click)="onSelect()">
+    <input
+      type="text"
+      [value]="isEditing() ? editedName() : name()"
+      [readOnly]="!isEditing()"
+      class="clipboard-name"
+      (click)="$event.stopPropagation(); !isEditing() && onSelect()"
+      (input)="onNameChange($event)"
+      (keydown.enter)="onSave()"
+      (keydown.escape)="onCancel()"
+      #nameInput
+    />
+    <div class="clipboard-actions">
+      <button mat-icon-button (click)="onEdit(); $event.stopPropagation()" class="edit-btn" [disabled]="editingClipboardId() !== null && editingClipboardId() !== id()">
+        <mat-icon>{{ isEditing() ? 'undo' : 'edit' }}</mat-icon>
+      </button>
+      <button mat-icon-button (click)="onDelete(); $event.stopPropagation()" class="delete-btn">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </div>
+  </div>
+</div>

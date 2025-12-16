@@ -1,0 +1,10 @@
+<mat-toolbar class="navbar">
+  <div class="navbar-content">
+    <span class="app-title">Angular Todo</span>
+    <nav class="nav-links">
+      <button mat-button (click)="navigateHome($event)" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</button>
+      <button mat-button routerLink="/about" routerLinkActive="active">About</button>
+      <app-login></app-login>
+    </nav>
+  </div>
+</mat-toolbar>

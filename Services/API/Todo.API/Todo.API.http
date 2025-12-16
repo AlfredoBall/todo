@@ -1,0 +1,12 @@
+@Todo.API_HostAddress = http://localhost:5138
+
+GET {{Todo.API_HostAddress}}/api/items/
+Accept: application/json
+
+POST {{Todo.API_HostAddress}}/api/item/
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 9
+
+name=Test
+
+###

@@ -1,0 +1,68 @@
+/* You can add global styles to this file, and also import other style files */
+
+:root {
+    /* Background colors */
+    --bg-primary: #f5f5f0;
+    --bg-secondary: #d2d2cd;
+    --bg-tertiary: #fafaf7;
+    --bg-white: #ffffff;
+    --bg-completed: #e8f5e8;
+    --bg-editing: #fffef5;
+    
+    /* Text colors */
+    --text-primary: #5a5a52;
+    --text-secondary: #6b6b60;
+    --text-tertiary: #7a7a70;
+    --text-muted: #9a9a88;
+    --text-light: #e8e8e0;
+    --text-white: #ffffff;
+    
+    /* Border colors */
+    --border-primary: #d4d4c8;
+    --border-secondary: #e0e0d8;
+    --border-hover: #9a9a88;
+    --border-dark: #b8b8a8;
+    --border-completed: #a8c8a8;
+    
+    /* Button colors */
+    --btn-primary: #8a8a78;
+    --btn-primary-hover: #7a7a68;
+    --btn-secondary: #e8e8e0;
+    --btn-secondary-hover: #d8d8d0;
+    --btn-accent: #a8a89a;
+    --btn-blue: #6b8aa8;
+    --btn-blue-hover: #5a7a98;
+    --btn-disabled: #b8b8b8;
+    
+    /* Action colors */
+    --color-complete: #6a8a6a;
+    --color-complete-hover: #4a7a4a;
+    --color-complete-bg: rgba(106, 138, 106, 0.15);
+    --color-complete-bg-hover: rgba(106, 138, 106, 0.1);
+    --color-delete: #a85858;
+    --color-delete-hover: #8a4040;
+    --color-delete-bg: rgba(168, 88, 88, 0.1);
+    
+    /* Success/Error colors */
+    --color-success: #4caf50;
+    --color-error: #f44336;
+}
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+/* Snackbar styles */
+.snackbar-success .mdc-snackbar__surface {
+    background-color: var(--color-success) !important;
+    color: white !important;
+}
+
+.snackbar-error .mdc-snackbar__surface {
+    background-color: var(--color-error) !important;
+    color: white !important;
+}
+
+.snackbar-success .mdc-snackbar__action,
+.snackbar-error .mdc-snackbar__action {
+    color: white !important;
+}   

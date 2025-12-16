@@ -1,0 +1,30 @@
+<div class="paging-container">
+  @if (totalPages() > 1) {
+    <button 
+      class="page-button nav-button" 
+      (click)="previousPage()" 
+      [disabled]="currentPage() === 1">
+      Previous
+    </button>
+
+    @for (page of getPageNumbers(); track page) {
+      @if (page === -1) {
+        <span class="ellipsis">...</span>
+      } @else {
+        <button 
+          class="page-button" 
+          [class.active]="page === currentPage()"
+          (click)="goToPage(page)">
+          {{ page }}
+        </button>
+      }
+    }
+
+    <button 
+      class="page-button nav-button" 
+      (click)="nextPage()" 
+      [disabled]="currentPage() === totalPages()">
+      Next
+    </button>
+  }
+</div>

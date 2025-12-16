@@ -1,0 +1,127 @@
+<div class="home-container">
+  <h1>Todo List</h1>
+  
+  <div class="clipboard-selector" [class.disabled]="!hasClipboards()">
+    <label>
+      Select Clipboard:
+      <select #clipboardSelect [value]="selectedClipboardId()" (change)="onClipboardChange($event)" [disabled]="!hasClipboards()">
+        @for (clipboard of clipboards$(); track clipboard.id) {
+          <option [value]="clipboard.id" [selected]="clipboard.id === selectedClipboardId()">
+            {{ clipboard.name }}
+          </option>
+        }
+      </select>
+    </label>
+  </div>
+
+  <div class="items-section" [class.disabled]="!hasClipboards()">
+    <div class="filter-buttons">
+      <button 
+        [class.active]="filter() === 'all'"
+        (click)="setFilter('all')"
+        [disabled]="!hasClipboards()">
+        All ({{ allItemsCount() }})
+      </button>
+      <button 
+        [class.active]="filter() === 'unfinished'"
+        (click)="setFilter('unfinished')"
+        [disabled]="!hasClipboards()">
+        Unfinished ({{ unfinishedItemsCount() }})
+      </button>
+      <button 
+        [class.active]="filter() === 'completed'"
+        (click)="setFilter('completed')"
+        [disabled]="!hasClipboards()">
+        Completed ({{ completedItemsCount() }})
+      </button>
+    </div>
+    
+    @for (item of pagedItems(); track item.id) {
+      <app-todo-item 
+        [id]="item.id" 
+        [name]="item.name" 
+        [completed]="item.isComplete || false"
+        [editingItemId]="editingItemId()"
+        (delete)="onDeleteTodoItem($event)"
+        (complete)="onCompleteTodoItem($event)"
+        (edit)="onEditTodoItem($event)"
+        (editingChange)="onEditingTodoItemChange($event)">
+      </app-todo-item>
+    }
+
+    <app-paging
+      [currentPage]="currentPage()"
+      [totalPages]="totalPages()"
+      (pageChange)="setPage($event)">
+    </app-paging>
+  </div>
+
+  <div class="forms-container">
+    <div class="new-todo-container" [class.disabled]="!hasClipboards()">
+      <form (submit)="onAddTodoItem($event)" class="todo-form">
+        <div>
+          <label>
+            To Do:
+            <textarea [field]="newTodoItemForm.name" rows="4"></textarea>
+          </label>
+
+          @if (newTodoItemForm.name().touched() && newTodoItemForm.name().invalid()) {
+            <ul class="error-list">
+              @for (error of newTodoItemForm.name().errors(); track error) {
+                <li>{{ error.message }}</li>
+              }
+            </ul>
+          }
+        </div>
+
+        <button type="submit" [disabled]="!hasClipboards()">Add New Todo Item</button>
+      </form>
+    </div>
+
+    <div class="clipboard-container">
+      <label class="clipboard-label">Manage Clipboards:</label>
+      <div class="clipboard-list">
+        <ul class="clipboard-list-items">
+          @for (clipboard of clipboards$(); track clipboard.id) {
+            <li>
+              <app-clipboard-item 
+                [id]="clipboard.id" 
+                [name]="clipboard.name"
+                [isSelected]="false"
+                [editingClipboardId]="editingClipboardId()"
+                (delete)="onClipboardDelete($event)"
+                (edit)="onClipboardEdit($event)"
+                (editingChange)="onEditingClipboardChange($event)"
+                (nameChange)="onClipboardNameChange($event)">
+              </app-clipboard-item>
+            </li>
+          }
+        </ul>
+      </div>
+
+      <button mat-raised-button color="primary" class="save-clipboard-button" [class.hidden]="editingClipboardId() === null" (click)="onSaveClipboard()" [disabled]="!clipboardNameChanged()">
+        Save
+      </button>
+
+      <hr/>
+
+      <form (submit)="onAddClipboard($event)" class="new-clipbord-form">
+        <label>
+          New Clipboard Name:
+          <input type="text" [field]="newClipboardForm.name" />
+        </label>
+
+        @if (newClipboardForm.name().touched() && newClipboardForm.name().invalid()) {
+          <ul class="error-list">
+            @for (error of newClipboardForm.name().errors(); track error) {
+              <li>{{ error.message }}</li>
+            }
+          </ul>
+        }
+
+        <button type="submit">Add Clipboard</button>
+      </form>
+    </div>
+  </div>
+</div>
+

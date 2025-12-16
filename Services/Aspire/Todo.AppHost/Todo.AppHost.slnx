@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/Data/">
+    <Project Path="../../Data/Todo.Data.Access/Todo.Data.Access.csproj" Id="b75683fd-bfc5-44d7-a676-efbb3f1851ad" />
+    <Project Path="../../Data/Todo.Data.Entity/Todo.Data.Entity.csproj" Id="4dabfef1-f84c-4ceb-9322-6e3b0dd5f2f4" />
+    <Project Path="../../Data/Todo.Data.Service/Todo.Data.Service.csproj" Id="3f396af7-bee9-4101-897d-829bff76c84d" />
+  </Folder>
+  <Project Path="../../API/Todo.API/Todo.API.csproj" Id="1c8f1842-00c6-4ab2-8486-9f72e93915df" />
+  <Project Path="../Todo.ServiceDefaults/Todo.ServiceDefaults.csproj" Id="74b9f3a0-22e7-4889-a0ae-5d9c7bc92d31" />
+  <Project Path="Todo.AppHost.csproj" />
+</Solution>

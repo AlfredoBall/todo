@@ -1,0 +1,328 @@
+.home-container {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: var(--bg-primary);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+h1 {
+  color: var(--text-primary);
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid var(--border-primary);
+  padding-bottom: 0.5rem;
+}
+
+.clipboard-selector {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background-color: var(--bg-secondary);
+  border-radius: 4px;
+  border: 1px solid var(--border-primary);
+  width: fit-content;
+}
+
+.clipboard-selector label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.clipboard-selector select {
+  padding: 0.5rem;
+  border: 1px solid var(--border-primary);
+  border-radius: 4px;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 1rem;
+  cursor: pointer;
+  width: 320px;
+}
+
+.clipboard-selector select option:checked {
+  background-color: #d4e8d4;
+  color: #3a6a3a;
+}
+
+.clipboard-selector select option:hover {
+  background-color: #e8ecf0;
+  color: var(--text-primary);
+}
+
+.clipboard-selector select:focus {
+  outline: 2px solid var(--border-primary);
+  outline-offset: 2px;
+}
+
+.items-section {
+  margin-bottom: 2rem;
+  background-color: #e7e7a8;
+  padding: 2rem;
+  border-radius: 4px;
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.1),
+    0 4px 8px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  position: relative;
+  border: 2px solid black
+}
+
+.items-section::before {
+  content: '';
+  position: absolute;
+  top: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 40px;
+  background-color: var(--btn-accent);
+  border-radius: 8px 8px 0 0;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+  border: 2px solid gray;
+}
+
+.filter-buttons {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  justify-content: center;
+}
+
+.filter-buttons button {
+  padding: 0.5rem 1rem;
+  background-color: var(--btn-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-primary);
+  font-size: 0.875rem;
+  transition: all 0.2s;
+}
+
+.filter-buttons button:hover {
+  background-color: var(--btn-secondary-hover);
+  border-color: var(--border-dark);
+}
+
+.filter-buttons button.active {
+  background-color: var(--btn-primary);
+  color: var(--text-white);
+  border-color: var(--btn-primary-hover);
+}
+
+.forms-container {
+  display: flex;
+  gap: 2rem;
+  align-items: stretch;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  flex: 1;
+  padding: 1.5rem;
+  background-color: var(--bg-secondary);
+  border-radius: 6px;
+  border: 1px solid var(--border-secondary);
+  font-family:
+    Inter,
+    system-ui,
+    -apple-system,
+    sans-serif;
+}
+
+form div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+input {
+  padding: 0.75rem;
+  border: 1px solid var(--border-primary);
+  border-radius: 4px;
+  font-size: 1rem;
+  font-family: inherit;
+  background-color: var(--bg-white);
+  color: var(--text-primary);
+  transition: border-color 0.2s;
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--border-hover);
+}
+
+textarea {
+  padding: 0.75rem;
+  border: 1px solid var(--border-primary);
+  border-radius: 4px;
+  font-size: 1rem;
+  font-family: inherit;
+  background-color: var(--bg-white);
+  color: var(--text-primary);
+  transition: border-color 0.2s;
+  resize: none;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: var(--border-hover);
+}
+
+button {
+  padding: 0.75rem 1.5rem;
+  background-color: var(--btn-primary);
+  color: var(--text-white);
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  background-color: var(--btn-primary-hover);
+}
+
+button:active {
+  background-color: #6a6a58;
+}
+
+.error-list {
+  color: #a85858;
+  font-size: 0.875rem;
+  margin: 0.25rem 0 0 0;
+  padding-left: 0;
+  list-style-position: inside;
+}
+
+.error-list p {
+  margin: 0;
+}
+
+.new-todo-container {
+  flex: 1;
+  padding: 2rem;
+  background-color: var(--bg-secondary);
+  border-radius: 4px;
+  border: 2px solid var(--border-primary);
+}
+
+.clipboard-container {
+  flex: 1;
+  padding: 2rem;
+  background-color: var(--bg-secondary);
+  border-radius: 4px;
+  border: 2px solid var(--border-primary);
+}
+
+.clipboard-label {
+  font-weight: 500;
+}
+
+.clipboard-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  margin-top: 0.5rem;
+}
+
+.clipboard-list-items {
+  max-height: 160px;
+  overflow-y: scroll;
+  padding-inline-start: 0;
+  background-color: white
+}
+
+.clipboard-list-items > li {
+  list-style: none;
+  cursor: none;
+}
+
+.save-clipboard-button {
+  width: auto;
+  margin-top: 1rem;
+  margin-left: auto;
+  display: block;
+  font-size: 0.875rem;
+  background-color: var(--btn-blue) !important;
+  color: white !important;
+  border-radius: 4px !important;
+}
+
+.save-clipboard-button:hover:not(:disabled) {
+  background-color: var(--btn-blue-hover) !important;
+}
+
+.save-clipboard-button:disabled {
+  background-color: var(--btn-disabled) !important;
+  color: #e0e0e0 !important;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.hidden {
+  display: none;
+}
+
+.todo-form {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.todo-form > div {
+  height: 100%;
+}
+
+.todo-form button[type="submit"]:not(:disabled),
+.new-clipbord-form button[type="submit"]:not(:disabled) {
+  background-color: var(--btn-blue) !important;
+  color: white !important;
+  display: block;
+  width: 100%;
+}
+
+.todo-form button[type="submit"]:hover:not(:disabled),
+.new-clipbord-form button[type="submit"]:hover:not(:disabled) {
+  background-color: var(--btn-blue-hover) !important;
+}
+
+.new-clipbord-form {
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+/* Disabled state styles */
+.clipboard-selector.disabled,
+.items-section.disabled,
+.new-todo-container.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+  filter: grayscale(30%);
+}
+
+.clipboard-selector.disabled select,
+.new-todo-container.disabled textarea,
+.new-todo-container.disabled button,
+.items-section.disabled button {
+  cursor: not-allowed;
+  background-color: var(--bg-secondary);
+  color: var(--text-secondary);
+}
