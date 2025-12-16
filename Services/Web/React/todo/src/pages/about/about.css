@@ -1,0 +1,79 @@
+.about-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: var(--bg-primary);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+h1 {
+  color: var(--text-primary);
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid var(--border-primary);
+  padding-bottom: 0.5rem;
+}
+
+h2 {
+  color: var(--text-secondary);
+  font-size: 1.5rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+p {
+  color: var(--text-tertiary);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  font-size: 1rem;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0;
+}
+
+li {
+  color: var(--text-tertiary);
+  line-height: 1.7;
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+  position: relative;
+}
+
+li::before {
+  content: "→";
+  position: absolute;
+  left: 0;
+  color: var(--text-muted);
+  font-weight: bold;
+}
+
+strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+ol {
+  padding-left: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+ol li {
+  padding-left: 0.5rem;
+  list-style: decimal;
+}
+
+ol li::before {
+  content: none;
+}
+
+code {
+  background-color: var(--bg-secondary, #f5f5f5);
+  padding: 0.2rem 0.4rem;
+  border-radius: 3px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9em;
+}
