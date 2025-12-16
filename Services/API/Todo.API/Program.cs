@@ -1,7 +1,6 @@
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
-using StackExchange.Redis;
 using Todo.API;
 using Todo.Data.Entity;
 using Todo.Data.Service;
@@ -67,7 +66,7 @@ app.MapGet("api/items/{clipboardId}", async (HttpContext httpContext, IDistribut
 {
     //httpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
 
-    string cacheKey = "items";
+    string cacheKey = "items" + clipboardId;
     var cachedItems = await cache.GetAsync<IList<Todo.Data.Access.Item>>(cacheKey);
 
     if (cachedItems != null)
@@ -88,38 +87,80 @@ app.MapGet("api/items/{clipboardId}", async (HttpContext httpContext, IDistribut
 })
 .WithName("GetItems");
 
-app.MapPost("api/item", async (HttpContext httpContext, ItemService itemService, Context context, int clipboardId, string name) =>
+app.MapPost("api/item", async (HttpContext httpContext, IDistributedCache cache, ItemService itemService, Context context, int clipboardId, string name) =>
 {
     var result = await itemService.AddItem(context, clipboardId, name.Trim());
+    
+    if (result != null)
+    {
+        // Invalidate cache for this clipboard
+        await cache.RemoveAsync("items" + clipboardId);
+    }
 
     return result == null ? Results.BadRequest() : Results.Ok(result);
 })
 .WithName("AddItem");
 
-app.MapDelete("api/item/{id}", async (HttpContext httpContext, ItemService itemService, Context context, int id) =>
+app.MapDelete("api/item/{id}", async (HttpContext httpContext, IDistributedCache cache, ItemService itemService, Context context, int id) =>
 {
+    // Get the item to find its clipboard before deleting
+    var item = await context.Items.FindAsync(id);
     var result = await itemService.DeleteItem(context, id);
+
+    if (result && item != null)
+    {
+        // Invalidate cache for this clipboard
+        await cache.RemoveAsync("items" + item.ClipboardID);
+    }
+    
     return result ? Results.Ok() : Results.NotFound();
 })
 .WithName("DeleteItem");
 
-app.MapPost("api/item/{id}/complete", async (HttpContext httpContext, ItemService itemService, Context context, int id) =>
+app.MapPost("api/item/{id}/complete", async (HttpContext httpContext, IDistributedCache cache, ItemService itemService, Context context, int id) =>
 {
+    // Get the item to find its clipboardS
+    var item = await context.Items.FindAsync(id);
     var result = await itemService.CompleteItem(context, id);
+    
+    if (result && item != null)
+    {
+        // Invalidate cache for this clipboard
+        await cache.RemoveAsync("items" + item.ClipboardID);
+    }
+    
     return result ? Results.Ok() : Results.NotFound();
 })
 .WithName("CompleteItem");
 
-app.MapPost("api/item/{id}/unfinish", async (HttpContext httpContext, ItemService itemService, Context context, int id) =>
+app.MapPost("api/item/{id}/unfinish", async (HttpContext httpContext, IDistributedCache cache, ItemService itemService, Context context, int id) =>
 {
+    // Get the item to find its clipboard
+    var item = await context.Items.FindAsync(id);
     var result = await itemService.UnfinishItem(context, id);
+    
+    if (result && item != null)
+    {
+        // Invalidate cache for this clipboard
+        await cache.RemoveAsync("items" + item.ClipboardID);
+    }
+    
     return result ? Results.Ok() : Results.NotFound();
 })
 .WithName("UnfinishItem");
 
-app.MapPatch("api/item/{id}", async (HttpContext httpContext, ItemService itemService, Context context, int id, string name) =>
+app.MapPatch("api/item/{id}", async (HttpContext httpContext, IDistributedCache cache, ItemService itemService, Context context, int id, string name) =>
 {
+    // Get the item to find its clipboard
+    var item = await context.Items.FindAsync(id);
     var result = await itemService.EditItem(context, id, name);
+    
+    if (result && item != null)
+    {
+        // Invalidate cache for this clipboard
+        await cache.RemoveAsync("items" + item.ClipboardID);
+    }
+    
     return result ? Results.Ok() : Results.BadRequest();
 })
 .WithName("EditItem");
