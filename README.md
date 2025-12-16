@@ -6,6 +6,10 @@ AzureAd__ClientID
 AzureAd__Instance
 AzureAd__Scopes
 
+# Create .env files for the Angular and React applications respectively
+
+## See [text](Services/Web/React/todo/src/authConfig.ts) and [text](Services\Web\Angular\todo\src\app\auth-config.ts) for usage requirements.
+
 # Suggested tools to install for further development
 
 dotnet
