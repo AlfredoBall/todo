@@ -1,6 +1,6 @@
 import type { IClipboardItem, ITodoItem } from "../types";
 import type { IPublicClientApplication } from "@azure/msal-browser";
-import { AUTH_CONFIG } from "../authConfig";
+import { AUTH_CONFIG } from "../auth-config";
 
 export class ApiService {
   private msalInstance: IPublicClientApplication | null = null;

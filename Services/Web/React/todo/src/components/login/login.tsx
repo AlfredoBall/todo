@@ -1,6 +1,6 @@
 import './login.css';
 import { useMsal } from '@azure/msal-react';
-import { loginRequest, AUTH_CONFIG } from '../../authConfig';
+import { loginRequest, AUTH_CONFIG } from '../../auth-config';
 import { useEffect, useState } from 'react';
 
 export default function Login() {
@@ -12,7 +12,7 @@ export default function Login() {
   useEffect(() => {
     if (isAuthenticated) {
       const activeAccount = instance.getActiveAccount() || accounts[0];
-      
+
       if (!instance.getActiveAccount()) {
         instance.setActiveAccount(activeAccount);
       }
