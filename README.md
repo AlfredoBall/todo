@@ -1,12 +1,10 @@
 # Set the following environment variables for the Services/API/Todo.API project
 
-/*:
   - AzureAd__Audience
   - AzureAd__TenantId
   - AzureAd__ClientID
   - AzureAd__Instance
   - AzureAd__Scopes
-*/
 
 # Create .env files for the Angular and React applications respectively
 
