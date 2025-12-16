@@ -8,7 +8,7 @@ AzureAd__Scopes
 
 # Create .env files for the Angular and React applications respectively
 
-## See [text](Services/Web/React/todo/src/authConfig.ts) and [text](Services\Web\Angular\todo\src\app\auth-config.ts) for usage requirements.
+## See [React - authConfig.ts](Services/Web/React/todo/src/authConfig.ts) and [Angular - auth-config.ts](Services\Web\Angular\todo\src\app\auth-config.ts) for usage requirements.
 
 # Suggested tools to install for further development
 
