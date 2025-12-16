@@ -33,7 +33,7 @@ function Home() {
     apiService.fetchClipboards().then(setClipboards);
   }, [instance, accounts]);
 
-  // Load items after clipboards are available
+  // Load items after clipboards are available or when URL params change
   useEffect(() => {
     const clipboardParam = searchParams.has('clipboard') ? Number(searchParams.get('clipboard')) : null;
     const itemFilterParam = searchParams.has('itemFilter') ? searchParams.get('itemFilter') : 'ALL';
@@ -52,7 +52,7 @@ function Home() {
     if (clipbloardId !== null) {
       apiService.fetchItems(clipbloardId).then(setItems);
     }
-  }, [clipboards]);
+  }, [clipboards, searchParams]);
 
   const filteredItems = items.filter(item => {
     if (selectedItemFilter === 'ALL') return true;
@@ -233,29 +233,32 @@ function Home() {
         }
         
         const updatedClipboards = clipboards.filter(c => c.id !== id);
-        setClipboards(updatedClipboards);
         
-        // Update URL and selected clipboard
+        // Clear items immediately to prevent showing stale data
+        if (selectedClipboardId === id) {
+          setItems([]);
+        }
+        
+        // Update URL and clipboards state - let useEffect handle fetching
         if (selectedClipboardId === id) {
           const newSearchParams = new URLSearchParams(searchParams);
           
           if (updatedClipboards.length > 0) {
-            // Select the first clipboard
+            // Select the first clipboard and update URL
             const firstClipboardId = updatedClipboards[0].id;
             setSelectedClipboardId(firstClipboardId);
             newSearchParams.set('clipboard', firstClipboardId.toString());
             setSearchParams(newSearchParams, { replace: true });
-            
-            // Reload items for the new clipboard
-            apiService.fetchItems(firstClipboardId).then(setItems);
           } else {
             // No clipboards left
             setSelectedClipboardId(null);
             newSearchParams.delete('clipboard');
             setSearchParams(newSearchParams, { replace: true });
-            setItems([]);
           }
         }
+        
+        // Update clipboards state - this will trigger useEffect to fetch items
+        setClipboards(updatedClipboards);
         
         showSnackbar('Clipboard deleted successfully!');
       })
