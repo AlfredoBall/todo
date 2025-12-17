@@ -1,17 +1,36 @@
 #!/usr/bin/env bash
-set -euo pipefail
+# Generic Terraform backend initialization script for Bash.
+# Reads backend config from environment variables and runs `terraform init` with the correct -backend-config args.
+#
+# Required environment variables:
+#   TF_RESOURCE_GROUP        # Resource group for the storage account
+#   TF_STORAGE_ACCOUNT       # Storage account name (must be globally unique)
+#   TF_CONTAINER             # Blob container name (e.g. tfstate)
+#   TF_KEY                   # State file name/key (e.g. todo.terraform.tfstate)
+#   TF_SUBSCRIPTION_ID       # Azure subscription ID (GUID)
+#   TF_TENANT_ID             # Azure tenant ID (GUID)
+#
+# Usage:
+#   export TF_RESOURCE_GROUP=<your-tfstate-resource-group>
+#   export TF_STORAGE_ACCOUNT=<your-storage-account>
+#   export TF_CONTAINER=tfstate
+#   export TF_KEY=todo.terraform.tfstate
+#   export TF_SUBSCRIPTION_ID=<your-subscription-id>
+#   export TF_TENANT_ID=<your-tenant-id>
+#   ./DevOps/Scripts/terraform-init.sh [working_dir]
+#
+# See backend.env.example for a template.
 
-# Wrapper to run `terraform init` using environment variables for backend
-# configuration. Useful in CI or local shells.
+set -euo pipefail
 
 WORKING_DIR=${1:-DevOps/Infrastructure/Terraform}
 
-: "${TF_RESOURCE_GROUP:?TF_RESOURCE_GROUP must be set}" 
-: "${TF_STORAGE_ACCOUNT:?TF_STORAGE_ACCOUNT must be set}"
-: "${TF_CONTAINER:?TF_CONTAINER must be set}"
-: "${TF_KEY:?TF_KEY must be set}"
-: "${TF_SUBSCRIPTION_ID:?TF_SUBSCRIPTION_ID must be set}"
-: "${TF_TENANT_ID:?TF_TENANT_ID must be set}"
+if [[ -z "${TF_RESOURCE_GROUP:-}" ]]; then echo "TF_RESOURCE_GROUP is not set"; exit 1; fi
+if [[ -z "${TF_STORAGE_ACCOUNT:-}" ]]; then echo "TF_STORAGE_ACCOUNT is not set"; exit 1; fi
+if [[ -z "${TF_CONTAINER:-}" ]]; then echo "TF_CONTAINER is not set"; exit 1; fi
+if [[ -z "${TF_KEY:-}" ]]; then echo "TF_KEY is not set"; exit 1; fi
+if [[ -z "${TF_SUBSCRIPTION_ID:-}" ]]; then echo "TF_SUBSCRIPTION_ID is not set"; exit 1; fi
+if [[ -z "${TF_TENANT_ID:-}" ]]; then echo "TF_TENANT_ID is not set"; exit 1; fi
 
 echo "Initializing Terraform in '$WORKING_DIR' using storage account '$TF_STORAGE_ACCOUNT' (container: $TF_CONTAINER)"
 
