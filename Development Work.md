@@ -1,11 +1,9 @@
-# Redux, RxJS
+# Redux, NgRx (Try not to rely on RxJs)
 
-# Simplify State Management
+# Simplify UI State Management
 
 # GraphQL
 
-# OPA
-
-# Terraform
+# OPA (Open Policy Agent for Authorization)
 
 # CICD
