@@ -1,0 +1,26 @@
+name: Check Source Branch for Merge to Main
+
+on:
+  pull_request_target:
+    types:
+      - opened
+      - synchronize
+      - reopened
+    branches:
+      - 'main' # This action runs when a PR targets the main branch
+
+jobs:
+  check-allowed-branch:
+    runs-on: ubuntu-latest
+    env:
+      ALLOWED_BRANCH: 'development' # Replace with your specific allowed branch name
+    steps:
+      - name: Check if source branch is allowed
+        if: ${{ github.head_ref != env.ALLOWED_BRANCH }}
+        run: |
+          echo "Error: Only the '${ALLOWED_BRANCH}' branch is allowed to merge into 'main'."
+          exit 1
+      - name: Success
+        if: ${{ github.head_ref == env.ALLOWED_BRANCH }}
+        run: |
+          echo "Source branch is valid. Proceeding with merge checks."
