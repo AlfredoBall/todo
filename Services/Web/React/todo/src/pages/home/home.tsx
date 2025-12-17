@@ -438,7 +438,7 @@ function Home() {
               <form className="todo-form" action={formAction}>
                 <div>
                   <label>To Do:</label>
-                  <textarea name="name" rows={5} disabled={!hasClipboards() || isPending}></textarea>
+                  <textarea name="name" disabled={!hasClipboards() || isPending}></textarea>
                   
                   {formState.error && (
                     <ul className="error-list">
@@ -455,21 +455,17 @@ function Home() {
             <div className="clipboard-container">
               <label className="clipboard-label">Manage Clipboards:</label>
               <div className="clipboard-list">
-                <ul className="clipboard-list-items">
-                  {clipboards.map((clipboard: any) => (
-                    <li key={clipboard.id}>
-                      <ClipboardItem
-                        id={clipboard.id}
-                        name={clipboard.name}
-                        isSelected={clipboard.id === selectedClipboardId}
-                        editingClipboardId={editingClipboardId}
-                        onEditingChange={setEditingClipboardId}
-                        onDelete={handleClipboardDelete}
-                        onNameChange={handleClipboardNameChange}
-                      />
-                    </li>
-                  ))}
-                </ul>
+                {clipboards.map((clipboard: any) => (
+                  <ClipboardItem
+                    id={clipboard.id}
+                    name={clipboard.name}
+                    isSelected={clipboard.id === selectedClipboardId}
+                    editingClipboardId={editingClipboardId}
+                    onEditingChange={setEditingClipboardId}
+                    onDelete={handleClipboardDelete}
+                    onNameChange={handleClipboardNameChange}
+                  />
+                ))}
               </div>
               <button 
                 className="save-clipboard-button" 

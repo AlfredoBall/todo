@@ -140,11 +140,3 @@
 .button-group button:nth-child(2) svg {
     color: var(--text-primary);
 }
-
-.button-group button:last-child {
-    color: var(--btn-warn);
-}
-
-.button-group button:last-child svg {
-    color: var(--btn-warn);
-}

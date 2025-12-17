@@ -96,6 +96,10 @@
   color: #5a5a52;
 }
 
+.delete-btn {
+  color: var(--color-delete);
+}
+
 .delete-btn svg {
   color: var(--color-delete);
 }

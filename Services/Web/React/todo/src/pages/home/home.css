@@ -239,18 +239,9 @@ button:active {
   gap: 0.5rem;
   margin-bottom: 1.5rem;
   margin-top: 0.5rem;
-}
-
-.clipboard-list-items {
-  max-height: 160px;
+  height: 160px;
+  background-color: white;
   overflow-y: scroll;
-  padding-inline-start: 0;
-  background-color: white
-}
-
-.clipboard-list-items > li {
-  list-style: none;
-  cursor: none;
 }
 
 .save-clipboard-button {
@@ -305,6 +296,10 @@ button:active {
 .todo-form button[type="submit"]:hover:not(:disabled),
 .new-clipboard-form button[type="submit"]:hover:not(:disabled) {
   background-color: var(--btn-blue-hover) !important;
+}
+
+.todo-form textarea {
+  height: 100%;
 }
 
 .new-clipboard-form {

@@ -72,7 +72,7 @@ export function ClipboardItem({
   };
 
   return (
-    <div className={`clipboard-item ${isSelected ? 'selected' : ''} ${isEditing ? 'editing' : ''}`}>
+    <div className={`clipboard-item${isSelected ? ' selected' : ''}${isEditing ? ' editing' : ''}`}>
       <div className="clipboard-content">
         <div className="clipboard-name-container">
           <input

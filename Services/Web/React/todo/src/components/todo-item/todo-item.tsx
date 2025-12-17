@@ -92,14 +92,14 @@ export function TodoItem({
             <CheckBoxOutlineBlankIcon />
           )}
         </button>
-        <button onClick={handleEdit} disabled={editingItemId !== null && !isEditing || item.isComplete} title={isEditing ? 'Undo' : 'Edit'}>
+        <button className="edit-btn" onClick={handleEdit} disabled={editingItemId !== null && !isEditing || item.isComplete} title={isEditing ? 'Undo' : 'Edit'}>
           {isEditing ? (
             <UndoIcon />
           ) : (
             <EditIcon />
           )}
         </button>
-        <button onClick={handleDelete} title="Delete">
+        <button className="delete-btn" onClick={handleDelete} title="Delete">
           <DeleteIcon />
         </button>
       </div>
