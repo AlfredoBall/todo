@@ -1,0 +1,8 @@
+#!/bin/sh
+# Prevent commits on protected branches (main/master)
+branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
+if [ "$branch" = "main" ] || [ "$branch" = "master" ]; then
+  echo "ERROR: Direct commits to '$branch' are disabled. Create a branch and open a PR instead." >&2
+  exit 1
+fi
+exit 0
