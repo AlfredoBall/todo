@@ -1,0 +1,27 @@
+
+// Example Terraform variable values (copy to `terraform.tfvars` and edit)
+// Replace the placeholders below with values for your environment.
+// DO NOT commit secrets or environment-specific values to source control.
+
+// Azure infrastructure settings
+location            = "<YOUR_AZURE_REGION>"        # e.g. centralus, eastus
+resource_group_name = "<YOUR_RESOURCE_GROUP>"      # e.g. rg-todo
+tenant_id           = "<YOUR_TENANT_ID>"           # Entra ID tenant GUID
+subscription_id     = "<YOUR_SUBSCRIPTION_ID>"     # Azure subscription GUID
+
+// Terraform backend configuration (for remote state in Azure Storage)
+tf_storage_account_name = "<YOUR_STORAGE_ACCOUNT>" # Storage account for tfstate (must be globally unique)
+tf_container_name       = "<YOUR_CONTAINER_NAME>"  # e.g. tfstate
+tf_state_key            = "<YOUR_STATE_KEY>"       # e.g. todo.terraform.tfstate
+
+// Azure AD App Registration names (optional - defaults will be used if not specified)
+// api_app_registration_name     = "To Do API"
+// angular_app_registration_name = "To Do Angular"
+// react_app_registration_name   = "To Do React"
+
+// Resource tags (optional - defaults will be used if not specified)
+// resource_tags = {
+//   project     = "todo"
+//   environment = "dev"
+//   owner       = "your-team"
+// }

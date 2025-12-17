@@ -22,3 +22,5 @@ cubectl
 docker-compose
 docker
 az cli
+aztft
+aztfexport

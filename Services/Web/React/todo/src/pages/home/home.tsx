@@ -457,6 +457,7 @@ function Home() {
               <div className="clipboard-list">
                 {clipboards.map((clipboard: any) => (
                   <ClipboardItem
+                    key={clipboard.id}
                     id={clipboard.id}
                     name={clipboard.name}
                     isSelected={clipboard.id === selectedClipboardId}

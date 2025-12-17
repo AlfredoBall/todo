@@ -1,0 +1,31 @@
+/*
+Backend configuration example for Terraform remote state in Azure Storage.
+
+IMPORTANT: Variables are NOT allowed in backend blocks. Instead:
+
+1. Use the provided initialization scripts (recommended):
+   - PowerShell: .\DevOps\Scripts\terraform-init.ps1
+   - Bash: ./DevOps/Scripts/terraform-init.sh
+   
+   These scripts read environment variables from backend.env (not committed)
+   and pass them as -backend-config arguments.
+
+2. OR manually pass backend config at terraform init time:
+
+   terraform init \
+     -backend-config="resource_group_name=<your-tfstate-rg>" \
+     -backend-config="storage_account_name=<your-storage-account>" \
+     -backend-config="container_name=tfstate" \
+     -backend-config="key=todo.terraform.tfstate" \
+     -backend-config="subscription_id=<your-subscription-id>" \
+     -backend-config="tenant_id=<your-tenant-id>"
+
+3. For CI/CD:
+   Store these values as pipeline secrets/variables and pass them during init.
+
+Do NOT commit secrets (like access_key) into source control.
+Prefer Azure AD authentication with RBAC over storage account keys.
+
+See backend.env.example for environment variable template.
+See TERRAFORM.md for detailed setup instructions.
+*/

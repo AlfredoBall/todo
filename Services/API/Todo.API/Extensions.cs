@@ -11,11 +11,22 @@ public static class Extensions
         if (runWithAuth)
         {
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
+                .AddMicrosoftIdentityWebApi(options =>
+                {
+                    builder.Configuration.Bind("AzureAd", options);
+                    
+                    // Accept both api://clientId and clientId as valid audiences
+                    var audience = builder.Configuration["AzureAd:Audience"];
+                    var clientId = builder.Configuration["AzureAd:ClientId"];
+                    options.TokenValidationParameters.ValidAudiences = new[] 
+                    { 
+                        audience ?? clientId,
+                        clientId
+                    };
+                }, options => builder.Configuration.Bind("AzureAd", options));
 
             builder.Services.AddAuthorization(options =>
             {
-                // Configure the fallback policy to require an authenticated user
                 options.FallbackPolicy = new AuthorizationPolicyBuilder()
                     .RequireAuthenticatedUser()
                     .Build();
