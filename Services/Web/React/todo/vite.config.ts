@@ -11,10 +11,10 @@ const target = process.env.services__API__HTTPS__0 || "https://localhost:5173/ap
 export default defineConfig({
   plugins: [react()],
   server: {
-    https: {
+    https: process.env.NODE_ENV === 'development' ? {
       key: fs.readFileSync(path.resolve(__dirname, '../../ssl/localhost.key')),
       cert: fs.readFileSync(path.resolve(__dirname, '../../ssl/localhost.crt')),
-    },
+    } : undefined,
     port: 5173,
     open: true, // Automatically opens the browser
     proxy: {
