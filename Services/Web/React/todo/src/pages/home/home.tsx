@@ -268,7 +268,7 @@ function Home() {
       });
   };
 
-  const handleClipboardNameChange = (id: number, name: string) => {
+  const handleClipboardNameChange = (_id: number, name: string) => {
     setEditedClipboardName(name);
   };
 
