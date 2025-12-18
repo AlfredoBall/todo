@@ -1,14 +1,18 @@
 name: Deploy API, React, and Angular
 
+# This workflow runs after the "Build API, React, and Angular" workflow completes successfully.
+# It uses workflow_run trigger to create an explicit dependency on the build workflow.
 on:
   workflow_run:
     workflows: ["Build API, React, and Angular"]
     types:
       - completed
     branches: [ main, development ]
-
+  
 jobs:
   deploy:
+    # Only run this job if the build workflow completed successfully (no build errors)
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
