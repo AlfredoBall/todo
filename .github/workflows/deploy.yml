@@ -60,17 +60,17 @@ jobs:
       - name: Deploy API to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
-          app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
+          app-name: ${{ vars.AZURE_API_APP_SERVICE_NAME }}
           package: api_artifact
 
 
-      - name: Deploy React to Azure Static Web App (OIDC)
+      - name: Deploy React to Azure Static Web App
         run: |
-          az extension add --name staticwebapp --yes
-          az staticwebapp deploy --name ${{ secrets.AZURE_STATIC_WEBAPP_NAME_REACT }} --source react_artifact --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --no-use-keychain
+          npm install -g @azure/static-web-apps-cli
+          swa deploy ./react_artifact --env production --subscription-id ${{ secrets.AZURE_SUBSCRIPTION_ID }} --resource-group ${{ vars.AZURE_RESOURCE_GROUP }} --app-name ${{ vars.AZURE_STATIC_WEBAPP_NAME_REACT }} --no-use-keychain
 
 
-      - name: Deploy Angular to Azure Static Web App (OIDC)
+      - name: Deploy Angular to Azure Static Web App
         run: |
-          az extension add --name staticwebapp --yes
-          az staticwebapp deploy --name ${{ secrets.AZURE_STATIC_WEBAPP_NAME_ANGULAR }} --source angular_artifact --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --no-use-keychain
+          npm install -g @azure/static-web-apps-cli
+          swa deploy ./angular_artifact --env production --subscription-id ${{ secrets.AZURE_SUBSCRIPTION_ID }} --resource-group ${{ vars.AZURE_RESOURCE_GROUP }} --app-name ${{ vars.AZURE_STATIC_WEBAPP_NAME_ANGULAR }} --no-use-keychain
