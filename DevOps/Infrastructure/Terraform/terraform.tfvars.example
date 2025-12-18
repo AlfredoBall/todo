@@ -1,8 +1,16 @@
+
+// IMPORTANT: CI/CD Variable Mapping Guidance
+// The following variables MUST match the corresponding GitHub Actions secrets used in deploy.yml:
+//   - api_app_service_name         <-> API_APP_SERVICE_NAME
+//   - react_static_web_app_name    <-> REACT_STATIC_WEB_APP_NAME
+//   - angular_static_web_app_name  <-> ANGULAR_STATIC_WEB_APP_NAME
+// These names must be consistent between your Terraform configuration and your GitHub Actions secrets for successful deployment.
+
 // App Service and Static Web App names (will have a random suffix appended automatically)
 api_service_plan_name        = "<YOUR_API_SERVICE_PLAN_NAME>"      # e.g. todo-api-service-plan
-api_app_service_name         = "todo-api-app-service-${random_string.api_suffix.result}"
-react_static_web_app_name    = "todo-react-swa-${random_string.react_suffix.result}"
-angular_static_web_app_name  = "todo-angular-swa-${random_string.angular_suffix.result}"
+api_app_service_name         = "todo-api-app-service-${random_string.api_suffix.result}" # Must match API_APP_SERVICE_NAME secret
+react_static_web_app_name    = "todo-react-swa-${random_string.react_suffix.result}"    # Must match REACT_STATIC_WEB_APP_NAME secret
+angular_static_web_app_name  = "todo-angular-swa-${random_string.angular_suffix.result}" # Must match ANGULAR_STATIC_WEB_APP_NAME secret
 
 // Example Terraform variable values (copy to `terraform.tfvars` and edit)
 // Replace the placeholders below with values for your environment.

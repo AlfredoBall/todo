@@ -1,0 +1,74 @@
+name: Build API, React, and Angular
+
+on:
+  push:
+    branches: [ main, development ]
+  pull_request:
+    branches: [ main, development ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        project:
+          - Services/API/Todo.API
+          - Services/Web/React/todo
+          - Services/Web/Angular/todo
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        if: matrix.project != 'Services/API/Todo.API'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24.11.1'
+
+      - name: Set up .NET 10
+        if: matrix.project == 'Services/API/Todo.API'
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Install dependencies (React/Angular)
+        if: matrix.project != 'Services/API/Todo.API'
+        working-directory: ${{ matrix.project }}
+        run: |
+          npm ci
+
+      - name: Build React app
+        if: matrix.project == 'Services/Web/React/todo'
+        working-directory: ${{ matrix.project }}
+        run: npm run build
+
+      - name: Build Angular app
+        if: matrix.project == 'Services/Web/Angular/todo'
+        working-directory: ${{ matrix.project }}
+        run: npm run build -- --configuration production
+
+      - name: Build .NET API
+        if: matrix.project == 'Services/API/Todo.API'
+        working-directory: ${{ matrix.project }}
+        run: dotnet publish -c Release -o ../../../../artifacts/api
+
+      - name: Upload API artifact
+        if: matrix.project == 'Services/API/Todo.API'
+        uses: actions/upload-artifact@v4
+        with:
+          name: api
+          path: artifacts/api
+
+      - name: Upload React artifact
+        if: matrix.project == 'Services/Web/React/todo'
+        uses: actions/upload-artifact@v4
+        with:
+          name: react
+          path: Services/Web/React/todo/build
+
+      - name: Upload Angular artifact
+        if: matrix.project == 'Services/Web/Angular/todo'
+        uses: actions/upload-artifact@v4
+        with:
+          name: angular
+          path: Services/Web/Angular/todo/dist
