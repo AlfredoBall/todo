@@ -50,21 +50,21 @@ jobs:
       - name: Build .NET API
         if: matrix.project == 'Services/API/Todo.API'
         working-directory: ${{ matrix.project }}
-        run: dotnet publish -c Release -o ../../../../artifacts/api
+        run: dotnet publish -c Release -o ./publish
 
       - name: Upload API artifact
         if: matrix.project == 'Services/API/Todo.API'
         uses: actions/upload-artifact@v4
         with:
           name: api
-          path: artifacts/api
+          path: Services/API/Todo.API/publish
 
       - name: Upload React artifact
         if: matrix.project == 'Services/Web/React/todo'
         uses: actions/upload-artifact@v4
         with:
           name: react
-          path: Services/Web/React/todo/build
+          path: Services/Web/React/todo/dist
 
       - name: Upload Angular artifact
         if: matrix.project == 'Services/Web/Angular/todo'
