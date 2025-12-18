@@ -1,3 +1,23 @@
+
+variable "react_static_web_app_name" {
+  description = "Name of the Azure Static Web App for the React app"
+  type        = string
+}
+
+variable "angular_static_web_app_name" {
+  description = "Name of the Azure Static Web App for the Angular app"
+  type        = string
+}
+
+variable "api_service_plan_name" {
+  description = "Name of the Azure App Service Plan for the Todo API"
+  type        = string
+}
+
+variable "api_app_service_name" {
+  description = "Name of the Azure App Service for the Todo API"
+  type        = string
+}
 // Centralized Terraform variables for the Todo infrastructure
 
 variable "location" {

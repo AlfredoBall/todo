@@ -4,7 +4,10 @@ resource "azuread_application" "react_app" {
   sign_in_audience = "AzureADMyOrg"
 
   single_page_application {
-    redirect_uris = ["https://localhost:5173/"]
+    redirect_uris = [
+      "http://localhost:5173/",
+      "https://${var.react_static_web_app_name}.azurestaticapps.net/"
+    ]
   }
 
   # Microsoft Graph API permissions

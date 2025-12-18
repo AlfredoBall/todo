@@ -1,3 +1,18 @@
+output "api_app_service_default_url" {
+  description = "Default URL for the API App Service"
+  value       = "https://${azurerm_linux_web_app.api.name}.azurewebsites.net"
+}
+
+output "react_static_web_app_default_url" {
+  description = "Default URL for the React Static Web App"
+  value       = "https://${azurerm_static_web_app.react.name}.azurestaticapps.net"
+}
+
+output "angular_static_web_app_default_url" {
+  description = "Default URL for the Angular Static Web App"
+  value       = "https://${azurerm_static_web_app.angular.name}.azurestaticapps.net"
+}
+
 output "resource_group_name" {
   value       = azurerm_resource_group.rg.name
   description = "Name of the todo resource group"
@@ -37,3 +52,6 @@ output "react_sp_id" {
   description = "Object ID of the service principal for the React app"
   value       = azuread_service_principal.react_sp.id
 }
+
+
+# Outputs for DNS TXT validation tokens for custom domains (for manual DNS setup)
