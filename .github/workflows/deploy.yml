@@ -23,18 +23,24 @@ jobs:
         with:
           name: api
           path: api_artifact
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
 
       - name: Download React artifact
         uses: actions/download-artifact@v4
         with:
           name: react
           path: react_artifact
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
 
       - name: Download Angular artifact
         uses: actions/download-artifact@v4
         with:
           name: angular
           path: angular_artifact
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
 
 
       - name: Azure Login (OIDC)
