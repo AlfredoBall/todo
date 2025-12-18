@@ -1,0 +1,62 @@
+name: Deploy API, React, and Angular
+
+on:
+  workflow_run:
+    workflows: ["Build API, React, and Angular"]
+    types:
+      - completed
+    branches: [ main, development ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download API artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: api
+          path: api_artifact
+
+      - name: Download React artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: react
+          path: react_artifact
+
+      - name: Download Angular artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: angular
+          path: angular_artifact
+
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          enable-AzPSSession: false
+          allow-no-subscriptions: true
+
+
+      - name: Deploy API to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
+          package: api_artifact
+
+
+      - name: Deploy React to Azure Static Web App (OIDC)
+        run: |
+          az extension add --name staticwebapp --yes
+          az staticwebapp upload --name ${{ secrets.AZURE_STATIC_WEBAPP_NAME_REACT }} --source react_artifact --no-use-keychain
+
+
+      - name: Deploy Angular to Azure Static Web App (OIDC)
+        run: |
+          az extension add --name staticwebapp --yes
+          az staticwebapp upload --name ${{ secrets.AZURE_STATIC_WEBAPP_NAME_ANGULAR }} --source angular_artifact --no-use-keychain
