@@ -14,6 +14,7 @@ jobs:
     # Only run this job if the build workflow completed successfully (no build errors)
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
+    environment: development
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
