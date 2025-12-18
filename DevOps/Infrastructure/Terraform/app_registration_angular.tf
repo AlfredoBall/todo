@@ -4,7 +4,10 @@ resource "azuread_application" "angular_app" {
   sign_in_audience = "AzureADMyOrg"
 
   single_page_application {
-    redirect_uris = ["https://localhost:4200/"]
+    redirect_uris = [
+      "http://localhost:4200/",
+      "https://${var.angular_static_web_app_name}.azurestaticapps.net/"
+    ]
   }
 
   # Microsoft Graph API permissions
