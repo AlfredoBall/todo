@@ -73,5 +73,9 @@ jobs:
       - name: Deploy Angular to Azure Static Web App
         run: |
           npm install -g @azure/static-web-apps-cli
+<<<<<<< Updated upstream
           ls -la angular_artifact/
           swa deploy ./angular_artifact --env production --subscription-id ${{ vars.AZURE_SUBSCRIPTION_ID }} --resource-group ${{ vars.AZURE_RESOURCE_GROUP }} --app-name ${{ vars.AZURE_STATIC_WEBAPP_NAME_ANGULAR }} --no-use-keychain
+=======
+          swa deploy ./angular_artifact/todo/browser --env production --subscription-id ${{ vars.AZURE_SUBSCRIPTION_ID }} --resource-group ${{ vars.AZURE_RESOURCE_GROUP }} --app-name ${{ vars.AZURE_STATIC_WEBAPP_NAME_ANGULAR }} --no-use-keychain
+>>>>>>> Stashed changes
