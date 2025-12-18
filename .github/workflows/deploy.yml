@@ -67,10 +67,10 @@ jobs:
       - name: Deploy React to Azure Static Web App (OIDC)
         run: |
           az extension add --name staticwebapp --yes
-          az staticwebapp upload --name ${{ secrets.AZURE_STATIC_WEBAPP_NAME_REACT }} --source react_artifact --no-use-keychain
+          az staticwebapp deploy --name ${{ secrets.AZURE_STATIC_WEBAPP_NAME_REACT }} --source react_artifact --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --no-use-keychain
 
 
       - name: Deploy Angular to Azure Static Web App (OIDC)
         run: |
           az extension add --name staticwebapp --yes
-          az staticwebapp upload --name ${{ secrets.AZURE_STATIC_WEBAPP_NAME_ANGULAR }} --source angular_artifact --no-use-keychain
+          az staticwebapp deploy --name ${{ secrets.AZURE_STATIC_WEBAPP_NAME_ANGULAR }} --source angular_artifact --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --no-use-keychain
