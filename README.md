@@ -44,16 +44,7 @@ Before running this application, ensure you have the following tools installed a
    ```
    - **Must be in your system PATH**
 
-5. **[GitHub CLI](https://cli.github.com/)** - For GitHub OIDC setup
-   ```bash
-   gh --version      # Verify installation
-   gh auth login     # Authenticate with GitHub
-   winget install GitHub.cli
-   ```
-   - **Required for Terraform to configure GitHub environments**
-   - **Must be authenticated before running Terraform**
-
-6. **[Node.js](https://nodejs.org/)** (v18+) - For Angular/React frontends
+5. **[Node.js](https://nodejs.org/)** (v18+) - For Angular/React frontends
    ```bash
    node --version
    npm --version
