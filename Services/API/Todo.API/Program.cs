@@ -17,6 +17,7 @@ builder.Services.AddAutoMapper(cfg => { }, Assembly.Load("Todo.Data.Service"));
 var cacheConnection = builder.Configuration.GetConnectionString("cache");
 if (!string.IsNullOrEmpty(cacheConnection))
 {
+    Console.WriteLine("Configuring Redis cache with provided connection string.");
     builder.Services.AddStackExchangeRedisCache(options =>
     {
         options.Configuration = cacheConnection;
@@ -26,6 +27,7 @@ if (!string.IsNullOrEmpty(cacheConnection))
 else
 {
     // Fallback to in-memory distributed cache when Redis is not configured
+    Console.WriteLine("No Redis connection string configured; using in-memory distributed cache.");
     builder.Services.AddDistributedMemoryCache();
 }
 
