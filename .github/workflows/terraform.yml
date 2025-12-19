@@ -49,10 +49,14 @@ jobs:
 
       - name: Terraform Plan
         working-directory: ${{ env.TERRAFORM_DIR }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: terraform plan -out=tfplan
 
       - name: Terraform Apply
         working-directory: ${{ env.TERRAFORM_DIR }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: terraform apply -auto-approve tfplan
 
       - name: Capture Terraform Outputs
