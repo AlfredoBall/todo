@@ -21,9 +21,6 @@ on:
       api_client_id:
         description: 'API App Registration Client ID'
         value: ${{ jobs.terraform.outputs.api_client_id }}
-      tenant_id:
-        description: 'Azure AD Tenant ID'
-        value: ${{ jobs.terraform.outputs.tenant_id }}
       api_scope:
         description: 'API OAuth Scope'
         value: ${{ jobs.terraform.outputs.api_scope }}
@@ -45,7 +42,6 @@ jobs:
       angular_client_id: ${{ steps.terraform_output.outputs.angular_client_id }}
       react_client_id: ${{ steps.terraform_output.outputs.react_client_id }}
       api_client_id: ${{ steps.terraform_output.outputs.api_client_id }}
-      tenant_id: ${{ steps.terraform_output.outputs.tenant_id }}
       api_scope: ${{ steps.terraform_output.outputs.api_scope }}
     
     steps:
