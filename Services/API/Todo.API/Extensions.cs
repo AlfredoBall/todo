@@ -8,6 +8,11 @@ public static class Extensions
 {
     public static WebApplicationBuilder ConfigureAuth(this WebApplicationBuilder builder, bool runWithAuth)
     {
+        Console.WriteLine($"AzureAd:TenantId: {builder.Configuration["AzureAd:TenantId"]}");
+        Console.WriteLine($"AzureAd:Audience: {builder.Configuration["AzureAd:Audience"]}");
+        Console.WriteLine($"AzureAd:ClientId: {builder.Configuration["AzureAd:ClientId"]}");
+        Console.WriteLine($"AzureAd:Instance: {builder.Configuration["AzureAd:Instance"]}");
+
         if (runWithAuth)
         {
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
