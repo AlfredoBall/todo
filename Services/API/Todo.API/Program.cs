@@ -14,11 +14,20 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddAutoMapper(cfg => { }, Assembly.Load("Todo.Data.Service"));
 
-builder.Services.AddStackExchangeRedisCache(options =>
+var cacheConnection = builder.Configuration.GetConnectionString("cache");
+if (!string.IsNullOrEmpty(cacheConnection))
 {
-    options.Configuration = builder.Configuration.GetConnectionString("cache");
-    options.InstanceName = "TodoApp_";
-});
+    builder.Services.AddStackExchangeRedisCache(options =>
+    {
+        options.Configuration = cacheConnection;
+        options.InstanceName = "TodoApp_";
+    });
+}
+else
+{
+    // Fallback to in-memory distributed cache when Redis is not configured
+    builder.Services.AddDistributedMemoryCache();
+}
 
 builder.Services.AddDbContext<Context>(options =>
 {
