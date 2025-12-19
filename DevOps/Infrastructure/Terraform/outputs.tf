@@ -5,12 +5,12 @@ output "api_app_service_default_url" {
 
 output "react_static_web_app_default_url" {
   description = "Default URL for the React Static Web App"
-  value       = "https://${azurerm_static_web_app.react.name}.azurestaticapps.net"
+  value       = "https://${azurerm_static_web_app.react.default_host_name}"
 }
 
 output "angular_static_web_app_default_url" {
   description = "Default URL for the Angular Static Web App"
-  value       = "https://${azurerm_static_web_app.angular.name}.azurestaticapps.net"
+  value       = "https://${azurerm_static_web_app.angular.default_host_name}"
 }
 
 output "resource_group_name" {
