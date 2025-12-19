@@ -16,11 +16,11 @@ A full-stack todo application built with .NET 10, Angular 21, React 19, and Azur
 - This currently only works if you have an account within my tenant.
 - I'm going to setup self registration next... coming soon.
 
-[Top Image](/pic1.png)
+![Top Image](./pic1.png)
 
 <hr style="border: 2px solid gray">
 
-[Bottom Image](/pic2.png)
+![Bottom Image](./pic2.png)
 
 ## Prerequisites
 
