@@ -104,14 +104,36 @@ echo "OIDC app registration created successfully!"
 echo "Client ID: $APP_ID"
 ```
 
+### Create the Resource Group
+
+**CRITICAL**: Create the resource group first, as it will be used for:
+- Terraform state storage account
+- API App Service
+- React Static Web App
+- Angular Static Web App
+- All other Azure resources
+
+```bash
+# Set your values
+RESOURCE_GROUP="todo-rg"
+LOCATION="centralus"
+SUBSCRIPTION_ID=$(az account show --query id -o tsv)
+
+# Create the resource group
+az group create \
+  --name $RESOURCE_GROUP \
+  --location $LOCATION
+
+echo "Resource group created: $RESOURCE_GROUP"
+```
+
 ### Grant RBAC Permissions
 
 The OIDC service principal needs permissions to manage your Azure resources:
 
 ```bash
-# Get your subscription and resource group
-SUBSCRIPTION_ID=$(az account show --query id -o tsv)
-RESOURCE_GROUP="your-resource-group-name"
+# Use the APP_ID from earlier (or set it if starting fresh)
+# APP_ID="your-oidc-app-client-id"
 
 # Grant Contributor role on the resource group
 az role assignment create \
@@ -120,7 +142,7 @@ az role assignment create \
   --scope "/subscriptions/$SUBSCRIPTION_ID/resourceGroups/$RESOURCE_GROUP"
 ```
 
-**Note**: If the resource group doesn't exist yet, you can grant Contributor at the subscription level (less secure) or create the resource group first.
+**Important**: The resource group must exist before granting permissions on it.
 
 ## Step 2: Create GitHub Environment Manually
 
