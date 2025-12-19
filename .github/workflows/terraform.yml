@@ -47,7 +47,12 @@ jobs:
 
       - name: Terraform Init
         working-directory: ${{ env.TERRAFORM_DIR }}
-        run: terraform init
+        run: |
+          terraform init \
+            -backend-config="resource_group_name=${{ vars.AZURE_RESOURCE_GROUP }}" \
+            -backend-config="storage_account_name=${{ vars.TF_STORAGE_ACCOUNT_NAME }}" \
+            -backend-config="container_name=${{ vars.TF_CONTAINER_NAME }}" \
+            -backend-config="key=${{ vars.TF_STATE_KEY }}"
 
       - name: Import Resource Group (if not in state)
         working-directory: ${{ env.TERRAFORM_DIR }}

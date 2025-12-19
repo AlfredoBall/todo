@@ -1,4 +1,3 @@
-
 /*
 backend configuration and usage
 -------------------------------
@@ -23,7 +22,7 @@ cannot be used directly inside the backend block.
 
 Example (PowerShell):
 	$env:TF_RESOURCE_GROUP = 'todo-rg'
-	$env:TF_STORAGE_ACCOUNT = 'todo-tfstatestorage-15243'
+	$env:TF_STORAGE_ACCOUNT = 'todotfstatestorage15243'
 	$env:TF_CONTAINER = 'tfstate'
 	$env:TF_KEY = 'todo.terraform.tfstate'
 	$env:TF_SUBSCRIPTION_ID = 'da348b35-29b6-4906-85ec-4a097aa5fe04'
@@ -36,4 +35,9 @@ Example (bash):
 
 */
 
-
+terraform {
+  backend "azurerm" {
+    # Configuration provided via -backend-config flags during terraform init
+    # or via environment variables (ARM_*)
+  }
+}
