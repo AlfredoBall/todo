@@ -4,6 +4,7 @@ import './home.css';
 import classNames from 'classnames';
 import { type ITodoItem, type IClipboardItem, type ItemFilter } from '../../types';
 import ApiService from '../../services/api';
+import { AUTH_CONFIG } from '../../auth-config';
 import TodoItem from '../../components/todo-item/todo-item';
 import { useSearchParams } from 'react-router-dom';
 import { useSnackbar } from '../../components/snackbar/snackbar';
@@ -30,7 +31,15 @@ function Home() {
   // Set MSAL instance and fetch clipboards when instance is ready or authentication changes
   useEffect(() => {
     apiService.setMsalInstance(instance);
-    apiService.fetchClipboards().then(setClipboards);
+
+    // Only fetch clipboards when the user is signed in, or when auth bypass is enabled (dev)
+    const isSignedIn = accounts && accounts.length > 0;
+    if (isSignedIn || AUTH_CONFIG.BYPASS_AUTH_IN_DEV) {
+      apiService.fetchClipboards().then(setClipboards);
+    } else {
+      // Ensure no clipboards are shown until auth
+      setClipboards([]);
+    }
   }, [instance, accounts]);
 
   // Load items after clipboards are available or when URL params change
