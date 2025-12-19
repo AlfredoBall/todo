@@ -1,6 +1,7 @@
 name: Terraform Infrastructure
 
 on:
+  workflow_call:
   workflow_dispatch:
   push:
     branches: [ main ]
@@ -84,20 +85,3 @@ jobs:
           echo "React URL: $REACT_URL"
           echo "Angular URL: $ANGULAR_URL"
 
-  trigger-build:
-    needs: terraform
-    uses: ./.github/workflows/build.yml
-    with:
-      api_url: ${{ needs.terraform.outputs.api_url }}
-      angular_url: ${{ needs.terraform.outputs.angular_url }}
-      react_url: ${{ needs.terraform.outputs.react_url }}
-      angular_client_id: ${{ needs.terraform.outputs.angular_client_id }}
-      react_client_id: ${{ needs.terraform.outputs.react_client_id }}
-  trigger-deploy:
-    needs: [terraform, trigger-build]
-    uses: ./.github/workflows/deploy.yml
-    secrets: inherit
-    with:
-      api_url: ${{ needs.terraform.outputs.api_url }}
-      angular_url: ${{ needs.terraform.outputs.angular_url }}
-      react_url: ${{ needs.terraform.outputs.react_url }}
