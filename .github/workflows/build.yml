@@ -32,11 +32,6 @@ on:
         required: false
         type: string
         default: ''
-      tenant_id:
-        description: 'Azure AD tenant ID'
-        required: false
-        type: string
-        default: ''
       api_scope:
         description: 'API scope for authentication'
         required: false
@@ -80,7 +75,7 @@ jobs:
         env:
           VITE_API_BASE_URL: ${{ inputs.api_url }}
           VITE_CLIENT_ID: ${{ inputs.react_client_id }}
-          VITE_TENANT_ID: ${{ inputs.tenant_id }}
+          VITE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
           VITE_REDIRECT_URI: ${{ inputs.react_url }}
           VITE_POST_LOGOUT_REDIRECT_URI: ${{ inputs.react_url }}
           VITE_API_SCOPES: ${{ inputs.api_scope }}
@@ -92,7 +87,7 @@ jobs:
         env:
           NG_APP_apiBaseUrl: ${{ inputs.api_url }}
           NG_APP_AzureAd__ClientID: ${{ inputs.angular_client_id }}
-          NG_APP_AzureAd__TenantId: ${{ inputs.tenant_id }}
+          NG_APP_AzureAd__TenantId: ${{ secrets.AZURE_TENANT_ID }}
           NG_APP_RedirectUri: ${{ inputs.angular_url }}
           NG_APP_PostLogoutRedirectUri: ${{ inputs.angular_url }}
           NG_APP_apiScopes: ${{ inputs.api_scope }}
