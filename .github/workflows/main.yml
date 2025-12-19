@@ -10,6 +10,9 @@ jobs:
     name: Provision Infrastructure
     uses: ./.github/workflows/terraform.yml
     secrets: inherit
+    permissions:
+      id-token: write
+      contents: read
 
   build:
     name: Build Applications
