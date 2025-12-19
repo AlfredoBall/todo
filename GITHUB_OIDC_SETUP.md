@@ -2,112 +2,214 @@
 
 ## Overview
 
-This guide explains how to set up GitHub Actions OIDC authentication for deploying to Azure **production environments**. This configuration is in `DevOps/Infrastructure/Terraform` (production), NOT in `Terraform-Dev` (local development).
+This guide explains how to set up GitHub Actions OIDC authentication for deploying to Azure **production environments**. 
 
-Terraform automatically creates:
-- Azure AD app registration for GitHub Actions
-- Federated identity credential (no client secret needed!)
-- GitHub environment with secrets and variables
+**CRITICAL**: Both the Azure AD app registration and GitHub environment must be **created manually** as prerequisites. This avoids the chicken-and-egg problem where GitHub Actions needs the environment and credentials that would be created by Terraform running in that environment.
+
+### What You Create Manually
+1. Azure AD app registration for GitHub OIDC
+2. Federated identity credential (no client secret needed!)
+3. GitHub environment with secrets and variables
+
+### What Terraform Creates
+- Azure resources (Resource Group, App Services, Static Web Apps, etc.)
+- Azure AD app registrations for the applications (API, Angular, React)
 
 ## Prerequisites
 
 ### Required Azure Permissions
 
-**CRITICAL**: The Azure account used to run this initial Terraform setup must have:
+**CRITICAL**: The Azure account used to create the OIDC app registration must have:
 - **Owner** or **User Access Administrator** role on the subscription (to grant RBAC roles to the OIDC principal)
 - **Application Administrator** or **Global Administrator** role in Azure AD (to create app registrations)
 
 This is a **one-time bootstrap process**. After initial setup, the OIDC principal can manage future deployments.
 
-### Required Azure Resources
-
-**Azure Subscription**: You must have an **existing Azure subscription**. Terraform does not create subscriptions because they involve billing and financial commitments. The subscription ID must be provided in `terraform.tfvars`.
-
 ### Tools
 
-1. **GitHub CLI** installed and authenticated (for local Terraform execution)
-   ```bash
-   winget install GitHub.cli
-   gh auth login
-   ```
-   
-   **Alternative**: Set `GITHUB_TOKEN` environment variable with a Personal Access Token (useful for CI/CD pipelines)
-   ```bash
-   export GITHUB_TOKEN="ghp_your_token_here"
-   ```
-
-2. **Azure CLI** installed and authenticated with privileged account
+1. **Azure CLI** installed and authenticated with privileged account
    ```bash
    az login  # Must authenticate as user with Owner + App Admin roles
    ```
 
-3. **Terraform** configured with required variables
+2. **Terraform** configured with required variables (for Azure resource deployment)
 
-## Required Terraform Variables
+## Step 1: Create OIDC App Registration Manually
 
-Add these to your Terraform configuration (via `terraform.tfvars` or environment variables):
+### Why Manual Creation?
+
+Creating the OIDC app registration and GitHub environment manually avoids the chicken-and-egg problem:
+- GitHub Actions workflows need the environment and Azure credentials to run
+- If Terraform created the environment, the workflow couldn't run to create it
+- By creating both manually first, GitHub Actions can authenticate and deploy from the start
+
+### Option A: Azure Portal
+
+1. Navigate to **Azure AD** → **App registrations** → **New registration**
+
+2. Configure the application:
+   - **Name**: `github-actions-oidc-{your-repo-name}` (e.g., `github-actions-oidc-todo`)
+   - **Supported account types**: **Accounts in this organizational directory only** (Single tenant)
+   - **Redirect URI**: Leave blank
+   - Click **Register**
+
+3. Note the **Application (client) ID** - you'll need this for `terraform.tfvars`
+
+4. Add Federated Identity Credential:
+   - Go to **Certificates & secrets** → **Federated credentials** tab
+   - Click **Add credential**
+   - **Federated credential scenario**: Select **GitHub Actions deploying Azure resources**
+   - **Organization**: Your GitHub username or organization (e.g., `AlfredoBall`)
+   - **Repository**: Your repo name (e.g., `todo`)
+   - **Entity type**: Select **Branch**
+   - **Branch name**: The branch that will deploy (e.g., `main`)
+   - **Name**: `github-{branch}-credential` (e.g., `github-main-credential`)
+   - Click **Add**
+
+### Option B: Azure CLI
+
+```bash
+# Set your values
+REPO_OWNER="your-github-username"
+REPO_NAME="your-repo-name"
+BRANCH="main"
+APP_NAME="github-actions-oidc-${REPO_NAME}"
+
+# Create the app registration
+APP_ID=$(az ad app create \
+  --display-name "$APP_NAME" \
+  --query appId -o tsv)
+
+echo "Application (Client) ID: $APP_ID"
+echo "Save this value for terraform.tfvars!"
+
+# Get the object ID (different from app ID)
+OBJECT_ID=$(az ad app show --id $APP_ID --query id -o tsv)
+
+# Create federated identity credential
+az ad app federated-credential create \
+  --id $OBJECT_ID \
+  --parameters @- <<EOF
+{
+  "name": "github-${BRANCH}-credential",
+  "issuer": "https://token.actions.githubusercontent.com",
+  "subject": "repo:${REPO_OWNER}/${REPO_NAME}:ref:refs/heads/${BRANCH}",
+  "audiences": [
+    "api://AzureADTokenExchange"
+  ]
+}
+EOF
+
+echo "OIDC app registration created successfully!"
+echo "Client ID: $APP_ID"
+```
+
+### Grant RBAC Permissions
+
+The OIDC service principal needs permissions to manage your Azure resources:
+
+```bash
+# Get your subscription and resource group
+SUBSCRIPTION_ID=$(az account show --query id -o tsv)
+RESOURCE_GROUP="your-resource-group-name"
+
+# Grant Contributor role on the resource group
+az role assignment create \
+  --assignee $APP_ID \
+  --role "Contributor" \
+  --scope "/subscriptions/$SUBSCRIPTION_ID/resourceGroups/$RESOURCE_GROUP"
+```
+
+**Note**: If the resource group doesn't exist yet, you can grant Contributor at the subscription level (less secure) or create the resource group first.
+
+## Step 2: Create GitHub Environment Manually
+
+### Why Manual Creation?
+
+The GitHub environment must exist before the workflow runs. If Terraform tried to create it, the workflow would need to run inside an environment that doesn't exist yet (chicken-and-egg).
+
+### Create the Environment
+
+1. Go to your GitHub repository
+2. Navigate to **Settings** → **Environments**
+3. Click **New environment**
+4. Name it `production` (or your preferred name)
+5. Click **Configure environment**
+
+### Add Required Secrets
+
+Click **Add secret** for each of these:
+
+1. **AZURE_CLIENT_ID**
+   - Value: The Application (Client) ID from Step 1
+
+2. **AZURE_SUBSCRIPTION_ID**
+   - Value: Your Azure subscription ID
+   ```bash
+   az account show --query id -o tsv
+   ```
+
+3. **AZURE_TENANT_ID**
+   - Value: Your Azure tenant ID
+   ```bash
+   az account show --query tenantId -o tsv
+   ```
+
+### Add Required Variables
+
+Click **Add variable** for each of these (these must match your `terraform.tfvars` values):
+
+1. **AZURE_RESOURCE_GROUP**
+   - Value: Your resource group name (e.g., `todo-rg`)
+
+2. **AZURE_API_APP_SERVICE_NAME**
+   - Value: Your API app service name (e.g., `todo-api-app-service`)
+
+3. **AZURE_STATIC_WEBAPP_NAME_REACT**
+   - Value: Your React static web app name (e.g., `todo-react-swa`)
+
+4. **AZURE_STATIC_WEBAPP_NAME_ANGULAR**
+   - Value: Your Angular static web app name (e.g., `todo-angular-swa`)
+
+**CRITICAL**: These variable values **must exactly match** the corresponding values in your `terraform.tfvars` file. The GitHub Actions workflows will use these to deploy to the resources that Terraform creates.
+
+## Step 3: Configure Terraform Variables
+
+Add these to your `terraform.tfvars` file:
 
 **⚠️ Security Note**: The `terraform.tfvars` file in this repository is checked in for educational purposes only. In production, NEVER commit this file - use environment variables, Azure Key Vault, or Terraform Cloud instead. See [TERRAFORM.md](TERRAFORM.md) for details.
 
 ```hcl
-# GitHub Configuration
-github_repo_owner = "your-github-username-or-org"
-github_repo_name  = "your-repo-name"
-github_branch     = "main"  # Branch for OIDC federation
-
 # Azure Configuration  
-subscription_id                  = "your-subscription-id"  # PREREQUISITE: Must exist (billing)
+subscription_id                  = "your-subscription-id"
 tenant_id                        = "your-tenant-id"
-resource_group_name              = "your-resource-group-name"
-api_app_service_name             = "your-api-app-service-name"
-angular_static_web_app_name      = "your-angular-swa-name"
-react_static_web_app_name        = "your-react-swa-name"
+resource_group_name              = "todo-rg"                          # MUST match GitHub environment variable
+api_app_service_name             = "todo-api-app-service"             # MUST match GitHub environment variable
+angular_static_web_app_name      = "todo-angular-swa"                # MUST match GitHub environment variable
+react_static_web_app_name        = "todo-react-swa"                  # MUST match GitHub environment variable
 ```
 
 ### Getting Your Values
 
-**GitHub Repo Owner/Name**: From your repo URL `https://github.com/OWNER/REPO`
-
-**Azure Subscription ID**: **REQUIRED PREREQUISITE**
+**Azure Subscription ID**: **REQUIRED**
 ```bash
 az account show --query id -o tsv
 ```
-**Important**: Terraform does NOT create Azure subscriptions because they involve billing and cost management. You must have an existing subscription before running this Terraform configuration. The subscription ID is provided in `terraform.tfvars`.
 
-**Resource Names**: Use the names you plan to create in Azure (or existing ones)
+**Azure Tenant ID**: **REQUIRED**
+```bash
+az account show --query tenantId -o tsv
+```
 
-## What Gets Created
+**Resource and App Names**: These values **must exactly match** the GitHub environment variables you created in Step 2. The GitHub Actions workflows will use the environment variables to deploy to the resources that Terraform creates with these names.
 
-### 1. Azure AD App Registration
-- **Name**: `github-actions-oidc-{repo-name}`
-- **Purpose**: Allows GitHub to authenticate to Azure without secrets
-- **Federated Credential**: Scoped to your repo and branch
+## Step 4: Run Terraform to Create Azure Resources
 
-### 2. GitHub Environment
-- **Name**: `development`
-- **Secrets** (automatically set):
-  - `AZURE_CLIENT_ID` - From the OIDC app registration
-  - `AZURE_SUBSCRIPTION_ID` - Your Azure subscription
-  - `AZURE_TENANT_ID` - Your Azure tenant
-
-- **Variables** (automatically set):
-  - `AZURE_API_APP_SERVICE_NAME` - API deployment target
-  - `AZURE_RESOURCE_GROUP` - Resource group for deployments
-  - `AZURE_STATIC_WEBAPP_NAME_ANGULAR` - Angular SWA name
-  - `AZURE_STATIC_WEBAPP_NAME_REACT` - React SWA name
-
-## Initial Bootstrap Process
-
-**This is a ONE-TIME setup that must be run locally before the GitHub Actions workflow can execute.**
-
-### Step 1: Run Terraform Locally
+Now that the OIDC app registration and GitHub environment exist, you can run Terraform to create the Azure resources:
 
 ```powershell
-# Authenticate with your privileged Azure account (Owner + App Admin)
+# Authenticate with Azure
 az login
-
-# Authenticate with GitHub
-gh auth login
 
 # Navigate to production Terraform directory
 cd DevOps/Infrastructure/Terraform
@@ -118,53 +220,33 @@ terraform plan
 terraform apply
 ```
 
-This creates:
-- Azure AD app registration for GitHub OIDC
-- Federated identity credential
-- GitHub environment with secrets and variables
+### What Terraform Creates
 
-### Step 2: Grant Azure RBAC Permissions
+- **Azure Resource Group** (if it doesn't exist)
+- **Azure AD App Registrations** for the applications:
+  - To Do API
+  - To Do Angular
+  - To Do React
+- **Azure App Service Plan** and **App Service** for the API
+- **Azure Static Web Apps** for Angular and React frontends
 
-The OIDC service principal needs permissions to deploy Azure resources:
+## Step 5: Verify Setup
 
-```powershell
-# Get the client ID that Terraform created
-$clientId = terraform output -raw github_oidc_client_id
+### Check Azure Portal
+1. Go to **Azure Active Directory** → **App registrations**
+2. Verify the OIDC app registration from Step 1
+3. Navigate to **Certificates & secrets** → **Federated credentials**
+4. Verify the credential is scoped to your repo/branch
 
-# Grant Contributor role on the resource group
-az role assignment create `
-  --assignee $clientId `
-  --role "Contributor" `
-  --scope "/subscriptions/<SUBSCRIPTION_ID>/resourceGroups/<RESOURCE_GROUP>"
+### Check GitHub Environment
+1. Go to `https://github.com/<owner>/<repo>/settings/environments`
+2. Select the environment (e.g., "production")
+3. Verify secrets: `AZURE_CLIENT_ID`, `AZURE_SUBSCRIPTION_ID`, `AZURE_TENANT_ID`
+4. Verify variables: `AZURE_RESOURCE_GROUP`, `AZURE_API_APP_SERVICE_NAME`, `AZURE_STATIC_WEBAPP_NAME_ANGULAR`, `AZURE_STATIC_WEBAPP_NAME_REACT`
 
-# Or grant specific roles per resource type as needed
-```
+### GitHub Actions Can Now Run
 
-### Step 3: Verify GitHub Secrets
-
-Check that Terraform created the GitHub environment secrets:
-- Go to `https://github.com/<owner>/<repo>/settings/environments`
-- Select the environment (e.g., "development")
-- Verify secrets: `AZURE_CLIENT_ID`, `AZURE_SUBSCRIPTION_ID`, `AZURE_TENANT_ID`
-- Verify variables: Resource group and app service names
-
-### Step 4: GitHub Actions Can Now Run
-
-After this one-time setup, the GitHub Actions workflows can use the OIDC credentials for all future deployments.
-
-## Usage in Aspire AppHost
-
-The AppHost can be enhanced to pass GitHub-related variables to Terraform:
-
-```csharp
-var terraformApply = builder.AddExecutable("terraform-setup", "terraform", terraformDir, "apply", "-auto-approve")
-    .WithEnvironment("TF_VAR_tenant_id", tenantId)
-    .WithEnvironment("TF_VAR_github_repo_owner", "your-org")
-    .WithEnvironment("TF_VAR_github_repo_name", "your-repo")
-    // ... other variables
-```
-
-Or configure these in `terraform.tfvars` to keep them separate from the AppHost.
+After this setup, GitHub Actions workflows can use the OIDC credentials and environment to deploy applications. No bootstrap catch-22!
 
 ## Usage in GitHub Actions Workflows
 
@@ -209,116 +291,69 @@ jobs:
           # ... more configuration
 ```
 
-## Azure RBAC Permissions
-
-After Terraform creates the app registration, you need to assign Azure RBAC roles:
-
-```bash
-# Get the client ID from Terraform outputs
-CLIENT_ID=$(cd DevOps/Infrastructure/Terraform-Dev && terraform output -raw github_oidc_client_id)
-
-# Assign Contributor role on the resource group
-az role assignment create \
-  --assignee $CLIENT_ID \
-  --role "Contributor" \
-  --scope "/subscriptions/{subscription-id}/resourceGroups/{resource-group}"
-
-# Or assign specific roles per resource
-az role assignment create \
-  --assignee $CLIENT_ID \
-  --role "Website Contributor" \
-  --scope "/subscriptions/{subscription-id}/resourceGroups/{rg}/providers/Microsoft.Web/sites/{app-service-name}"
-```
-
-**Note**: These role assignments are NOT managed by Terraform in the dev environment. You can add them manually or create a separate Terraform configuration for production that includes both the app registration and RBAC assignments.
-
-## Verifying the Setup
-
-### 1. Check Terraform Outputs
-```bash
-cd DevOps/Infrastructure/Terraform-Dev
-terraform output
-```
-
-You should see:
-- `github_oidc_client_id`
-- `github_oidc_app_id`
-- `github_environment_name`
-- `github_oidc_subject`
-
-### 2. Check Azure Portal
-1. Go to **Azure Active Directory** → **App registrations**
-2. Find `github-actions-oidc-{repo-name}`
-3. Navigate to **Certificates & secrets** → **Federated credentials**
-4. Verify the credential is scoped to your repo/branch
-
-### 3. Check GitHub
-1. Go to your repo → **Settings** → **Environments**
-2. Click on **development**
-3. Verify secrets and variables are present
-
 ## Troubleshooting
-
-### "GitHub provider authentication failed"
-**Solution**: Run `gh auth login` and ensure you're authenticated
-
-### "Permission denied to create environment"
-**Solution**: Ensure your GitHub account has admin access to the repository
 
 ### "OIDC token validation failed in workflow"
 **Solution**: 
-- Verify the federated credential subject matches your repo/branch
+- Verify the federated credential subject matches your repo/branch exactly: `repo:owner/name:ref:refs/heads/branch`
 - Check workflow permissions include `id-token: write`
-- Ensure the workflow is running on the correct branch
+- Ensure the workflow is running on the correct branch specified in the federated credential
+- Verify audiences is set to `["api://AzureADTokenExchange"]`
 
-### "Azure role assignment required"
-**Solution**: The GitHub OIDC app needs permissions to deploy. Assign appropriate RBAC roles (see section above)
+### "GitHub environment not found in workflow"
+**Solution**: The environment must be created manually in GitHub (Step 2). Verify it exists at `Settings` → `Environments`.
+
+### "Resource names don't match between Terraform and GitHub"
+**Solution**: The resource names in `terraform.tfvars` **must exactly match** the GitHub environment variables created in Step 2. Check for typos or case differences.
+**Solution**: This is the chicken-and-egg problem! The OIDC app registration must be created manually BEFORE running Terraform in CI/CD. Follow Step 1 to create it manually.
+
+### "Resource group already exists"
+**Solution**: Import the existing resource group into Terraform state:
+```bash
+terraform import azurerm_resource_group.main /subscriptions/<SUB_ID>/resourceGroups/<RG_NAME>
+```
 
 ## Security Best Practices
 
 1. **Branch Protection**: Limit OIDC federation to protected branches (e.g., `main`)
-2. **Environment Protection**: Configure GitHub environment protection rules
+2. **Environment Protection**: Configure GitHub environment protection rules (required reviewers, deployment branches)
 3. **Least Privilege**: Assign minimal Azure RBAC roles needed for deployment
-4. **Audit Logs**: Monitor Azure AD sign-in logs for the GitHub app
+4. **Audit Logs**: Monitor Azure AD sign-in logs for the GitHub OIDC app
 5. **Rotation**: No secrets to rotate! OIDC tokens are short-lived by design
-6. **Token Scoping**: GitHub Provider tokens should have `repo`, `admin:org`, and `workflow` scopes for full functionality
-
-## CI/CD Considerations
-
-When running Terraform in CI/CD pipelines (e.g., GitHub Actions, Azure DevOps):
-
-**Option 1: GITHUB_TOKEN Environment Variable**
-```yaml
-- name: Terraform Apply
-  env:
-    GITHUB_TOKEN: ${{ secrets.GH_PAT }}
-  run: terraform apply -auto-approve
-```
-
-**Option 2: GitHub App Authentication** (more secure for organizations)
-```hcl
-provider "github" {
-  owner = var.github_repo_owner
-  app_auth {
-    id              = var.github_app_id
-    installation_id = var.github_app_installation_id
-    pem_file        = var.github_app_pem_file
-  }
-}
-```
+6. **Environment Secrets**: Use GitHub environment secrets (not repository secrets) for better access control
 
 ## Multiple Environments
 
-To create separate environments (staging, production):
+To create separate environments (e.g., staging, production):
 
-```hcl
-# In terraform.tfvars or pass as variables
-github_branch = "main"  # For production
+1. **Create Multiple OIDC Apps**: One for each environment/branch
+   ```bash
+   # Production
+   APP_ID_PROD=$(az ad app create --display-name "github-actions-oidc-todo-prod" --query appId -o tsv)
+   
+   # Staging
+   APP_ID_STAGING=$(az ad app create --display-name "github-actions-oidc-todo-staging" --query appId -o tsv)
+   ```
 
-# Or create multiple federated credentials for different branches
-```
+2. **Create Federated Credentials**: One for each branch
+   - Production: subject = `repo:owner/name:ref:refs/heads/main`
+   - Staging: subject = `repo:owner/name:ref:refs/heads/development`
 
-You can create separate Terraform configurations or use workspaces for different environments.
+3. **Create GitHub Environments**: One for each deployment target
+   - Environment: `production` with secrets for production OIDC app
+   - Environment: `staging` with secrets for staging OIDC app
+
+4. **Configure Workflows**: Use different environments based on branch
+   ```yaml
+   jobs:
+     deploy-staging:
+       if: github.ref == 'refs/heads/development'
+       environment: staging
+     
+     deploy-production:
+       if: github.ref == 'refs/heads/main'
+       environment: production
+   ```
 
 ## Additional Resources
 
