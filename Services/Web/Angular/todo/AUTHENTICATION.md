@@ -43,12 +43,12 @@ You need **two separate app registrations**:
 2. Configure:
    - **Name**: Your app name (e.g., "Angular Todo App")
    - **Supported account types**: Choose based on your needs (typically "Accounts in this organizational directory only")
-   - **Redirect URI**: Select "Single-page application (SPA)" and enter `angular-https-redirect-uri`
+   - **Redirect URI**: Select "Single-page application (SPA)" and enter `https://localhost:<YOUR_ANGULAR_DEV_PORT>`
 3. After registration, note down:
    - **Application (client) ID** (you'll need this for Angular configuration)
    - **Directory (tenant) ID** (same as API, but verify)
 4. Go to **Authentication** and add:
-   - **Front-channel logout URL**: `angular-logout-url`
+   - **Front-channel logout URL**: `https://localhost:<YOUR_ANGULAR_DEV_PORT>`
 
 ### 2. Configure API Permissions (Angular App)
 
@@ -75,23 +75,23 @@ export const AUTH_CONFIG = {
   BYPASS_AUTH_IN_DEV: true,  // Change to false when ready to test auth
 
   // Replace these with your ANGULAR app registration values
-  CLIENT_ID: 'YOUR_ANGULAR_CLIENT_ID_HERE',
-  TENANT_ID: 'YOUR_TENANT_ID_HERE',
-  REDIRECT_URI: 'angular-redirect-uri',
+  CLIENT_ID: '<YOUR_ANGULAR_CLIENT_ID>',
+  TENANT_ID: '<YOUR_TENANT_ID>',
+  REDIRECT_URI: 'https://localhost:<YOUR_ANGULAR_DEV_PORT>',
   
   // Your .NET API configuration
-  API_BASE_URL: 'api-base-url',
+  API_BASE_URL: '/api',
   // Use the full scope URI from your API's "Expose an API" section
-  API_SCOPES: ['api://YOUR_API_CLIENT_ID_HERE/scope'],
+  API_SCOPES: ['api://<YOUR_API_CLIENT_ID>/scope'],
   
-  POST_LOGOUT_REDIRECT_URI: 'angular-logout-redirect-uri'
+  POST_LOGOUT_REDIRECT_URI: 'https://localhost:<YOUR_ANGULAR_DEV_PORT>'
 };
 ```
 
 **Important**: Replace:
-- `YOUR_ANGULAR_CLIENT_ID_HERE` with your **Angular app's** Application (client) ID
-- `YOUR_TENANT_ID_HERE` with your Directory (tenant) ID
-- `YOUR_API_CLIENT_ID_HERE` with your **.NET API app's** Application (client) ID (in the scope URI)
+- `<YOUR_ANGULAR_CLIENT_ID>` with your **Angular app's** Application (client) ID
+- `<YOUR_TENANT_ID>` with your Directory (tenant) ID
+- `<YOUR_API_CLIENT_ID>` with your **.NET API app's** Application (client) ID (in the scope URI)
 
 ## 🔐 How Authentication Works
 

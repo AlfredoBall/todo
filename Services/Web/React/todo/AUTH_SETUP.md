@@ -1,7 +1,13 @@
 # Azure Entra ID Authentication Setup for React Todo App
 
 ## Overview
-This document outlines the steps to implement Azure Entra ID authentication in the React Todo application using MSAL (Microsoft Authentication Library).
+This document outlines the Azure Entra ID authentication implementation in the React Todo application using MSAL (Microsoft Authentication Library).
+
+**Note**: When running via .NET Aspire (recommended), all Azure AD configuration is automatically injected as environment variables. You don't need to manually configure anything - just run the Aspire AppHost and it handles everything!
+
+## For Standalone Development (Without Aspire)
+
+If you're running the React app independently without Aspire orchestration, follow these steps:
 
 ## Prerequisites
 - Azure subscription with an Entra ID tenant
@@ -23,7 +29,7 @@ npm install @azure/msal-browser @azure/msal-react
 This file contains the MSAL configuration with Azure app registration values:
 - `CLIENT_ID`: Application (client) ID from Azure
 - `TENANT_ID`: Directory (tenant) ID from Azure
-- `REDIRECT_URI`: Must match the redirect URI in Azure (default: https://localhost:4200)
+- `REDIRECT_URI`: Must match the redirect URI in Azure (e.g., https://localhost:<YOUR_PORT>)
 - `API_SCOPES`: Custom scopes for your .NET API
 - `BYPASS_AUTHENTICATION`: Set to true to bypass auth during development
 
@@ -81,7 +87,7 @@ This file contains the MSAL configuration with Azure app registration values:
 
 In the Azure Entra admin center:
 1. Register the React SPA application
-2. Add redirect URI: `https://localhost:4200`
+2. Add redirect URI: `https://localhost:<YOUR_REACT_PORT>`
 3. Configure platform as "Single-page application"
 4. Add scope `access_as_user` under "Expose an API"
 5. Note the Client ID and Tenant ID
@@ -90,7 +96,7 @@ In the Azure Entra admin center:
 ## Step 10: Testing
 
 1. Start the dev server: `npm run dev`
-2. Navigate to `https://localhost:4200`
+2. Navigate to `https://localhost:<YOUR_REACT_PORT>`
 3. Click "Sign In" button in navbar
 4. Authenticate with Azure credentials
 5. Verify API calls include bearer tokens in Authorization header
@@ -135,7 +141,7 @@ In the Azure Entra admin center:
 - Verify BYPASS_AUTHENTICATION is false
 
 ### Login redirect fails
-- Verify redirect URI in Azure matches exactly: `https://localhost:4200`
+- Verify redirect URI in Azure matches exactly: `https://localhost:<YOUR_REACT_PORT>`
 - Check that platform is set to "Single-page application" in Azure
 - Ensure CLIENT_ID and TENANT_ID are correct in authConfig.ts
 

@@ -1,11 +1,20 @@
-## Terraform + Azure backend (GitHub OIDC) — Documentation
+## Terraform + Azure Backend (GitHub OIDC) — Documentation
 
-This document describes the recommended approach for running Terraform locally and in CI using GitHub Actions OIDC to authenticate to Azure, and using an Azure Blob Storage backend for remote state.
+This document describes Terraform configuration for **production** deployments using Azure Blob Storage backend and GitHub Actions OIDC authentication.
 
-### Goals
-- Local developer: `az login` for interactive runs.
-- CI: GitHub Actions uses OIDC to obtain short-lived credentials for a federated service principal (no client secret stored in GitHub).
-- Backend: Azure Storage (StorageV2 blob container) with Azure AD (Microsoft Entra) auth and RBAC; storage account/container must exist before `terraform init`.
+**Note**: For local development, see [DEVELOPMENT_SETUP.md](DEVELOPMENT_SETUP.md) or [ASPIRE_TERRAFORM_SETUP.md](ASPIRE_TERRAFORM_SETUP.md). The Aspire AppHost handles Terraform automatically with local state.
+
+---
+
+### Development vs Production
+
+| Aspect | Development (Aspire) | Production (CI/CD) |
+|--------|---------------------|-------------------|
+| **Terraform State** | Local file | Azure Blob Storage |
+| **Authentication** | `az login` | GitHub OIDC |
+| **Execution** | Aspire AppHost | GitHub Actions |
+| **Variables** | Hardcoded in AppHost.cs | Passed via workflow |
+| **Backend** | None | Required |
 
 ---
 

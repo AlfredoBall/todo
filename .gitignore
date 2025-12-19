@@ -40,6 +40,7 @@ artifacts/
 # Visual Studio cache/options
 .vs/
 **/.vscode/
+!**/.vscode/launch.json
 
 # Rider
 .idea/
@@ -162,4 +163,5 @@ appsettings.*.json
 !appsettings.json
 !appsettings.Development.json
 .vscode/*
+!.vscode/launch.json
 .editorconfig

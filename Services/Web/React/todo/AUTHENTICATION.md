@@ -3,7 +3,7 @@
 This React application is configured to use Azure Entra ID (formerly Azure AD) for authentication using MSAL (MSAL React / msal-browser).
 
 ## Quick summary
-- Dev server: https://localhost:5173
+- Dev server: https://localhost:<REACT_DEV_PORT>
 - Config file: `src/auth-config.ts` (reads Vite env variables)
 - Env file: `Services/Web/React/todo/.env` (Vite `VITE_` prefixed variables)
 
@@ -28,7 +28,7 @@ Expose an API scope for your API (Microsoft Entra ID → App registrations → s
 1. Azure Portal → App registrations → New registration
 2. Name: e.g. `React Todo App`
 3. Supported account types: choose as needed
-4. Redirect URI: Platform = Single-page application (SPA) → `https://localhost:5173`
+4. Redirect URI: Platform = Single-page application (SPA) → `https://localhost:<REACT_DEV_PORT>`
 5. In Authentication settings add the front-channel logout and set post-logout redirect URI if desired
 6. Note the **Application (client) ID** and **Directory (tenant) ID**
 
@@ -43,12 +43,12 @@ Update `Services/Web/React/todo/.env` (Vite picks up `VITE_` variables). Example
 
 ```
 VITE_BYPASS_AUTH_IN_DEV=true
-VITE_CLIENT_ID=your-react-client-id
-VITE_TENANT_ID=your-tenant-id
-VITE_REDIRECT_URI=https://localhost:5173
-VITE_POST_LOGOUT_REDIRECT_URI=https://localhost:5173
-VITE_API_BASE_URL=https://localhost:5173/api
-VITE_API_SCOPES=["api://YOUR_API_CLIENT_ID_HERE/scope"]
+VITE_CLIENT_ID=<YOUR_REACT_CLIENT_ID>
+VITE_TENANT_ID=<YOUR_TENANT_ID>
+VITE_REDIRECT_URI=https://localhost:<REACT_DEV_PORT>
+VITE_POST_LOGOUT_REDIRECT_URI=https://localhost:<REACT_DEV_PORT>
+VITE_API_BASE_URL=/api
+VITE_API_SCOPES=["api://<YOUR_API_CLIENT_ID>/scope"]
 ```
 
 - `VITE_BYPASS_AUTH_IN_DEV`: when `true` the app bypasses auth for easier development (see `src/auth-config.ts`).
@@ -96,7 +96,7 @@ app.UseAuthorization();
 ```
 
 ## 7. Development tips
-- Dev server runs at `https://localhost:5173` (Vite). Ensure Azure redirect URI exactly matches this origin plus path if used (e.g. `https://localhost:5173/auth/callback`).
+- Dev server runs at `https://localhost:<REACT_DEV_PORT>` (Vite). Ensure Azure redirect URI exactly matches this origin plus path if used.
 - If you use `VITE_BYPASS_AUTH_IN_DEV=true`, the UI will show a dev-mode warning and not require login.
 - To test real auth set `VITE_BYPASS_AUTH_IN_DEV=false`, update `.env`, restart the dev server, and sign in.
 

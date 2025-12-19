@@ -5,6 +5,37 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  workflow_call:
+    inputs:
+      api_url:
+        description: 'API base URL from Terraform'
+        required: true
+        type: string
+      angular_url:
+        description: 'Angular Static Web App URL from Terraform'
+        required: false
+        type: string
+        default: ''
+      angular_client_id:
+        description: 'Angular app registration client ID'
+        required: false
+        type: string
+        default: ''
+      api_client_id:
+        description: 'API app registration client ID'
+        required: false
+        type: string
+        default: ''
+      tenant_id:
+        description: 'Azure AD tenant ID'
+        required: false
+        type: string
+        default: ''
+      api_scope:
+        description: 'API scope for authentication'
+        required: false
+        type: string
+        default: ''
 
 jobs:
   build:
@@ -37,9 +68,25 @@ jobs:
         run: |
           npm ci
 
+      - name: Generate Angular .env file
+        if: matrix.project == 'Services/Web/Angular/todo'
+        working-directory: ${{ matrix.project }}
+        run: |
+          cat > .env << EOF
+          NG_APP_API_BASE_URL=${{ inputs.api_url }}
+          NG_APP_AzureAd__ClientID=${{ inputs.angular_client_id }}
+          NG_APP_AzureAd__TenantId=${{ inputs.tenant_id }}
+          NG_APP_RedirectUri=${{ inputs.angular_url }}
+          NG_APP_PostLogoutRedirectUri=${{ inputs.angular_url }}
+          NG_APP_apiScopes=${{ inputs.api_scope }}
+          NG_APP_bypassAuthInDev=false
+          EOF
+
       - name: Build React app
         if: matrix.project == 'Services/Web/React/todo'
         working-directory: ${{ matrix.project }}
+        env:
+          VITE_API_BASE_URL: ${{ inputs.api_url }}
         run: npm run build
 
       - name: Build Angular app
