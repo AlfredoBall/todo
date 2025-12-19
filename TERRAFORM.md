@@ -69,6 +69,36 @@ See `backend.env.example` for the required environment variables.
 
 ---
 
+### App Service environment variables for Azure AD
+
+When deploying the front-end and API to Azure, you must set the following Application Settings (App Service / Static Web App configuration) so your apps can authenticate with Azure AD. These correspond to the environment variables injected by the Aspire AppHost during local development.
+
+**API (App Service)**
+- `AzureAd__ClientId` — API application (client) ID
+- `AzureAd__TenantId` — Azure AD tenant ID
+- `AzureAd__Audience` — API audience URI (e.g., `api://<client-id>`)
+
+**Angular (NG_APP_*)**
+- `NG_APP_AzureAd__ClientID` — Angular client ID
+- `NG_APP_AzureAd__TenantId` — Tenant ID
+- `NG_APP_apiScopes` — API access scope (e.g., `api://<client-id>/access_as_user`)
+- `NG_APP_AzureAd__Audience` — API audience URI
+- `NG_APP_AzureAd__Instance` — Identity provider instance (`https://login.microsoftonline.com/`)
+- `NG_APP_RedirectUri` / `NG_APP_PostLogoutRedirectUri` — Redirect URIs for the Angular app
+- `NG_APP_API_BASE_URL` / `NG_APP_apiBaseUrl` — API base URL for the Angular app
+
+**React (VITE_*)**
+- `VITE_CLIENT_ID` — React client ID
+- `VITE_TENANT_ID` — Tenant ID
+- `VITE_API_SCOPES` — API scopes (JSON array, e.g., `["api://<client-id>/access_as_user"]`)
+- `VITE_REDIRECT_URI` / `VITE_POST_LOGOUT_REDIRECT_URI` — Redirect URIs for the React app
+- `VITE_API_BASE_URL` — API base URL
+- `VITE_BYPASS_AUTH_IN_DEV` — Optional (development only)
+
+Set these in the Azure Portal under your App Service or Static Web App -> Configuration, or manage them via Terraform using the appropriate app settings blocks in your deployment configuration.
+
+---
+
 ### Quick CLI bootstrap (create RG, storage account, container)
 **Run these commands ONCE before your first `terraform init`.**
 Replace names and subscription values as needed.
