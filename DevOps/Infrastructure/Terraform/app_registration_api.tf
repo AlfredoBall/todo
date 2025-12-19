@@ -2,8 +2,6 @@
 resource "azuread_application" "api_app_registration" {
   display_name     = "To Do API"
   sign_in_audience = "AzureADMyOrg"
-  
-  identifier_uris = ["api://${azuread_application.api_app_registration.client_id}"]
 
   # Expose an API scope so other apps can request consent
   api {
@@ -25,13 +23,22 @@ resource "azuread_application" "api_app_registration" {
     enterprise = false
     hide       = false
   }
-  
-  lifecycle {
-    ignore_changes = [identifier_uris]
-  }
 
   # Optional: add web redirect URIs, owners, or additional settings as needed.
   # reply_urls = ["https://your-app/callback"]
+}
+
+# Set identifier URI after app is created using time_sleep for replication
+resource "time_sleep" "wait_for_api_app" {
+  depends_on = [azuread_application.api_app_registration]
+  create_duration = "30s"
+}
+
+resource "azuread_application_identifier_uri" "api_identifier_uri" {
+  application_id = azuread_application.api_app_registration.id
+  identifier_uri = "api://${azuread_application.api_app_registration.client_id}"
+  
+  depends_on = [time_sleep.wait_for_api_app]
 }
 
 
