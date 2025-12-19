@@ -19,19 +19,35 @@ resource "azuread_application" "api_app_registration" {
     requested_access_token_version = 2
   }
 
+  feature_tags {
+    enterprise = false
+    hide       = false
+  }
+
   # Optional: add web redirect URIs, owners, or additional settings as needed.
   # reply_urls = ["https://your-app/callback"]
 }
 
-# Set identifier_uris after the app is created to use its client_id
-resource "azuread_application_identifier_uri" "api_identifier_uri" {
-  application_id = azuread_application.api_app_registration.id
-  identifier_uri = "api://${azuread_application.api_app_registration.client_id}"
+# Use null_resource to set identifier URI after app is fully created
+resource "null_resource" "api_identifier_uri" {
+  triggers = {
+    app_id = azuread_application.api_app_registration.id
+  }
+
+  provisioner "local-exec" {
+    command = "az ad app update --id ${azuread_application.api_app_registration.client_id} --identifier-uris api://${azuread_application.api_app_registration.client_id}"
+  }
+
+  depends_on = [azuread_application.api_app_registration]
 }
 
 
 resource "azuread_service_principal" "api_sp" {
   client_id = azuread_application.api_app_registration.client_id
+  
+  feature_tags {
+    enterprise = false
+  }
 }
 
 
