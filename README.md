@@ -462,6 +462,12 @@ The production Terraform configuration (`DevOps/Infrastructure/Terraform`) can a
 
 **Note:** This is separate from local development (`Terraform-Dev`) and only needed for CI/CD deployments.
 
+## ⚠️ Important Security Note
+
+**The production `terraform.tfvars` file is checked into this repository for educational purposes only.**
+
+This is a **security exception** made for demonstration and learning. In production environments, `terraform.tfvars` should NEVER be committed because it contains sensitive subscription IDs, tenant IDs, and infrastructure details. See [TERRAFORM.md](TERRAFORM.md) for detailed security best practices.
+
 ## Contributing
 
 1. Fork the repository
