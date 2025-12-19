@@ -65,15 +65,13 @@ resource "azurerm_linux_web_app" "api" {
     "REACT_URL"                = "https://${azurerm_static_web_app.react.default_host_name}"
     "ANGULAR_URL"              = "https://${azurerm_static_web_app.angular.default_host_name}"
     "RunWithAuth"              = "true"
-    # Add other settings as needed
+    # Azure AD configuration for token validation
+    "AzureAd__TenantId" = var.tenant_id
+    "AzureAd__ClientId" = azuread_application.api_app_registration.client_id
+    "AzureAd__Audience" = "api://${azuread_application.api_app_registration.client_id}"
+    "AzureAd__Instance" = "https://login.microsoftonline.com/"
+    "AzureAd__Scopes"   = "access_as_user"
   }
-
-  # App Service "Easy Auth" (auth_settings) removed so the application can handle authentication and CORS
-  # auth_settings {
-  #   enabled = true
-  #   issuer  = "https://sts.windows.net/${var.tenant_id}/"
-  # }
-  # Authentication is handled by the application (Microsoft.Identity.Web) and CORS is configured in Program.cs.
 }
 
 // Terraform resources for the Todo infrastructure
