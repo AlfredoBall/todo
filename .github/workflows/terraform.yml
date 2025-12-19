@@ -1,6 +1,7 @@
 name: Terraform Infrastructure
 
 on:
+  workflow_call:
   workflow_dispatch:
   push:
     branches: [ main ]
@@ -21,6 +22,7 @@ jobs:
       react_url: ${{ steps.terraform_output.outputs.react_url }}
       angular_url: ${{ steps.terraform_output.outputs.angular_url }}
       angular_client_id: ${{ steps.terraform_output.outputs.angular_client_id }}
+      react_client_id: ${{ steps.terraform_output.outputs.react_client_id }}
       api_client_id: ${{ steps.terraform_output.outputs.api_client_id }}
       tenant_id: ${{ steps.terraform_output.outputs.tenant_id }}
       api_scope: ${{ steps.terraform_output.outputs.api_scope }}
@@ -67,6 +69,7 @@ jobs:
           REACT_URL=$(terraform output -raw react_static_web_app_default_url)
           ANGULAR_URL=$(terraform output -raw angular_static_web_app_default_url)
           ANGULAR_CLIENT_ID=$(terraform output -raw angular_app_id)
+          REACT_CLIENT_ID=$(terraform output -raw react_app_id)
           API_CLIENT_ID=$(terraform output -raw api_app_registration_app_id)
           TENANT_ID=$(terraform output -raw tenant_id)
           API_SCOPE=$(terraform output -raw api_scope)
@@ -74,6 +77,7 @@ jobs:
           echo "react_url=$REACT_URL" >> $GITHUB_OUTPUT
           echo "angular_url=$ANGULAR_URL" >> $GITHUB_OUTPUT
           echo "angular_client_id=$ANGULAR_CLIENT_ID" >> $GITHUB_OUTPUT
+          echo "react_client_id=$REACT_CLIENT_ID" >> $GITHUB_OUTPUT
           echo "api_client_id=$API_CLIENT_ID" >> $GITHUB_OUTPUT
           echo "tenant_id=$TENANT_ID" >> $GITHUB_OUTPUT
           echo "api_scope=$API_SCOPE" >> $GITHUB_OUTPUT
@@ -81,13 +85,3 @@ jobs:
           echo "React URL: $REACT_URL"
           echo "Angular URL: $ANGULAR_URL"
 
-  trigger-build:
-    needs: terraform
-    uses: ./.github/workflows/build.yml
-    with:
-      api_url: ${{ needs.terraform.outputs.api_url }}
-      angular_url: ${{ needs.terraform.outputs.angular_url }}
-      angular_client_id: ${{ needs.terraform.outputs.angular_client_id }}
-      api_client_id: ${{ needs.terraform.outputs.api_client_id }}
-      tenant_id: ${{ needs.terraform.outputs.tenant_id }}
-      api_scope: ${{ needs.terraform.outputs.api_scope }}

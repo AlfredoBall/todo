@@ -1,0 +1,36 @@
+name: Main Deployment Pipeline
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  terraform:
+    name: Provision Infrastructure
+    uses: ./.github/workflows/terraform.yml
+    secrets: inherit
+
+  build:
+    name: Build Applications
+    needs: terraform
+    uses: ./.github/workflows/build.yml
+    with:
+      api_url: ${{ needs.terraform.outputs.api_url }}
+      angular_url: ${{ needs.terraform.outputs.angular_url }}
+      react_url: ${{ needs.terraform.outputs.react_url }}
+      angular_client_id: ${{ needs.terraform.outputs.angular_client_id }}
+      react_client_id: ${{ needs.terraform.outputs.react_client_id }}
+      api_client_id: ${{ needs.terraform.outputs.api_client_id }}
+      tenant_id: ${{ needs.terraform.outputs.tenant_id }}
+      api_scope: ${{ needs.terraform.outputs.api_scope }}
+
+  deploy:
+    name: Deploy Applications
+    needs: [terraform, build]
+    uses: ./.github/workflows/deploy.yml
+    secrets: inherit
+    with:
+      api_url: ${{ needs.terraform.outputs.api_url }}
+      angular_url: ${{ needs.terraform.outputs.angular_url }}
+      react_url: ${{ needs.terraform.outputs.react_url }}
