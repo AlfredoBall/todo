@@ -11,6 +11,11 @@ A full-stack todo application built with .NET 10, Angular, React, and Azure AD a
 - **Infrastructure**: Terraform for Azure AD app registrations
 - **Orchestration**: .NET Aspire
 
+## Live demo
+- **React (deployed)**: https://ambitious-dune-011767210.1.azurestaticapps.net
+- This currently only works if you have an account within my tenant.
+- I'm going to setup self registration next... coming soon.
+
 ## Prerequisites
 
 Before running this application, ensure you have the following tools installed and configured:
