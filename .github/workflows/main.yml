@@ -33,6 +33,9 @@ jobs:
     needs: [terraform, build]
     uses: ./.github/workflows/deploy.yml
     secrets: inherit
+    permissions:
+      id-token: write
+      contents: read
     with:
       api_url: ${{ needs.terraform.outputs.api_url }}
       angular_url: ${{ needs.terraform.outputs.angular_url }}
