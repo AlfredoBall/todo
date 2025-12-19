@@ -1,10 +1,6 @@
 name: Build API, React, and Angular
 
 on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
   workflow_call:
     inputs:
       api_url:
@@ -16,8 +12,18 @@ on:
         required: false
         type: string
         default: ''
+      react_url:
+        description: 'React Static Web App URL from Terraform'
+        required: false
+        type: string
+        default: ''
       angular_client_id:
         description: 'Angular app registration client ID'
+        required: false
+        type: string
+        default: ''
+      react_client_id:
+        description: 'React app registration client ID'
         required: false
         type: string
         default: ''
@@ -87,6 +93,11 @@ jobs:
         working-directory: ${{ matrix.project }}
         env:
           VITE_API_BASE_URL: ${{ inputs.api_url }}
+          VITE_CLIENT_ID: ${{ inputs.react_client_id }}
+          VITE_TENANT_ID: ${{ inputs.tenant_id }}
+          VITE_REDIRECT_URI: ${{ inputs.react_url }}
+          VITE_POST_LOGOUT_REDIRECT_URI: ${{ inputs.react_url }}
+          VITE_API_SCOPE: ${{ inputs.api_scope }}
         run: npm run build
 
       - name: Build Angular app
