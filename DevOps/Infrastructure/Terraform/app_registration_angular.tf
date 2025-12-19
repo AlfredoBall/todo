@@ -6,7 +6,7 @@ resource "azuread_application" "angular_app" {
 
   single_page_application {
     redirect_uris = [
-      "https://${var.angular_static_web_app_name}.azurestaticapps.net/"
+      "https://${azurerm_static_web_app.angular.default_host_name}/"
     ]
   }
 
