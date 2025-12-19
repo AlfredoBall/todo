@@ -1,5 +1,26 @@
 ## Terraform + Azure Backend (GitHub OIDC) — Documentation
 
+## ⚠️ Important Security Note
+
+**The `terraform.tfvars` file in this repository contains sensitive information and is checked into source control as an educational exception.**
+
+In a production environment, `terraform.tfvars` should **NEVER** be committed to version control because it contains:
+- Subscription IDs
+- Tenant IDs  
+- Resource names that could expose infrastructure details
+- Potentially other sensitive configuration
+
+**Best practices for production:**
+- Add `terraform.tfvars` to `.gitignore`
+- Use environment variables: `TF_VAR_*`
+- Use Azure Key Vault or HashiCorp Vault for secrets
+- Use Terraform Cloud/Enterprise for remote state and variable management
+- Use CI/CD pipeline secrets for automated deployments
+
+**Why this repo is different:** For demonstration and learning purposes, the maintainer has chosen to include this file to make the setup process clearer. This is a conscious trade-off between security and educational value.
+
+---
+
 This document describes Terraform configuration for **production** deployments using Azure Blob Storage backend and GitHub Actions OIDC authentication.
 
 **Note**: For local development, see [DEVELOPMENT_SETUP.md](DEVELOPMENT_SETUP.md) or [ASPIRE_TERRAFORM_SETUP.md](ASPIRE_TERRAFORM_SETUP.md). The Aspire AppHost handles Terraform automatically with local state.
