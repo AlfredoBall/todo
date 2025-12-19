@@ -5,7 +5,6 @@ resource "azuread_application" "react_app" {
 
   single_page_application {
     redirect_uris = [
-      "http://localhost:5173/",
       "https://${var.react_static_web_app_name}.azurestaticapps.net/"
     ]
   }

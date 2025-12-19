@@ -3,9 +3,9 @@ import react from '@vitejs/plugin-react'
 import fs from 'fs'
 import path from 'path'
 
-// const _env = (import.meta && (import.meta as any).env) || {};
-
-const target = process.env.services__API__HTTPS__0 || "https://localhost:5173/api"//_env['VITE_API_BASE_URL'];
+// Aspire injects services__API__HTTPS__0 with the actual API endpoint
+// Fallback to standalone API port if running outside Aspire
+const target = process.env.services__API__HTTPS__0 || "https://localhost:7258";
 
 // https://vite.dev/config/
 export default defineConfig({

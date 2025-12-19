@@ -1,0 +1,89 @@
+name: Terraform Infrastructure
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - 'DevOps/Infrastructure/Terraform/**'
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    environment: development
+    permissions:
+      id-token: write
+      contents: read
+    env:
+      TERRAFORM_DIR: DevOps/Infrastructure/Terraform
+    outputs:
+      api_url: ${{ steps.terraform_output.outputs.api_url }}
+      react_url: ${{ steps.terraform_output.outputs.react_url }}
+      angular_url: ${{ steps.terraform_output.outputs.angular_url }}
+      angular_client_id: ${{ steps.terraform_output.outputs.angular_client_id }}
+      api_client_id: ${{ steps.terraform_output.outputs.api_client_id }}
+      tenant_id: ${{ steps.terraform_output.outputs.tenant_id }}
+      api_scope: ${{ steps.terraform_output.outputs.api_scope }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          enable-AzPSSession: false
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.14.2
+          terraform_wrapper: false
+
+      - name: Terraform Init
+        working-directory: ${{ env.TERRAFORM_DIR }}
+        run: terraform init
+
+      - name: Terraform Plan
+        working-directory: ${{ env.TERRAFORM_DIR }}
+        run: terraform plan -out=tfplan
+
+      - name: Terraform Apply
+        working-directory: ${{ env.TERRAFORM_DIR }}
+        run: terraform apply -auto-approve tfplan
+
+      - name: Capture Terraform Outputs
+        id: terraform_output
+        working-directory: ${{ env.TERRAFORM_DIR }}
+        run: |
+          API_URL=$(terraform output -raw api_app_service_default_url)
+          REACT_URL=$(terraform output -raw react_static_web_app_default_url)
+          ANGULAR_URL=$(terraform output -raw angular_static_web_app_default_url)
+          ANGULAR_CLIENT_ID=$(terraform output -raw angular_app_id)
+          API_CLIENT_ID=$(terraform output -raw api_app_registration_app_id)
+          TENANT_ID=$(terraform output -raw tenant_id)
+          API_SCOPE=$(terraform output -raw api_scope)
+          echo "api_url=$API_URL" >> $GITHUB_OUTPUT
+          echo "react_url=$REACT_URL" >> $GITHUB_OUTPUT
+          echo "angular_url=$ANGULAR_URL" >> $GITHUB_OUTPUT
+          echo "angular_client_id=$ANGULAR_CLIENT_ID" >> $GITHUB_OUTPUT
+          echo "api_client_id=$API_CLIENT_ID" >> $GITHUB_OUTPUT
+          echo "tenant_id=$TENANT_ID" >> $GITHUB_OUTPUT
+          echo "api_scope=$API_SCOPE" >> $GITHUB_OUTPUT
+          echo "API URL: $API_URL"
+          echo "React URL: $REACT_URL"
+          echo "Angular URL: $ANGULAR_URL"
+
+  trigger-build:
+    needs: terraform
+    uses: ./.github/workflows/build.yml
+    with:
+      api_url: ${{ needs.terraform.outputs.api_url }}
+      angular_url: ${{ needs.terraform.outputs.angular_url }}
+      angular_client_id: ${{ needs.terraform.outputs.angular_client_id }}
+      api_client_id: ${{ needs.terraform.outputs.api_client_id }}
+      tenant_id: ${{ needs.terraform.outputs.tenant_id }}
+      api_scope: ${{ needs.terraform.outputs.api_scope }}

@@ -23,7 +23,7 @@ export const AUTH_CONFIG = {
   
   // API Configuration
   API_BASE_URL: import.meta.env['NG_APP_apiBaseUrl'],
-  API_SCOPES: import.meta.env['NG_APP_apiScopes'] ? import.meta.env['NG_APP_apiScopes'].split(',').map((s: string) => s.trim()) : [],
+  API_SCOPES: import.meta.env['NG_APP_apiScopes']?.split(',').map((s: string) => s.trim()) || [],
   
   // Optional: Post logout redirect URI
   POST_LOGOUT_REDIRECT_URI: import.meta.env['NG_APP_PostLogoutRedirectUri']

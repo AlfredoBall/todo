@@ -53,5 +53,35 @@ output "react_sp_id" {
   value       = azuread_service_principal.react_sp.id
 }
 
+output "tenant_id" {
+  description = "Azure AD Tenant ID"
+  value       = var.tenant_id
+}
+
+output "api_scope" {
+  description = "API scope for authentication (format: api://client-id/scope)"
+  value       = "api://${azuread_application.api_app_registration.client_id}/access_as_user"
+}
+
+// GitHub OIDC outputs
+output "github_oidc_client_id" {
+  description = "Client ID for GitHub OIDC app registration (used in workflows)"
+  value       = azuread_application.github_oidc.client_id
+}
+
+output "github_oidc_app_id" {
+  description = "Object ID of the GitHub OIDC app registration"
+  value       = azuread_application.github_oidc.id
+}
+
+output "github_environment_name" {
+  description = "Name of the created GitHub environment"
+  value       = github_repository_environment.production.environment
+}
+
+output "github_oidc_subject" {
+  description = "Subject claim used in the federated credential"
+  value       = "repo:${var.github_repo_owner}/${var.github_repo_name}:ref:refs/heads/${var.github_branch}"
+}
 
 # Outputs for DNS TXT validation tokens for custom domains (for manual DNS setup)

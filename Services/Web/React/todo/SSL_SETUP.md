@@ -25,7 +25,7 @@ The SSL certificates are located in the shared `../../ssl/` directory (at `Servi
 ### Backend Certificate (.NET API)
 The ASP.NET backend API uses a separate .NET developer certificate:
 - **Generated with**: `dotnet dev-certs https --trust`
-- **Purpose**: HTTPS endpoint for the backend API (typically https://localhost:7258)
+- **Purpose**: HTTPS endpoint for the backend API (e.g., https://localhost:<API_PORT>)
 - **Storage**: Managed by .NET in the Windows certificate store
 - **Validity**: 1 year (can be regenerated with the same command)
 
@@ -122,7 +122,7 @@ Or permanently add the exception:
 cd c:\repos\todo\Services\API
 dotnet run
 ```
-The API will run on `https://localhost:7258`
+The API will run on `https://localhost:<API_PORT>`
 
 **Then start the React frontend:**
 ```bash
@@ -132,8 +132,8 @@ npm run dev
 ```
 
 The application will be available at:
-- **React App**: `https://localhost:5173`
-- **Backend API**: `https://localhost:7258`
+- **React App**: `https://localhost:<REACT_DEV_PORT>`
+- **Backend API**: `https://localhost:<API_PORT>`
 
 ## Security Note
 
@@ -195,8 +195,8 @@ dotnet dev-certs https --trust
 
 After starting both the backend and frontend:
 
-1. ✅ Backend API runs on `https://localhost:7258`
-2. ✅ Frontend runs on `https://localhost:5173`
+1. ✅ Backend API runs on `https://localhost:<API_PORT>`
+2. ✅ Frontend runs on `https://localhost:<REACT_DEV_PORT>`
 3. ✅ No certificate warnings in Chrome/Edge
 4. ✅ Lock icon appears in the address bar for both
 5. ✅ Azure Entra ID authentication works with HTTPS redirect URI

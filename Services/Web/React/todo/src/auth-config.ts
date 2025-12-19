@@ -6,7 +6,7 @@ import { LogLevel } from '@azure/msal-browser';
  * TODO: Replace these placeholder values with your actual Azure app registration values:
  * - CLIENT_ID: Application (client) ID from Azure app registration
  * - TENANT_ID: Directory (tenant) ID from Azure app registration
- * - REDIRECT_URI: Must match the redirect URI configured in Azure (default: http://localhost:5173)
+ * - REDIRECT_URI: Must match the redirect URI configured in Azure (e.g., https://localhost:<YOUR_PORT>)
  * - API_SCOPES: The custom scopes for your .NET API (format: api://<CLIENT_ID>/<scope>)
  */
 
