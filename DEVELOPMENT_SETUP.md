@@ -13,7 +13,7 @@ This guide explains how to set up your local development environment for the Tod
 - **Node.js** (>= 18.x)
 - **Docker Desktop** running
 
-**Note**: GitHub CLI is **not required** for local development. It's only needed if you're setting up production CI/CD with GitHub Actions OIDC (see `GITHUB_OIDC_SETUP.md`).
+
 
 ---
 
