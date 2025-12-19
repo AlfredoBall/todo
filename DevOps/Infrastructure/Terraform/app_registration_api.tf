@@ -18,12 +18,6 @@ resource "azuread_application" "api_app_registration" {
     
     # CRITICAL: Set this to 2 to ensure tokens have the api:// prefix in the aud claim
     requested_access_token_version = 2
-    
-    # Pre-authorize React and Angular apps to access this API without consent prompt
-    known_client_applications = [
-      azuread_application.react_app.client_id,
-      azuread_application.angular_app.client_id
-    ]
   }
 
   feature_tags {
