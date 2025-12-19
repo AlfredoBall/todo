@@ -59,12 +59,12 @@ resource "azurerm_linux_web_app" "api" {
     # Add other settings as needed
   }
 
-  auth_settings {
-    enabled = true
-    issuer  = "https://sts.windows.net/${var.tenant_id}/"
-    # client_id is not a valid attribute for auth_settings in azurerm_linux_web_app
-    # To configure authentication, use app_settings or site_config as needed
-  }
+  # App Service "Easy Auth" (auth_settings) removed so the application can handle authentication and CORS
+  # auth_settings {
+  #   enabled = true
+  #   issuer  = "https://sts.windows.net/${var.tenant_id}/"
+  # }
+  # Authentication is handled by the application (Microsoft.Identity.Web) and CORS is configured in Program.cs.
 }
 
 // Terraform resources for the Todo infrastructure
