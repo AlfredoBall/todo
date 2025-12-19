@@ -74,20 +74,6 @@ jobs:
         run: |
           npm ci
 
-      - name: Generate Angular .env file
-        if: matrix.project == 'Services/Web/Angular/todo'
-        working-directory: ${{ matrix.project }}
-        run: |
-          cat > .env << EOF
-          NG_APP_API_BASE_URL=${{ inputs.api_url }}
-          NG_APP_AzureAd__ClientID=${{ inputs.angular_client_id }}
-          NG_APP_AzureAd__TenantId=${{ inputs.tenant_id }}
-          NG_APP_RedirectUri=${{ inputs.angular_url }}
-          NG_APP_PostLogoutRedirectUri=${{ inputs.angular_url }}
-          NG_APP_apiScopes=${{ inputs.api_scope }}
-          NG_APP_bypassAuthInDev=false
-          EOF
-
       - name: Build React app
         if: matrix.project == 'Services/Web/React/todo'
         working-directory: ${{ matrix.project }}
@@ -97,7 +83,7 @@ jobs:
           VITE_TENANT_ID: ${{ inputs.tenant_id }}
           VITE_REDIRECT_URI: ${{ inputs.react_url }}
           VITE_POST_LOGOUT_REDIRECT_URI: ${{ inputs.react_url }}
-          VITE_API_SCOPE: ${{ inputs.api_scope }}
+          VITE_API_SCOPES: ${{ inputs.api_scope }}
         run: npm run build
 
       - name: Build Angular app

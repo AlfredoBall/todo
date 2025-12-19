@@ -28,3 +28,5 @@ export const AUTH_CONFIG = {
   // Optional: Post logout redirect URI
   POST_LOGOUT_REDIRECT_URI: import.meta.env['NG_APP_PostLogoutRedirectUri']
 };
+
+console.log('AUTH_CONFIG:', AUTH_CONFIG);
