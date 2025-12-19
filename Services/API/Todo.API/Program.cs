@@ -65,15 +65,15 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+app.UseCors();
+
+app.UseHttpsRedirection();
+
 if (runWithAuth)
 {
     app.UseAuthentication();
     app.UseAuthorization();
 }
-
-app.UseCors();
-
-app.UseHttpsRedirection();
 
 // TODO: Implement scopes, var scopeRequiredByApi = app.Configuration["AzureAd:Scopes"] ?? "";
 
