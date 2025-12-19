@@ -3,10 +3,6 @@ name: Terraform Infrastructure
 on:
   workflow_call:
   workflow_dispatch:
-  push:
-    branches: [ main ]
-    paths:
-      - 'DevOps/Infrastructure/Terraform/**'
 
 jobs:
   terraform:
