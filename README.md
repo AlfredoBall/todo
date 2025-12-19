@@ -236,25 +236,25 @@ All services are monitored in the Aspire dashboard with live logs!
 
 ```
 todo/
-??? Services/
-?   ??? API/
-?   ?   ??? Todo.API/              # .NET 10 Web API with Azure AD auth
-?   ??? Aspire/
-?   ?   ??? Todo.AppHost/          # Aspire orchestration (START HERE)
-?   ?   ??? Todo.ServiceDefaults/  # Shared Aspire configuration
-?   ??? Data/
-?   ?   ??? Todo.Data.Entity/      # EF Core entities and DbContext
-?   ?   ??? Todo.Data.Access/      # DTOs and data models
-?   ?   ??? Todo.Data.Service/     # Business logic and services
-?   ??? scripts/
-?       ??? Set-AzureAdEnv.bat     # Batch script for env setup
-?       ??? Set-AzureAdEnv.ps1     # PowerShell script for env setup
-??? Web/
-?   ??? Angular/todo/              # Angular 18+ SPA
-?   ??? React/todo/                # React 18+ SPA
-??? DevOps/
-    ??? Infrastructure/
-        ??? Terraform-Dev/         # Azure AD infrastructure as code
+--- Services/
+    --- API/
+        --- Todo.API/              # .NET 10 Web API with Azure AD auth
+    --- Aspire/
+        --- Todo.AppHost/          # Aspire orchestration (START HERE)
+        --- Todo.ServiceDefaults/  # Shared Aspire configuration
+    --- Data/
+        --- Todo.Data.Entity/      # EF Core entities and DbContext
+        --- Todo.Data.Access/      # DTOs and data models
+        --- Todo.Data.Service/     # Business logic and services
+    --- scripts/
+        --- Set-AzureAdEnv.bat     # Batch script for env setugit p
+        --- Set-AzureAdEnv.ps1     # PowerShell script for env setup
+--- Web/
+    --- Angular/todo/              # Angular 18+ SPA
+    --- React/todo/                # React 18+ SPA
+--- DevOps/
+    --- Infrastructure/
+        --- Terraform-Dev/         # Azure AD infrastructure as code
 ```
 
 ## Configuration
@@ -423,29 +423,6 @@ terraform output -json
 terraform destroy
 ```
 
-### Database Migrations (For Production)
-
-This demo uses in-memory database. For real deployments:
-
-1. **Replace in `Program.cs`**:
-   ```csharp
-   // Remove:
-   options.UseInMemoryDatabase("TodoDB");
-   
-   // Add:
-   options.UseSqlServer(builder.Configuration.GetConnectionString("TodoDB"));
-   ```
-
-2. **Add migration**:
-   ```bash
-   cd Services/API/Todo.API
-   dotnet ef migrations add InitialCreate
-   ```
-
-3. **Update database**:
-   ```bash
-   dotnet ef database update
-   ```
 
 ## CI/CD Setup (Optional)
 
