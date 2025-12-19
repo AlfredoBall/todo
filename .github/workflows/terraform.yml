@@ -92,4 +92,9 @@ jobs:
           echo "API URL: $API_URL"
           echo "React URL: $REACT_URL"
           echo "Angular URL: $ANGULAR_URL"
+          echo "Angular Client ID: $ANGULAR_CLIENT_ID"
+          echo "React Client ID: $REACT_CLIENT_ID"
+          echo "API Client ID: $API_CLIENT_ID"
+          echo "Tenant ID: $TENANT_ID"
+          echo "API Scope: $API_SCOPE"
 
