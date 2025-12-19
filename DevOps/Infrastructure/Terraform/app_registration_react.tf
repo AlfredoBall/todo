@@ -2,6 +2,7 @@
 resource "azuread_application" "react_app" {
   display_name     = "To Do React App"
   sign_in_audience = "AzureADMyOrg"
+  prevent_duplicate_names = true
 
   single_page_application {
     redirect_uris = [
@@ -35,12 +36,19 @@ resource "azuread_application" "react_app" {
   }
 }
 
+resource "time_sleep" "wait_for_react_app" {
+  depends_on = [azuread_application.react_app]
+  create_duration = "30s"
+}
+
 resource "azuread_service_principal" "react_sp" {
   client_id = azuread_application.react_app.client_id
   
   feature_tags {
     enterprise = false
   }
+  
+  depends_on = [time_sleep.wait_for_react_app]
 }
 
 

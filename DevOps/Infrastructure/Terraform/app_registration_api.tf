@@ -2,6 +2,7 @@
 resource "azuread_application" "api_app_registration" {
   display_name     = "To Do API"
   sign_in_audience = "AzureADMyOrg"
+  prevent_duplicate_names = true
 
   # Expose an API scope so other apps can request consent
   api {
@@ -31,7 +32,7 @@ resource "azuread_application" "api_app_registration" {
 # Set identifier URI after app is created using time_sleep for replication
 resource "time_sleep" "wait_for_api_app" {
   depends_on = [azuread_application.api_app_registration]
-  create_duration = "30s"
+  create_duration = "60s"
 }
 
 resource "azuread_application_identifier_uri" "api_identifier_uri" {
@@ -41,6 +42,10 @@ resource "azuread_application_identifier_uri" "api_identifier_uri" {
   depends_on = [time_sleep.wait_for_api_app]
 }
 
+resource "time_sleep" "wait_for_api_sp" {
+  depends_on = [azuread_application_identifier_uri.api_identifier_uri]
+  create_duration = "30s"
+}
 
 resource "azuread_service_principal" "api_sp" {
   client_id = azuread_application.api_app_registration.client_id
@@ -48,6 +53,8 @@ resource "azuread_service_principal" "api_sp" {
   feature_tags {
     enterprise = false
   }
+  
+  depends_on = [time_sleep.wait_for_api_sp]
 }
 
 
