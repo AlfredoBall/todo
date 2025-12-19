@@ -53,6 +53,9 @@ resource "azurerm_linux_web_app" "api" {
 
   app_settings = {
     "WEBSITE_RUN_FROM_PACKAGE" = "1"
+    "REACT_URL"                = "https://${azurerm_static_web_app.react.default_host_name}"
+    "ANGULAR_URL"              = "https://${azurerm_static_web_app.angular.default_host_name}"
+    "RunWithAuth"              = "true"
     # Add other settings as needed
   }
 
