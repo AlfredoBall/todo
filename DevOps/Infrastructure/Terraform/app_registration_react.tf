@@ -28,10 +28,19 @@ resource "azuread_application" "react_app" {
       type = "Scope"
     }
   }
+
+  feature_tags {
+    enterprise = false
+    hide       = false
+  }
 }
 
 resource "azuread_service_principal" "react_sp" {
   client_id = azuread_application.react_app.client_id
+  
+  feature_tags {
+    enterprise = false
+  }
 }
 
 

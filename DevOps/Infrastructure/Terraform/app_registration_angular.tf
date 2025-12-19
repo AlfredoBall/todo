@@ -28,10 +28,19 @@ resource "azuread_application" "angular_app" {
       type = "Scope"
     }
   }
+
+  feature_tags {
+    enterprise = false
+    hide       = false
+  }
 }
 
 resource "azuread_service_principal" "angular_sp" {
   client_id = azuread_application.angular_app.client_id
+  
+  feature_tags {
+    enterprise = false
+  }
 }
 
 
