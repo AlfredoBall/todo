@@ -12,12 +12,16 @@ All the code is ready! The app is configured with:
 ✔️ HTTP interceptor for automatic token injection  
 ✔️ Development mode bypass option (currently ENABLED)  
 
-## ⚙️ Configuration Needed (3 Steps)
+**Note**: When running via .NET Aspire (recommended), all Azure AD configuration is automatically injected as environment variables. You don't need to manually update `auth-config.ts` - just run the Aspire AppHost!
+
+## ⚙️ For Standalone Development (Without Aspire)
+
+If you're running the Angular app independently without Aspire orchestration, follow these steps:
 
 ### Step 1: Azure App Registration
 1. Go to [Azure Portal](https://portal.azure.com) → Microsoft Entra ID → App registrations
 2. Create new registration:
-   - Redirect URI: `angular-redirect-uri` (type: SPA)
+   - Redirect URI: `https://localhost:<YOUR_ANGULAR_DEV_PORT>` (type: SPA)
 3. Copy these values:
    - Application (client) ID
    - Directory (tenant) ID
@@ -25,20 +29,20 @@ All the code is ready! The app is configured with:
 ### Step 2: API Scope Configuration
 In your app registration:
 - Go to **Expose an API** → Add a scope
-- Scope name: `scope-name`
-- Copy the full scope URI (format: `api://<CLIENT_ID>/scope-name`)
+- Scope name: `access_as_user` (or your preferred scope name)
+- Copy the full scope URI (format: `api://<CLIENT_ID>/access_as_user`)
 
-### Step 3: Update auth-config.ts
+### Step 3: Update auth-config.ts (Not needed with Aspire!)
 ```typescript
 // File: src/app/auth-config.ts
 export const AUTH_CONFIG = {
   BYPASS_AUTH_IN_DEV: false,  // ← Change to false to enable auth
-  CLIENT_ID: 'paste-your-client-id-here',
-  TENANT_ID: 'paste-your-tenant-id-here',
-  REDIRECT_URI: 'paste-the-angular-redirect-uri-here',
-  API_BASE_URL: 'paste-the-api-base-url-here',
-  API_SCOPES: ['api://paste-your-client-id-here/scope-name'],
-  POST_LOGOUT_REDIRECT_URI: 'paste-the-angular-redirect-uri-here'
+  CLIENT_ID: '<YOUR_ANGULAR_CLIENT_ID>',
+  TENANT_ID: '<YOUR_TENANT_ID>',
+  REDIRECT_URI: 'https://localhost:<YOUR_ANGULAR_DEV_PORT>',
+  API_BASE_URL: '/api',
+  API_SCOPES: ['api://<YOUR_API_CLIENT_ID>/access_as_user'],
+  POST_LOGOUT_REDIRECT_URI: 'https://localhost:<YOUR_ANGULAR_DEV_PORT>'
 };
 ```
 

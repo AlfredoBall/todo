@@ -1,0 +1,15 @@
+{
+  "RunWithAuth": true,
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "AzureAd": {
+    "Instance": "https://login.microsoftonline.com/",
+    "TenantId": "your-tenant-id-here",
+    "ClientId": "your-api-dev-client-id-here",
+    "Audience": "api://your-api-dev-client-id-here"
+  }
+}

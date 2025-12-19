@@ -26,7 +26,7 @@ Shared certificates are used for the Angular and React development servers.
 ### Backend Certificate (.NET API)
 The ASP.NET backend API uses a separate .NET developer certificate:
 - **Generated with**: `dotnet dev-certs https --trust`
-- **Purpose**: HTTPS endpoint for the backend API (typically https://localhost:7258)
+- **Purpose**: HTTPS endpoint for the backend API (e.g., https://localhost:<API_PORT>)
 - **Storage**: Managed by .NET in the Windows certificate store
 - **Validity**: 1 year (can be regenerated with the same command)  
 
@@ -40,7 +40,7 @@ The ASP.NET backend API uses a separate .NET developer certificate:
 cd c:\repos\todo\Services\API
 dotnet run
 ```
-The API will run on `https://localhost:7258`
+The API will run on `https://localhost:<API_PORT>`
 
 **Then start the Angular frontend:**
 ```bash
@@ -50,8 +50,8 @@ ng serve
 ```
 
 The application will now run on:
-- **Angular App**: `https://localhost:4200`
-- **Backend API**: `https://localhost:7258`
+- **Angular App**: `https://localhost:<ANGULAR_DEV_PORT>`
+- **Backend API**: `https://localhost:<API_PORT>`
 - HTTP redirect configured via proxy
 
 ### Browser Trust
@@ -61,7 +61,7 @@ The certificate is installed in the Windows Trusted Root store, so:
 - ✅ **Firefox**: May require manual trust (Firefox uses its own certificate store)
 
 #### For Firefox:
-1. Navigate to `https://localhost:4200`
+1. Navigate to `https://localhost:<ANGULAR_DEV_PORT>`
 2. Click "Advanced" on the warning page
 3. Click "Accept the Risk and Continue"
 
@@ -84,18 +84,18 @@ The certificate is installed in the Windows Trusted Root store, so:
 Update the redirect URIs to use HTTPS:
 ```typescript
 export const AUTH_CONFIG = {
-  REDIRECT_URI: 'https://localhost:4200',
-  POST_LOGOUT_REDIRECT_URI: 'https://localhost:4200'
+  REDIRECT_URI: 'https://localhost:<ANGULAR_DEV_PORT>',
+  POST_LOGOUT_REDIRECT_URI: 'https://localhost:<ANGULAR_DEV_PORT>'
   // ... other config
 };
 ```
 
 ### Azure App Registration
 Update your Azure app registration redirect URIs from:
-- ❌ `http://localhost:4200`
+- ❌ `http://localhost:<PORT>`
 
 To:
-- ✅ `https://localhost:4200`
+- ✅ `https://localhost:<ANGULAR_DEV_PORT>`
 
 ## 🔄 Certificate Management
 

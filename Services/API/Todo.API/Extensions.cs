@@ -11,19 +11,21 @@ public static class Extensions
         if (runWithAuth)
         {
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddMicrosoftIdentityWebApi(options =>
-                {
-                    builder.Configuration.Bind("AzureAd", options);
-                    
-                    // Accept both api://clientId and clientId as valid audiences
-                    var audience = builder.Configuration["AzureAd:Audience"];
-                    var clientId = builder.Configuration["AzureAd:ClientId"];
-                    options.TokenValidationParameters.ValidAudiences = new[] 
-                    { 
-                        audience ?? clientId,
-                        clientId
-                    };
-                }, options => builder.Configuration.Bind("AzureAd", options));
+                .AddMicrosoftIdentityWebApi(
+                    jwtBearerOptions =>
+                    {
+                        builder.Configuration.Bind("AzureAd", jwtBearerOptions);
+                        
+                        // Accept both api://clientId and clientId as valid audiences
+                        var audience = builder.Configuration["AzureAd:Audience"];
+                        var clientId = builder.Configuration["AzureAd:ClientId"];
+                        jwtBearerOptions.TokenValidationParameters.ValidAudiences = new[] 
+                        { 
+                            audience ?? clientId,
+                            clientId
+                        };
+                    },
+                    microsoftIdentityOptions => builder.Configuration.Bind("AzureAd", microsoftIdentityOptions));
 
             builder.Services.AddAuthorization(options =>
             {

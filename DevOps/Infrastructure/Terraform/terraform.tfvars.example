@@ -26,6 +26,20 @@ tf_state_key            = "<YOUR_STATE_KEY>"       # e.g. todo.terraform.tfstate
 // angular_app_registration_name = "To Do Angular"
 // react_app_registration_name   = "To Do React"
 
+// GitHub OIDC Configuration (for production CI/CD)
+// These variables configure GitHub Actions to authenticate to Azure without client secrets
+github_repo_owner      = "<YOUR_GITHUB_USERNAME_OR_ORG>"  # e.g. AlfredoBall
+github_repo_name       = "<YOUR_REPO_NAME>"                # e.g. todo
+github_branch          = "main"                            # Branch allowed to deploy
+github_environment_name = "production"                      # GitHub environment name
+
+// Azure Static Web App and App Service names (required - must match GitHub Actions workflow)
+// These MUST match the corresponding GitHub Actions secrets in deploy.yml
+api_app_service_name         = "<YOUR_API_APP_SERVICE_NAME>"         # e.g. todo-api-prod
+react_static_web_app_name    = "<YOUR_REACT_STATIC_WEB_APP_NAME>"    # e.g. todo-react-prod
+angular_static_web_app_name  = "<YOUR_ANGULAR_STATIC_WEB_APP_NAME>"  # e.g. todo-angular-prod
+api_service_plan_name        = "<YOUR_API_SERVICE_PLAN_NAME>"        # e.g. todo-api-plan-prod
+
 // Resource tags (optional - defaults will be used if not specified)
 // resource_tags = {
 //   project     = "todo"

@@ -83,6 +83,35 @@ variable "react_app_registration_name" {
   default     = "To Do React"
 }
 
+// GitHub OIDC Configuration (for production CI/CD)
+variable "github_oidc_app_name" {
+  description = "Name of the Azure AD App Registration for GitHub OIDC authentication"
+  type        = string
+  default     = "GitHub Actions OIDC - Todo"
+}
+
+variable "github_repo_owner" {
+  description = "GitHub repository owner (organization or username)"
+  type        = string
+}
+
+variable "github_repo_name" {
+  description = "GitHub repository name"
+  type        = string
+}
+
+variable "github_branch" {
+  description = "GitHub branch that is allowed to authenticate via OIDC"
+  type        = string
+  default     = "main"
+}
+
+variable "github_environment_name" {
+  description = "Name of the GitHub environment to create"
+  type        = string
+  default     = "production"
+}
+
 /*
 Backend values (resource_group_name, storage_account_name, container_name, key)
 should be supplied at `terraform init` with `-backend-config` or managed outside
