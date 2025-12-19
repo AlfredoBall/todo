@@ -2,6 +2,8 @@
 resource "azuread_application" "api_app_registration" {
   display_name     = "To Do API"
   sign_in_audience = "AzureADMyOrg"
+  
+  identifier_uris = ["api://${azuread_application.api_app_registration.client_id}"]
 
   # Expose an API scope so other apps can request consent
   api {
@@ -23,22 +25,13 @@ resource "azuread_application" "api_app_registration" {
     enterprise = false
     hide       = false
   }
+  
+  lifecycle {
+    ignore_changes = [identifier_uris]
+  }
 
   # Optional: add web redirect URIs, owners, or additional settings as needed.
   # reply_urls = ["https://your-app/callback"]
-}
-
-# Use null_resource to set identifier URI after app is fully created
-resource "null_resource" "api_identifier_uri" {
-  triggers = {
-    app_id = azuread_application.api_app_registration.id
-  }
-
-  provisioner "local-exec" {
-    command = "az ad app update --id ${azuread_application.api_app_registration.client_id} --identifier-uris api://${azuread_application.api_app_registration.client_id}"
-  }
-
-  depends_on = [azuread_application.api_app_registration]
 }
 
 
