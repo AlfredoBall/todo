@@ -109,7 +109,7 @@ variable "github_branch" {
 variable "github_environment_name" {
   description = "Name of the GitHub environment to create"
   type        = string
-  default     = "production"
+  default     = "development" // Change as needed, e.g., "production"
 }
 
 /*
