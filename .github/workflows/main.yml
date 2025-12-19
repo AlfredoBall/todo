@@ -18,6 +18,7 @@ jobs:
     name: Build Applications
     needs: terraform
     uses: ./.github/workflows/build.yml
+    secrets: inherit
     with:
       api_url: ${{ needs.terraform.outputs.api_url }}
       angular_url: ${{ needs.terraform.outputs.angular_url }}
@@ -25,7 +26,6 @@ jobs:
       angular_client_id: ${{ needs.terraform.outputs.angular_client_id }}
       react_client_id: ${{ needs.terraform.outputs.react_client_id }}
       api_client_id: ${{ needs.terraform.outputs.api_client_id }}
-      tenant_id: ${{ secrets.AZURE_TENANT_ID }}
       api_scope: ${{ needs.terraform.outputs.api_scope }}
 
   deploy:
