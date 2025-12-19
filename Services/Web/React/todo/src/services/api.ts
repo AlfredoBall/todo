@@ -49,7 +49,7 @@ export class ApiService {
 
   public async fetchClipboards() : Promise<IClipboardItem[]> {
     const headers = await this.getAuthHeaders();
-    const response = await fetch(`${API_BASE_URL}/clipboards`, { headers });
+    const response = await fetch(`${API_BASE_URL}/api/clipboards`, { headers });
     
     if (!response.ok) {
       if (response.status === 401) {
@@ -64,7 +64,7 @@ export class ApiService {
 
   public async fetchItems(clipboardId: number): Promise<ITodoItem[]> {
     const headers = await this.getAuthHeaders();
-    const response = await fetch(`${API_BASE_URL}/items/${clipboardId}`, { headers });
+    const response = await fetch(`${API_BASE_URL}/api/items/${clipboardId}`, { headers });
     
     if (!response.ok) {
       if (response.status === 401) {
@@ -79,7 +79,7 @@ export class ApiService {
 
   public async completeItem(itemId: number): Promise<Response> {
     const headers = await this.getAuthHeaders();
-    return await fetch(`${API_BASE_URL}/item/${itemId}/complete`, {
+    return await fetch(`${API_BASE_URL}/api/item/${itemId}/complete`, {
       method: 'POST',
       headers
     });
@@ -87,7 +87,7 @@ export class ApiService {
 
   public async unfinishItem(itemId: number): Promise<Response> {
     const headers = await this.getAuthHeaders();
-    return await fetch(`${API_BASE_URL}/item/${itemId}/unfinish`, {
+    return await fetch(`${API_BASE_URL}/api/item/${itemId}/unfinish`, {
       method: 'POST',
       headers
     });
@@ -95,7 +95,7 @@ export class ApiService {
 
   public async deleteItem(itemId: number): Promise<Response> {
     const headers = await this.getAuthHeaders();
-    return await fetch(`${API_BASE_URL}/item/${itemId}`, {
+    return await fetch(`${API_BASE_URL}/api/item/${itemId}`, {
       method: 'DELETE',
       headers
     });
@@ -103,7 +103,7 @@ export class ApiService {
 
   public async editItem(itemId: number, name: string): Promise<Response> {
     const headers = await this.getAuthHeaders();
-    return await fetch(`${API_BASE_URL}/item/${itemId}?name=${encodeURIComponent(name)}`, {
+    return await fetch(`${API_BASE_URL}/api/item/${itemId}?name=${encodeURIComponent(name)}`, {
       method: 'PATCH',
       headers
     });
@@ -111,14 +111,14 @@ export class ApiService {
 
   public async addItem(clipboardId: number, name: string): Promise<Response> {
     const headers = await this.getAuthHeaders();
-    return await fetch(`${API_BASE_URL}/item/?clipboardId=${clipboardId}&name=${encodeURIComponent(name)}`, {
+    return await fetch(`${API_BASE_URL}/api/item/?clipboardId=${clipboardId}&name=${encodeURIComponent(name)}`, {
       method: 'POST',
       headers
     });
   }
   public async editClipboard(id: number, name: string): Promise<Response> {
     const headers = await this.getAuthHeaders();
-    return await fetch(`${API_BASE_URL}/clipboard/${id}?name=${encodeURIComponent(name)}`, {
+    return await fetch(`${API_BASE_URL}/api/clipboard/${id}?name=${encodeURIComponent(name)}`, {
       method: 'PATCH',
       headers
     });
@@ -126,7 +126,7 @@ export class ApiService {
 
   public async deleteClipboard(id: number): Promise<Response> {
     const headers = await this.getAuthHeaders();
-    return await fetch(`${API_BASE_URL}/clipboard/${id}`, {
+    return await fetch(`${API_BASE_URL}/api/clipboard/${id}`, {
       method: 'DELETE',
       headers
     });
@@ -134,7 +134,7 @@ export class ApiService {
 
   public async addClipboard(name: string): Promise<Response> {
     const headers = await this.getAuthHeaders();
-    return await fetch(`${API_BASE_URL}/clipboard?name=${encodeURIComponent(name)}`, {
+    return await fetch(`${API_BASE_URL}/api/clipboard?name=${encodeURIComponent(name)}`, {
       method: 'POST',
       headers
     });
