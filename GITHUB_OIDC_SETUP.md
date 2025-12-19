@@ -225,26 +225,64 @@ az account show --query tenantId -o tsv
 
 **Resource and App Names**: These values **must exactly match** the GitHub environment variables you created in Step 2. The GitHub Actions workflows will use the environment variables to deploy to the resources that Terraform creates with these names.
 
-## Step 4: Run Terraform to Create Azure Resources
+## Step 4: Initialize Terraform and Commit Lock File
 
-Now that the OIDC app registration and GitHub environment exist, you can run Terraform to create the Azure resources:
+Before running Terraform, initialize it to download providers and generate the lock file:
+
+```powershell
+# Navigate to production Terraform directory
+cd DevOps/Infrastructure/Terraform
+
+# Initialize Terraform (downloads providers, creates lock file)
+terraform init -upgrade
+```
+
+**IMPORTANT**: Commit the generated `.terraform.lock.hcl` file to version control:
+
+```powershell
+git add .terraform.lock.hcl
+git commit -m "Add Terraform provider lock file"
+git push
+```
+
+This ensures all developers and CI/CD use the same provider versions.
+
+## Step 5: Deploy via GitHub Actions
+
+Once you've completed Steps 1-4, **push your changes to the main branch**. The GitHub Actions workflow will automatically:
+1. Authenticate to Azure using OIDC (no secrets!)
+2. Initialize Terraform with the remote backend
+3. Import the resource group (if not already in state)
+4. Plan and apply Terraform changes
+5. Output the URLs and client IDs for the applications
+
+```powershell
+# Push to trigger the deployment
+git push origin main
+```
+
+The workflow will run automatically and create all Azure resources.
+
+### Optional: Test Locally First
+
+If you want to validate your Terraform configuration before pushing, you can run it locally:
 
 ```powershell
 # Authenticate with Azure
 az login
 
-# Navigate to production Terraform directory
-cd DevOps/Infrastructure/Terraform
-
-# Initialize and apply
-terraform init -upgrade
+# Plan to see what will be created
 terraform plan
+
+# Apply (optional - GitHub Actions will do this)
 terraform apply
 ```
 
+**Note**: Local apply is optional. The GitHub Actions workflow is the source of truth for production deployments.
+
 ### What Terraform Creates
 
-- **Azure Resource Group** (if it doesn't exist)
+- **Azure Resource Group** (imports if it already exists)
 - **Azure AD App Registrations** for the applications:
   - To Do API
   - To Do Angular
@@ -252,7 +290,7 @@ terraform apply
 - **Azure App Service Plan** and **App Service** for the API
 - **Azure Static Web Apps** for Angular and React frontends
 
-## Step 5: Verify Setup
+## Step 6: Verify Setup
 
 ### Check Azure Portal
 1. Go to **Azure Active Directory** → **App registrations**
