@@ -1,6 +1,6 @@
 # Todo Application
 
-A full-stack todo application built with .NET 10, Angular, React, and Azure AD authentication, orchestrated with .NET Aspire and infrastructure managed by Terraform.
+A full-stack todo application built with .NET 10, Angular 21, React 19, and Azure AD authentication, orchestrated with .NET Aspire and infrastructure managed by Terraform and GitHub Actions.
 
 ## Architecture
 
@@ -9,7 +9,7 @@ A full-stack todo application built with .NET 10, Angular, React, and Azure AD a
 - **Cache**: Redis with Commander UI and RedisInsight
 - **Database**: In-memory EF Core (for Azure Free Tier demo)
 - **Infrastructure**: Terraform for Azure AD app registrations
-- **Orchestration**: .NET Aspire
+- **Local Orchestration**: .NET Aspire
 
 ## Live demo
 - **React (deployed)**: https://ambitious-dune-011767210.1.azurestaticapps.net
@@ -250,8 +250,8 @@ todo/
         --- Set-AzureAdEnv.bat     # Batch script for env setugit p
         --- Set-AzureAdEnv.ps1     # PowerShell script for env setup
 --- Web/
-    --- Angular/todo/              # Angular 18+ SPA
-    --- React/todo/                # React 18+ SPA
+    --- Angular/todo/              # Angular 21 SPA
+    --- React/todo/                # React 19 SPA
 --- DevOps/
     --- Infrastructure/
         --- Terraform-Dev/         # Azure AD infrastructure as code
