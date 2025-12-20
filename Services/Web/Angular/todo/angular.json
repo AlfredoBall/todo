@@ -16,6 +16,7 @@
         "build": {
           "builder": "@ngx-env/builder:application",
           "options": {
+            "outputPath": "dist/todo/browser",
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
             "assets": [
