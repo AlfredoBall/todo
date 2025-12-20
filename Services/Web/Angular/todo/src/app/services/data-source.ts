@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 
 // @ts-ignore
-const API_BASE_URL = import.meta.env.NG_APP_API_BASE_URL || '/api';
+const API_BASE_URL = import.meta.env.NG_APP_API_BASE_URL + '/api' || '/api';
 
 @Injectable({
   providedIn: 'root',
