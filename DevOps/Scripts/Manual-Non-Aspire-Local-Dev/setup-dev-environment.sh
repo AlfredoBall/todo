@@ -9,10 +9,10 @@ CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-TERRAFORM_DIR="$SCRIPT_DIR/../Infrastructure/Terraform-Dev"
-API_DIR="$SCRIPT_DIR/../../Services/API/Todo.API"
-REACT_DIR="$SCRIPT_DIR/../../Services/Web/React/todo"
-ANGULAR_DIR="$SCRIPT_DIR/../../Services/Web/Angular/todo"
+TERRAFORM_DIR="$SCRIPT_DIR/../../Manual-Non-Aspire-Local-Dev/Infrastructure/Terraform-Dev"
+API_DIR="$SCRIPT_DIR/../../Manual-Non-Aspire-Local-Dev/Services/API/Todo.API"
+REACT_DIR="$SCRIPT_DIR/../../Manual-Non-Aspire-Local-Dev/Services/Web/React/todo"
+ANGULAR_DIR="$SCRIPT_DIR/../../Manual-Non-Aspire-Local-Dev/Services/Web/Angular/todo"
 
 echo -e "${CYAN}========================================"
 echo -e "Todo App - Development Environment Setup"

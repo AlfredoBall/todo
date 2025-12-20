@@ -18,13 +18,13 @@ Usage:
   $env:TF_KEY = 'todo.terraform.tfstate'
   $env:TF_SUBSCRIPTION_ID = '<your-subscription-id>'
   $env:TF_TENANT_ID = '<your-tenant-id>'
-  .\DevOps\Scripts\terraform-init.ps1 -WorkingDir 'DevOps/Infrastructure/Terraform'
+  .\Manual-Non-Aspire-Local-Dev\terraform-init.ps1 -WorkingDir 'Manual-Non-Aspire-Local-Dev/Infrastructure/Terraform'
 
 See backend.env.example for a template.
 #>
 
 param(
-  [string]$WorkingDir = 'DevOps/Infrastructure/Terraform'
+  [string]$WorkingDir = 'Manual-Non-Aspire-Local-Dev/Infrastructure/Terraform'
 )
 
 function Fail([string]$msg) {

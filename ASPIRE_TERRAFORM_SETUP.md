@@ -59,18 +59,29 @@ var api = builder.AddProject<Todo_API>("API")
     });
 ```
 
+
 **Angular** configuration:
+
+> **Why is generate-angular-dev-env.ps1 needed?**
+>
+> The Angular app registration client ID and related values are not known until after Terraform has run and created the Azure resources. The script `generate-angular-dev-env.ps1` is run after Terraform completes, reads the outputs, and generates a `.env` file for the Angular app. This ensures the Angular app always receives the correct, dynamically-generated values for authentication and API access, without manual intervention.
+> The Angular app registration client ID and related values are not known until after Terraform has run and created the Azure resources. The script `generate-angular-dev-env.ps1` is run after Terraform completes, reads the outputs, and generates a `.env` file for the Angular app. This ensures the Angular app always receives the correct, dynamically-generated values for authentication and API access, without manual intervention.
+
 ```csharp
+// After Terraform completes, generate .env for Angular:
+    var generateAngularEnv = builder.AddExecutable(
+        "generate-angular-dev-env",
+        "pwsh",
+        "-File",
+        Path.GetFullPath(Path.Combine(builder.AppHostDirectory, "../../../DevOps/Scripts/generate-angular-dev-env.ps1")),
+        "-TerraformDir", terraformDir,
+        "-EnvPath", Path.GetFullPath(Path.Combine(builder.AppHostDirectory, "../../../Services/Web/Angular/todo/.env"))
+    ).WaitForCompletion(terraformApply);
+
 builder.AddNpmApp("Todo-Angular", "../../Web/Angular/todo")
     .WithReference(api)
     .WaitFor(api)
-    .WithEnvironment(async context =>
-    {
-        cachedOutputs ??= await GetTerraformOutputs(terraformDir);
-        context.EnvironmentVariables["NG_APP_AzureAd__ClientID"] = cachedOutputs.AngularClientId;
-        context.EnvironmentVariables["NG_APP_AzureAd__TenantId"] = cachedOutputs.TenantId;
-        // ... all other NG_APP_* variables
-    });
+    .WaitForCompletion(generateAngularEnv);
 ```
 
 **React** configuration:

@@ -84,8 +84,8 @@ When deploying the front-end and API to Azure, you must set the following Applic
 - `NG_APP_apiScopes` — API access scope (e.g., `api://<client-id>/access_as_user`)
 - `NG_APP_AzureAd__Audience` — API audience URI
 - `NG_APP_AzureAd__Instance` — Identity provider instance (`https://login.microsoftonline.com/`)
-- `NG_APP_RedirectUri` / `NG_APP_PostLogoutRedirectUri` — Redirect URIs for the Angular app
-- `NG_APP_API_BASE_URL` / `NG_APP_apiBaseUrl` — API base URL for the Angular app
+- `NG_APP_RedirectUri` / `NG_APP_PostLogoutRedirectUri` — Redirect URIs for the Angular app 
+- `NG_APP_API_BASE_URL` — API base URL for the Angular app
 
 **React (VITE_*)**
 - `VITE_CLIENT_ID` — React client ID
