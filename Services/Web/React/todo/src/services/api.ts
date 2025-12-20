@@ -4,7 +4,7 @@ import { AUTH_CONFIG } from "../auth-config";
 
 // Use '/api' for development (proxy), or VITE_API_BASE_URL for production
 const API_BASE_URL = import.meta.env.MODE === 'production' 
-  ? (import.meta.env.VITE_API_BASE_URL || '/api')
+  ? (import.meta.env.VITE_API_BASE_URL + '/api' || '/api')
   : '/api';
 
 export class ApiService {
