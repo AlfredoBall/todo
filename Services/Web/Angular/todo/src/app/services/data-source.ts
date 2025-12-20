@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 
+console.log('API Base URL:', import.meta.env.NG_APP_API_BASE_URL);
 // @ts-ignore
 const API_BASE_URL = import.meta.env.NG_APP_API_BASE_URL + '/api' || '/api';
 
