@@ -29,5 +29,5 @@ export const AUTH_CONFIG = {
   POST_LOGOUT_REDIRECT_URI: import.meta.env.NG_APP_PostLogoutRedirectUri
 };
 
-console.log('AUTH_CONFIG:', AUTH_CONFIG);
+// Debug: Log AUTH_CONFIG to verify environment variable injection
 console.log('AUTH_CONFIG:', AUTH_CONFIG);
