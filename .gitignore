@@ -159,9 +159,9 @@ Services/Web/ssl/
 *.pfx
 
 # Secrets and sensitive config
+.appsettings.Development.json
 appsettings.*.json
 !appsettings.json
-!appsettings.Development.json
 .vscode/*
 !.vscode/launch.json
 .editorconfig
