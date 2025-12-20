@@ -1,4 +1,5 @@
-/// <reference types="@ngx-env/core" />
+/// <reference types="@ngx-env/builder" />
+
 interface ImportMetaEnv {
   readonly NODE_ENV: 'development' | 'production';
   readonly NG_APP_apiBaseUrl: string;
