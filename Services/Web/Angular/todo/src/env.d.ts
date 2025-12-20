@@ -14,10 +14,9 @@ interface ImportMetaEnv {
   readonly NG_APP_API_BASE_URL: string;
   readonly NG_APP_AzureAd__Scopes: string;
   readonly NG_APP_production: string;
-  [key: string]: any;
 }
 
-declare interface ImportMeta {
+interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
 
