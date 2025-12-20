@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using Aspire.Hosting;
 using Projects;
 
 var builder = DistributedApplication.CreateBuilder(args);
@@ -24,11 +25,17 @@ var terraformApply = builder.AddExecutable("terraform-setup", "terraform", terra
     .WithEnvironment("TF_VAR_api_redirect_uri", "https://localhost:7258/")
     .WithEnvironment("TF_VAR_react_redirect_uri", "https://localhost:5173/")
     .WithEnvironment("TF_VAR_angular_redirect_uri", "https://localhost:4200/");
-    // Note: GitHub OIDC variables are NOT needed for local development
-    // GitHub Actions integration is configured in the production Terraform directory
+// Note: GitHub OIDC variables are NOT needed for local development
+// GitHub Actions integration is configured in the production Terraform directory
+
+// TODO Get this to work, it's complaining that it can't understand the .tfstate format, maybe it's outdated? Reverse engineer the source code.
+// var inframap = builder.AddContainer("inframap", "cycloid/inframap:latest")
+//                         .WithEntrypoint("/bin/sh")
+//                         .WithBindMount(terraformDir, "/opt")
+//                         .WithArgs("-c", "./inframap generate /opt/terraform.tfstate");
 
 var cache = builder.AddRedis("cache")
-    .WithRedisCommander();
+   .WithRedisCommander();
 
 var redisInsight = cache.WithRedisInsight(x =>
 {
@@ -49,55 +56,52 @@ var redisInsight = cache.WithRedisInsight(x =>
 TerraformOutputs? cachedOutputs = null;
 
 var api = builder.AddProject<Todo_API>("API")
-    .WithReference(cache)
-    .WaitFor(cache)
-    .WaitForCompletion(terraformApply, 0) // Wait for terraform to complete
-    .WithEnvironment(async context =>
-    {
-        Console.WriteLine("⏳ API starting, waiting for Terraform outputs...");
-
-        cachedOutputs ??= await GetTerraformOutputs(terraformDir);
-
-        Console.WriteLine("✓ Terraform outputs available, configuring API...");
-        context.EnvironmentVariables["AzureAd__ClientId"] = cachedOutputs.ApiClientId;
-        context.EnvironmentVariables["AzureAd__TenantId"] = cachedOutputs.TenantId;
-        context.EnvironmentVariables["AzureAd__Audience"] = cachedOutputs.ApiAudience;
-    });
-
-builder.AddNpmApp("Todo-Angular", "../../Web/Angular/todo")
-   .WithReference(api)
-   .WaitFor(api)
+   .WithReference(cache)
+   .WaitFor(cache)
+   .WaitForCompletion(terraformApply, 0) // Wait for terraform to complete
    .WithEnvironment(async context =>
    {
-        cachedOutputs ??= await GetTerraformOutputs(terraformDir);
-        
-        context.EnvironmentVariables["NG_APP_AzureAd__ClientID"] = cachedOutputs.AngularClientId;
-        context.EnvironmentVariables["NG_APP_AzureAd__TenantId"] = cachedOutputs.TenantId;
-        context.EnvironmentVariables["NG_APP_apiScopes"] = cachedOutputs.ApiScope;
-        context.EnvironmentVariables["NG_APP_AzureAd__Audience"] = cachedOutputs.ApiAudience;
-        context.EnvironmentVariables["NG_APP_AzureAd__Instance"] = "https://login.microsoftonline.com/";
-        context.EnvironmentVariables["NG_APP_RedirectUri"] = "https://localhost:4200";
-        context.EnvironmentVariables["NG_APP_PostLogoutRedirectUri"] = "https://localhost:4200";
-        context.EnvironmentVariables["NG_APP_apiBaseUrl"] = "https://localhost:4200/api/*";
-        context.EnvironmentVariables["NG_APP_API_BASE_URL"] = "/api";
-        context.EnvironmentVariables["NG_APP_AzureAd__Scopes"] = "access_as_user";
-        context.EnvironmentVariables["NG_APP_bypassAuthInDev"] = "false";
-        context.EnvironmentVariables["NG_APP_production"] = "false";
+       Console.WriteLine("⏳ API starting, waiting for Terraform outputs...");
+
+       cachedOutputs ??= await GetTerraformOutputs(terraformDir);
+
+       Console.WriteLine("✓ Terraform outputs available, configuring API...");
+       context.EnvironmentVariables["AzureAd__ClientId"] = cachedOutputs.ApiClientId;
+       context.EnvironmentVariables["AzureAd__TenantId"] = cachedOutputs.TenantId;
+       context.EnvironmentVariables["AzureAd__Audience"] = cachedOutputs.ApiAudience;
+       // Required for CORS since they are differen't ports than the API
+       context.EnvironmentVariables["ANGULAR_URL"] = "https://localhost:4200/";
+       context.EnvironmentVariables["REACT_URL"] = "https://localhost:5173/";
    });
+
+// Generate .env for Angular from Terraform outputs before building/serving Angular app
+var generateAngularEnv = builder.AddExecutable(
+    "generate-angular-env",
+    "pwsh",
+    "-File",
+    Path.GetFullPath(Path.Combine(builder.AppHostDirectory, "../../../DevOps/Scripts/generate-angular-dev-env.ps1")),
+    "-TerraformDir", terraformDir,
+    "-EnvPath", Path.GetFullPath(Path.Combine(builder.AppHostDirectory, "../../../Services/Web/Angular/todo/.env"))
+).WithWorkingDirectory(Path.GetFullPath(Path.Combine(builder.AppHostDirectory, "../../../DevOps/Scripts"))).WaitForCompletion(terraformApply);
+    
+builder.AddNpmApp("Todo-Angular", "../../Web/Angular/todo")
+    .WithReference(api)
+    .WaitFor(api)
+    .WaitForCompletion(generateAngularEnv);
 
 builder.AddNpmApp("Todo-React", "../../Web/React/todo", "dev")
-   .WithReference(api)
-   .WaitFor(api)
-   .WithEnvironment(async context =>
-   {
-        context.EnvironmentVariables["VITE_CLIENT_ID"] = cachedOutputs.ReactClientId;
-        context.EnvironmentVariables["VITE_TENANT_ID"] = cachedOutputs.TenantId;
-        context.EnvironmentVariables["VITE_API_SCOPES"] = $"[\"{cachedOutputs.ApiScope}\"]";
-        context.EnvironmentVariables["VITE_REDIRECT_URI"] = "https://localhost:5173";
-        context.EnvironmentVariables["VITE_POST_LOGOUT_REDIRECT_URI"] = "https://localhost:5173";
-        context.EnvironmentVariables["VITE_API_BASE_URL"] = "/api";
-        context.EnvironmentVariables["VITE_BYPASS_AUTH_IN_DEV"] = "false";
-   });
+  .WithReference(api)
+  .WaitFor(api)
+  .WithEnvironment(async context =>
+  {
+      context.EnvironmentVariables["VITE_CLIENT_ID"] = cachedOutputs.ReactClientId;
+      context.EnvironmentVariables["VITE_TENANT_ID"] = cachedOutputs.TenantId;
+      context.EnvironmentVariables["VITE_API_SCOPES"] = $"[\"{cachedOutputs.ApiScope}\"]";
+      context.EnvironmentVariables["VITE_REDIRECT_URI"] = "https://localhost:5173";
+      context.EnvironmentVariables["VITE_POST_LOGOUT_REDIRECT_URI"] = "https://localhost:5173";
+      context.EnvironmentVariables["VITE_API_BASE_URL"] = "/api";
+      context.EnvironmentVariables["VITE_BYPASS_AUTH_IN_DEV"] = "false";
+  });
 
 await builder.Build().RunAsync();
 

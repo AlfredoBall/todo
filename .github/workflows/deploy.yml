@@ -62,12 +62,13 @@ jobs:
           app-name: ${{ vars.AZURE_API_APP_SERVICE_NAME }}
           package: api_artifact
 
+      # https://azure.github.io/static-web-apps-cli/docs/cli/swa-deploy/
       - name: Deploy React to Azure Static Web App
         run: |
           npm install -g @azure/static-web-apps-cli
-          swa deploy ./react_artifact --env production --subscription-id ${{ secrets.AZURE_SUBSCRIPTION_ID }} --resource-group ${{ vars.AZURE_RESOURCE_GROUP }} --app-name ${{ vars.AZURE_STATIC_WEBAPP_NAME_REACT }} --no-use-keychain
+          swa deploy ./react_artifact --env development --subscription-id ${{ secrets.AZURE_SUBSCRIPTION_ID }} --resource-group ${{ vars.AZURE_RESOURCE_GROUP }} --app-name ${{ vars.AZURE_STATIC_WEBAPP_NAME_REACT }} --no-use-keychain
 
       - name: Deploy Angular to Azure Static Web App
         run: |
           npm install -g @azure/static-web-apps-cli
-          swa deploy ./angular_artifact/todo/browser --env production --subscription-id ${{ vars.AZURE_SUBSCRIPTION_ID }} --resource-group ${{ vars.AZURE_RESOURCE_GROUP }} --app-name ${{ vars.AZURE_STATIC_WEBAPP_NAME_ANGULAR }} --no-use-keychain
+          swa deploy ./angular_artifact/todo/browser --env development --subscription-id ${{ secrets.AZURE_SUBSCRIPTION_ID }} --resource-group ${{ vars.AZURE_RESOURCE_GROUP }} --app-name ${{ vars.AZURE_STATIC_WEBAPP_NAME_ANGULAR }} --no-use-keychain

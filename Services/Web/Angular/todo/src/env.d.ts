@@ -1,3 +1,23 @@
+/// <reference types="@ngx-env/core" />
+
+interface ImportMetaEnv {
+  readonly NG_APP_AzureAd__ClientID: string;
+  readonly NG_APP_AzureAd__TenantId: string;
+  readonly NG_APP_apiScopes: string;
+  readonly NG_APP_AzureAd__Audience: string;
+  readonly NG_APP_AzureAd__Instance: string;
+  readonly NG_APP_RedirectUri: string;
+  readonly NG_APP_PostLogoutRedirectUri: string;
+  readonly NG_APP_API_BASE_URL: string;
+  readonly NG_APP_AzureAd__Scopes: string;
+  readonly NG_APP_bypassAuthInDev: string;
+  readonly NG_APP_production: string;
+  // add more as needed
+}
+
+interface ImportMeta {
+  readonly env: ImportMetaEnv;
+}
 // Define the type of the environment variables.
 declare interface Env {
   readonly NODE_ENV: string;

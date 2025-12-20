@@ -17,13 +17,13 @@
 #   export TF_KEY=todo.terraform.tfstate
 #   export TF_SUBSCRIPTION_ID=<your-subscription-id>
 #   export TF_TENANT_ID=<your-tenant-id>
-#   ./DevOps/Scripts/terraform-init.sh [working_dir]
+#   ./terraform-init.sh [working_dir]
 #
 # See backend.env.example for a template.
 
 set -euo pipefail
 
-WORKING_DIR=${1:-DevOps/Infrastructure/Terraform}
+WORKING_DIR=${1:-../../Infrastructure/Terraform-Dev}
 
 if [[ -z "${TF_RESOURCE_GROUP:-}" ]]; then echo "TF_RESOURCE_GROUP is not set"; exit 1; fi
 if [[ -z "${TF_STORAGE_ACCOUNT:-}" ]]; then echo "TF_STORAGE_ACCOUNT is not set"; exit 1; fi
