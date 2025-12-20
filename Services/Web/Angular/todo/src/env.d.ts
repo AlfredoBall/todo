@@ -1,37 +1,23 @@
 /// <reference types="@ngx-env/core" />
-
 interface ImportMetaEnv {
+  readonly NODE_ENV: 'development' | 'production';
+  readonly NG_APP_apiBaseUrl: string;
   readonly NG_APP_AzureAd__ClientID: string;
   readonly NG_APP_AzureAd__TenantId: string;
-  readonly NG_APP_apiScopes: string;
-  readonly NG_APP_AzureAd__Audience: string;
-  readonly NG_APP_AzureAd__Instance: string;
   readonly NG_APP_RedirectUri: string;
   readonly NG_APP_PostLogoutRedirectUri: string;
+  readonly NG_APP_apiScopes: string;
+  readonly NG_APP_bypassAuthInDev: string;
+  readonly NG_APP_AzureAd__Audience: string;
+  readonly NG_APP_AzureAd__Instance: string;
   readonly NG_APP_API_BASE_URL: string;
   readonly NG_APP_AzureAd__Scopes: string;
-  readonly NG_APP_bypassAuthInDev: string;
   readonly NG_APP_production: string;
-  // add more as needed
+  [key: string]: any;
 }
 
 interface ImportMeta {
   readonly env: ImportMetaEnv;
-}
-// Define the type of the environment variables.
-declare interface Env {
-  readonly NODE_ENV: string;
-  // Replace the following with your own environment variables.
-  // Example: NGX_VERSION: string;
-  [key: string]: any;
-}
-
-// Choose how to access the environment variables.
-// Remove the unused options.
-
-// 1. Use import.meta.env.YOUR_ENV_VAR in your code. (conventional)
-declare interface ImportMeta {
-  readonly env: Env;
 }
 
 // 2. Use _NGX_ENV_.YOUR_ENV_VAR in your code. (customizable)
