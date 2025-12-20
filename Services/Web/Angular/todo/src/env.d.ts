@@ -17,7 +17,7 @@ interface ImportMetaEnv {
   [key: string]: any;
 }
 
-interface ImportMeta {
+declare interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
 
