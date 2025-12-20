@@ -63,12 +63,15 @@ jobs:
           package: api_artifact
 
       # https://azure.github.io/static-web-apps-cli/docs/cli/swa-deploy/
+      
+        # Only the 'production' environment exists for Azure Static Web Apps unless using PR previews.
+        # Use --env production to deploy to the persistent environment.
       - name: Deploy React to Azure Static Web App
         run: |
           npm install -g @azure/static-web-apps-cli
-          swa deploy ./react_artifact --env development --subscription-id ${{ secrets.AZURE_SUBSCRIPTION_ID }} --resource-group ${{ vars.AZURE_RESOURCE_GROUP }} --app-name ${{ vars.AZURE_STATIC_WEBAPP_NAME_REACT }} --no-use-keychain
+          swa deploy ./react_artifact --env production --subscription-id ${{ secrets.AZURE_SUBSCRIPTION_ID }} --resource-group ${{ vars.AZURE_RESOURCE_GROUP }} --app-name ${{ vars.AZURE_STATIC_WEBAPP_NAME_REACT }} --no-use-keychain
 
       - name: Deploy Angular to Azure Static Web App
         run: |
           npm install -g @azure/static-web-apps-cli
-          swa deploy ./angular_artifact/todo/browser --env development --subscription-id ${{ secrets.AZURE_SUBSCRIPTION_ID }} --resource-group ${{ vars.AZURE_RESOURCE_GROUP }} --app-name ${{ vars.AZURE_STATIC_WEBAPP_NAME_ANGULAR }} --no-use-keychain
+          swa deploy ./angular_artifact/todo/browser --env production --subscription-id ${{ secrets.AZURE_SUBSCRIPTION_ID }} --resource-group ${{ vars.AZURE_RESOURCE_GROUP }} --app-name ${{ vars.AZURE_STATIC_WEBAPP_NAME_ANGULAR }} --no-use-keychain
