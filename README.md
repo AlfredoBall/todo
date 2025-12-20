@@ -2,6 +2,8 @@
 
 A full-stack todo application built with .NET 10, Angular 21, React 19, and Azure AD authentication, orchestrated with .NET Aspire and infrastructure managed by Terraform and GitHub Actions.
 
+> **Note:** For most users, all local development and environment setup is automated by Aspire/AppHost. The `DevOps/Scripts/Manual-Non-Aspire-Local-Dev` directory contains scripts for manual or legacy local development workflows, and is only needed if you are not using Aspire/AppHost orchestration.
+
 ## Architecture
 
 - **Backend API**: .NET 10 Web API with Azure AD authentication
@@ -9,18 +11,18 @@ A full-stack todo application built with .NET 10, Angular 21, React 19, and Azur
 - **Cache**: Redis with Commander UI and RedisInsight
 - **Database**: In-memory EF Core (for Azure Free Tier demo)
 - **Infrastructure**: Terraform for Azure AD app registrations
-- **Local Orchestration**: .NET Aspire
+-
 
 ## Live demo
 - **React (deployed)**: https://ambitious-dune-011767210.1.azurestaticapps.net
 - This currently only works if you have an account within my tenant.
 - I'm going to setup self registration next... coming soon.
 
-![Top Image](./pic1.png)
+![Top Todo Image](./pic1.png)
 
 <hr style="border: 2px solid gray">
 
-![Bottom Image](./pic2.png)
+![Bottom Todo Image](./pic2.png)
 
 ## Prerequisites
 
@@ -61,10 +63,17 @@ Before running this application, ensure you have the following tools installed a
    npm --version
    ```
 
+6. **[PowerShell (pwsh)](https://learn.microsoft.com/powershell/scripting/install/installing-powershell)** (v7+)
+   ```bash
+   pwsh --version  # Verify installation
+   ```
+   - **Required for running PowerShell scripts in Manual-Non-Aspire-Local-Dev workflows and by Aspire AppHost orchestration**
+
 ### Optional Development Tools
 
-- **[kubectl](https://kubernetes.io/docs/tasks/tools/)** - For Kubernetes deployments
-- **[aztfexport](https://github.com/Azure/aztfexport)** - For exporting existing Azure resources to Terraform
+- **[kubectl](https://kubernetes.io/docs/tasks/tools/)** - Kubernetes deployments
+- **[aztfexport](https://github.com/Azure/aztfexport)** - Export existing Azure resources to Terraform
+- **[Graphviz](https://graphviz.org)** - Generating graphs of Terraform dependencies (e.g. terraform graph -type=plan | dot -T png > graph.png)
 - **Entity Framework Core Tools**:
   ```bash
   dotnet tool install --global dotnet-ef
@@ -123,24 +132,12 @@ The AppHost will automatically:
 5. ✅ Start all services with correct configuration
 6. ✅ Open the Aspire dashboard in your browser
 
-### 3. Run Aspire AppHost
+**No .env files or manual configuration needed! (The .env file is generated automatically for the Angular app)**
 
-That's it! Just run the AppHost and everything else is automatic:
-
-```bash
-cd Services/Aspire/Todo.AppHost
-dotnet run
-```
-
-The AppHost will automatically:
-1. ✅ Run `terraform init` (first time only)
-2. ✅ Run `terraform apply` to create Azure AD app registrations
-3. ✅ Extract client IDs and configuration from Terraform outputs
-4. ✅ Inject all environment variables into API, React, and Angular
-5. ✅ Start all services with correct configuration
-6. ✅ Open the Aspire dashboard in your browser
-
-**No .env files or manual configuration needed!**
+## Aspire Dependency Graph
+![Aspire Dependency Graph](./pic3.png)
+## Aspire Resources
+![Aspire Resources](./pic4.png)
 
 ## What Gets Created in Azure
 
@@ -151,6 +148,9 @@ When you run the application for the first time, Terraform creates three Azure A
 | `todo-api-dev` | Web API | `https://localhost:7258/` | Backend API with `access_as_user` scope |
 | `todo-react-dev` | SPA | `https://localhost:5173/` | React frontend |
 | `todo-angular-dev` | SPA | `https://localhost:4200/` | Angular frontend |
+
+## Azure App Registrations (Includes both local development and production deployment versions)
+![Azure App Registrations](./pic5.png)
 
 All configuration is automatically managed - you don't need to touch the Azure portal!
 
@@ -278,9 +278,17 @@ dotnet user-secrets set "Azure:TenantId" "your-tenant-id-guid"
 **Method 2: appsettings.Development.json**
 ```json
 {
-  "Azure": {
-    "TenantId": "your-tenant-id-guid"
-  }
+   "Azure": {
+      "TenantId": "your-tenant-id-guid"
+   }
+}
+```
+
+**Must exist: appsettings.Development.json**
+```json
+{
+   "ANGULAR_URL": "https://localhost:YOUR_PORT",
+   "REACT_URL": "https://localhost:YOUR_PORT"
 }
 ```
 
@@ -429,8 +437,7 @@ terraform output -json
 terraform destroy
 ```
 
-
-## CI/CD Setup (Optional)
+## CI/CD Setup - Deployment to AZURE - (Optional)
 
 Want to deploy to Azure production using GitHub Actions? See [GITHUB_OIDC_SETUP.md](GITHUB_OIDC_SETUP.md) for setting up secure, secret-less authentication with Azure.
 
@@ -438,6 +445,10 @@ The production Terraform configuration (`DevOps/Infrastructure/Terraform`) can a
 - Azure AD app registration for GitHub OIDC
 - GitHub environment with deployment secrets/variables
 - No client secrets needed - uses OpenID Connect!
+
+**Example of what you should see in your Azure Resource Group if everything is configured correctly**
+
+![Azure Resource Group Resources](./pic6.png)
 
 **Note:** This is separate from local development (`Terraform-Dev`) and only needed for CI/CD deployments.
 

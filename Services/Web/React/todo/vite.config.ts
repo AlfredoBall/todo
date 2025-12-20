@@ -7,6 +7,8 @@ import path from 'path'
 // Fallback to standalone API port if running outside Aspire
 const target = process.env.services__API__HTTPS__0 || "https://localhost:7258";
 
+console.log('Vite dev server proxy target for /api:', target);
+
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],

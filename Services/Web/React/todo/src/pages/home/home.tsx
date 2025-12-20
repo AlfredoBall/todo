@@ -30,7 +30,9 @@ function Home() {
   // Set MSAL instance and fetch clipboards when instance is ready or authentication changes
   useEffect(() => {
     apiService.setMsalInstance(instance);
-    apiService.fetchClipboards().then(setClipboards);
+    if (instance && accounts.length > 0) {
+      apiService.fetchClipboards().then(setClipboards);
+    }
   }, [instance, accounts]);
 
   // Load items after clipboards are available or when URL params change

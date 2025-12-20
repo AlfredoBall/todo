@@ -1,13 +1,10 @@
 #!/usr/bin/env pwsh
 <#
-.SYNOPSIS
-    Sets up local development Azure AD app registrations using Terraform
-.DESCRIPTION
-    This script initializes and applies Terraform configuration to create
-    development-only Azure AD app registrations for the Todo application.
-    It then generates environment configuration files with the app registration details.
-.EXAMPLE
-    .\setup-dev-environment.ps1
+Initializes and applies Terraform configuration to create development-only Azure AD app registrations for the Todo application.
+Generates environment configuration files for API, React, and Angular apps.
+
+Usage:
+  .\setup-dev-environment.ps1
 #>
 
 param(
@@ -16,45 +13,42 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
-$TerraformDir = "$PSScriptRoot\..\Infrastructure\Terraform-Dev"
-$ApiDir = "$PSScriptRoot\..\Services\API\Todo.API"
-$ReactDir = "$PSScriptRoot\..\Services\Web\React\todo"
-$AngularDir = "$PSScriptRoot\..\Services\Web\Angular\todo"
+$PSScriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Definition
+$TerraformDir = Join-Path $PSScriptRoot "..\..\Infrastructure\Terraform-Dev"
+$ApiDir = Join-Path $PSScriptRoot "..\..\Services\API\Todo.API"
+$ReactDir = Join-Path $PSScriptRoot "..\..\Services\Web\React\todo"
+$AngularDir = Join-Path $PSScriptRoot "..\..\Services\Web\Angular\todo"
 
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host "Todo App - Development Environment Setup" -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""
 
-# Check if Terraform is installed
+# Check prerequisites
 Write-Host "Checking prerequisites..." -ForegroundColor Yellow
 if (-not (Get-Command terraform -ErrorAction SilentlyContinue)) {
     Write-Host "ERROR: Terraform is not installed or not in PATH" -ForegroundColor Red
     Write-Host "Install from: https://www.terraform.io/downloads" -ForegroundColor Red
     exit 1
 }
-
-# Check if Azure CLI is installed and logged in
 if (-not (Get-Command az -ErrorAction SilentlyContinue)) {
     Write-Host "ERROR: Azure CLI is not installed or not in PATH" -ForegroundColor Red
     Write-Host "Install from: https://docs.microsoft.com/cli/azure/install-azure-cli" -ForegroundColor Red
     exit 1
 }
-
 $azAccount = az account show 2>$null | ConvertFrom-Json
 if (-not $azAccount) {
     Write-Host "ERROR: Not logged into Azure CLI" -ForegroundColor Red
     Write-Host "Run: az login" -ForegroundColor Yellow
     exit 1
 }
-
 Write-Host "✓ Terraform installed: $(terraform version -json | ConvertFrom-Json | Select-Object -ExpandProperty terraform_version)" -ForegroundColor Green
 Write-Host "✓ Azure CLI logged in as: $($azAccount.user.name)" -ForegroundColor Green
 Write-Host "✓ Tenant: $($azAccount.tenantId)" -ForegroundColor Green
 Write-Host ""
 
-# Check if terraform.tfvars exists
-$tfvarsPath = "$TerraformDir\terraform.tfvars"
+# Create terraform.tfvars if it doesn't exist
+$tfvarsPath = Join-Path $TerraformDir "terraform.tfvars"
 if (-not (Test-Path $tfvarsPath)) {
     Write-Host "Creating terraform.tfvars..." -ForegroundColor Yellow
     $tenantId = $azAccount.tenantId
@@ -72,25 +66,16 @@ if (-not $SkipTerraform) {
     Push-Location $TerraformDir
     try {
         terraform init
-        if ($LASTEXITCODE -ne 0) {
-            throw "Terraform init failed"
-        }
+        if ($LASTEXITCODE -ne 0) { throw "Terraform init failed" }
         Write-Host "✓ Terraform initialized" -ForegroundColor Green
         Write-Host ""
-
         # Apply Terraform configuration
         Write-Host "Creating Azure AD app registrations..." -ForegroundColor Yellow
         Write-Host "(This will create: todo-api-dev, todo-react-dev, todo-angular-dev)" -ForegroundColor Cyan
         Write-Host ""
-        
         terraform apply -auto-approve
-        if ($LASTEXITCODE -ne 0) {
-            throw "Terraform apply failed"
-        }
-        Write-Host ""
-        Write-Host "✓ App registrations created successfully" -ForegroundColor Green
-        Write-Host ""
-
+        if ($LASTEXITCODE -ne 0) { throw "Terraform apply failed" }
+        Write-Host ""; Write-Host "✓ App registrations created successfully" -ForegroundColor Green; Write-Host ""
         # Get Terraform outputs
         Write-Host "Retrieving configuration values..." -ForegroundColor Yellow
         $outputs = terraform output -json | ConvertFrom-Json
@@ -100,7 +85,6 @@ if (-not $SkipTerraform) {
         $tenantId = $outputs.tenant_id.value
         $apiScope = $outputs.api_scope.value
         $apiAudience = $outputs.api_audience.value
-
     } finally {
         Pop-Location
     }
@@ -120,14 +104,13 @@ if (-not $SkipTerraform) {
     }
 }
 
-Write-Host ""
-Write-Host "========================================" -ForegroundColor Cyan
+Write-Host ""; Write-Host "========================================" -ForegroundColor Cyan
 Write-Host "Generating environment configuration files" -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""
 
 # Generate API appsettings.Development.json
-$apiSettingsPath = "$ApiDir\appsettings.Development.json"
+$apiSettingsPath = Join-Path $ApiDir "appsettings.Development.json"
 if ((Test-Path $apiSettingsPath) -and -not $Force) {
     Write-Host "⚠ $apiSettingsPath already exists (use -Force to overwrite)" -ForegroundColor Yellow
 } else {
@@ -151,7 +134,7 @@ if ((Test-Path $apiSettingsPath) -and -not $Force) {
 }
 
 # Generate React .env
-$reactEnvPath = "$ReactDir\.env"
+$reactEnvPath = Join-Path $ReactDir ".env"
 if ((Test-Path $reactEnvPath) -and -not $Force) {
     Write-Host "⚠ $reactEnvPath already exists (use -Force to overwrite)" -ForegroundColor Yellow
 } else {
@@ -178,7 +161,7 @@ VITE_API_SCOPES=["$apiScope"]
 }
 
 # Generate Angular .env
-$angularEnvPath = "$AngularDir\.env"
+$angularEnvPath = Join-Path $AngularDir ".env"
 if ((Test-Path $angularEnvPath) -and -not $Force) {
     Write-Host "⚠ $angularEnvPath already exists (use -Force to overwrite)" -ForegroundColor Yellow
 } else {
@@ -197,7 +180,6 @@ NG_APP_RedirectUri=https://localhost:4200
 NG_APP_PostLogoutRedirectUri=https://localhost:4200
 
 # API settings (use /api for development proxy)
-NG_APP_apiBaseUrl=https://localhost:4200/api/*
 NG_APP_API_BASE_URL=/api
 
 # API Scopes
@@ -208,8 +190,7 @@ NG_APP_apiScopes=$apiScope
     Write-Host "✓ Created $angularEnvPath" -ForegroundColor Green
 }
 
-Write-Host ""
-Write-Host "========================================" -ForegroundColor Green
+Write-Host ""; Write-Host "========================================" -ForegroundColor Green
 Write-Host "✓ Development environment setup complete!" -ForegroundColor Green
 Write-Host "========================================" -ForegroundColor Green
 Write-Host ""
