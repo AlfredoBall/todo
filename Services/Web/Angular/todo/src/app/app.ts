@@ -22,14 +22,9 @@ import { AUTH_CONFIG } from './auth-config';
   ]
 })
 export class App implements OnInit, OnDestroy {
-  name = import.meta.env.NG_APP_API_BASE_URL;
   private msalService = inject(MsalService);
   private msalBroadcastService = inject(MsalBroadcastService);
   private readonly destroy$ = new Subject<void>();
-
-  constructor() {
-    console.log('API Base URL in App Component:', this.name);
-  }
 
   ngOnInit(): void {
     // Handle redirect after login
