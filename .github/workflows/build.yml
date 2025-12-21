@@ -85,29 +85,29 @@ jobs:
 
         
 
-      - name: Generate Angular .env file
-        if: matrix.project == 'Services/Web/Angular/todo'
-        working-directory: ${{ matrix.project }}
-        run: |
-          echo "NG_APP_apiBaseUrl=${{ inputs.api_url }}" > .env
-          echo "NG_APP_AzureAd__ClientID=${{ inputs.angular_client_id }}" >> .env
-          echo "NG_APP_AzureAd__TenantId=${{ secrets.AZURE_TENANT_ID }}" >> .env
-          echo "NG_APP_RedirectUri=${{ inputs.angular_url }}" >> .env
-          echo "NG_APP_PostLogoutRedirectUri=${{ inputs.angular_url }}" >> .env
-          echo "NG_APP_apiScopes=${{ inputs.api_scope }}" >> .env
-          echo "NG_APP_bypassAuthInDev=false" >> .env
+      # - name: Generate Angular .env file
+      #   if: matrix.project == 'Services/Web/Angular/todo'
+      #   working-directory: ${{ matrix.project }}
+      #   run: |
+      #     echo "NG_APP_apiBaseUrl=${{ inputs.api_url }}" > .env
+      #     echo "NG_APP_AzureAd__ClientID=${{ inputs.angular_client_id }}" >> .env
+      #     echo "NG_APP_AzureAd__TenantId=${{ secrets.AZURE_TENANT_ID }}" >> .env
+      #     echo "NG_APP_RedirectUri=${{ inputs.angular_url }}" >> .env
+      #     echo "NG_APP_PostLogoutRedirectUri=${{ inputs.angular_url }}" >> .env
+      #     echo "NG_APP_apiScopes=${{ inputs.api_scope }}" >> .env
+      #     echo "NG_APP_bypassAuthInDev=false" >> .env
 
       - name: Build Angular app
         if: matrix.project == 'Services/Web/Angular/todo'
         working-directory: ${{ matrix.project }}
-        # env:
-        #   NG_APP_apiBaseUrl: ${{ inputs.api_url }}
-        #   NG_APP_AzureAd__ClientID: ${{ inputs.angular_client_id }}
-        #   NG_APP_AzureAd__TenantId: ${{ secrets.AZURE_TENANT_ID }}
-        #   NG_APP_RedirectUri: ${{ inputs.angular_url }}
-        #   NG_APP_PostLogoutRedirectUri: ${{ inputs.angular_url }}
-        #   NG_APP_apiScopes: ${{ inputs.api_scope }}
-        #   NG_APP_bypassAuthInDev: 'false'
+        env:
+          NG_APP_apiBaseUrl: ${{ inputs.api_url }}
+          NG_APP_AzureAd__ClientID: ${{ inputs.angular_client_id }}
+          NG_APP_AzureAd__TenantId: ${{ secrets.AZURE_TENANT_ID }}
+          NG_APP_RedirectUri: ${{ inputs.angular_url }}
+          NG_APP_PostLogoutRedirectUri: ${{ inputs.angular_url }}
+          NG_APP_apiScopes: ${{ inputs.api_scope }}
+          NG_APP_bypassAuthInDev: 'false'
         run: npm run build -- --configuration production
 
       - name: Build .NET API

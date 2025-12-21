@@ -1,6 +1,4 @@
-/// <reference types="@ngx-env/builder" />
-
-interface ImportMetaEnv {
+interface Env {
   readonly NODE_ENV: 'development' | 'production';
   readonly NG_APP_apiBaseUrl: string;
   readonly NG_APP_AzureAd__ClientID: string;
@@ -17,7 +15,7 @@ interface ImportMetaEnv {
 }
 
 interface ImportMeta {
-  readonly env: ImportMetaEnv;
+  readonly env: Env;
 }
 
 // 2. Use _NGX_ENV_.YOUR_ENV_VAR in your code. (customizable)
