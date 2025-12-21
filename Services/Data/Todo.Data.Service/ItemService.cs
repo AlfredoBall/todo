@@ -12,19 +12,40 @@ namespace Todo.Data.Service;
 // Filtering by Clipboard ID is a good idea if this were a production level app
 public class ItemService(IMapper mapper)
 {
-    public async Task<IList<Item>> GetItems(C context, int clipboardId)
+    private readonly Guid demoUserID = new Guid("52515368-4ad4-4bae-9319-6886c234ee5a");
+
+    public async Task<IList<Item>> GetItems(C context, int clipboardId, Guid userID)
     {
-        return await context.Items
+        var clipboard = await context.Clipboards
+            .AsNoTracking()
+            .SingleOrDefaultAsync(c => c.ID == clipboardId);
+
+        if (clipboard == null)
+        {
+            throw new ArgumentException("Clipboard not found.");
+        }
+        else if(clipboard.UserID == userID || clipboard.UserID == demoUserID)
+        {
+            return await context.Items
             .Where(i => i.ClipboardID == clipboardId)
             .Select(i => mapper.Map<Item>(i))
             .ToListAsync();
+        }
+
+        throw new UnauthorizedAccessException("You do not have access to this clipboard.");
     }
 
-    public async Task<Item?> AddItem(C context, int clipboardId, string name)
+    public async Task<Item> AddItem(C context, string name, int clipboardId, Guid userID)
     {
-        if (name.Trim().Length == 0 || await context.Items.AnyAsync(i => i.ClipboardID == clipboardId && i.Name == name))
+        var item = await context.Clipboards.Join(context.Items,
+            cID => cID.ID,
+            iID => iID.ClipboardID,
+            (c, i) => new { Clipboard = c, Item = i })
+            .SingleOrDefaultAsync(s => s.Item.Name == name && s.Clipboard.ID == clipboardId && s.Clipboard.UserID == userID);
+
+        if (item != null)
         {
-            return null;
+            throw new ArgumentException("Item already exists or you do not have permission to add items to this clipboard.");
         }
 
         var entity = new E.Item { ClipboardID = clipboardId, Name = name };
@@ -38,56 +59,83 @@ public class ItemService(IMapper mapper)
         return mapper.Map<Item>(addedEntity);
     }
 
-    public async Task<bool> DeleteItem(C context, int id)
+    public async Task<Item> DeleteItem(C context, int itemID, Guid userID)
     {
-        var entity = await context.Items.FindAsync(id);
-        if (entity == null)
+        var item = await context.Clipboards.Join(context.Items,
+            cID => cID.ID,
+            iID => iID.ClipboardID,
+            (c, i) => new { Clipboard = c, Item = i })
+            .Where(c => c.Clipboard.UserID == userID && c.Item.ID == itemID)
+            .Select(c => c.Item)
+            .SingleOrDefaultAsync();
+
+        if (item == null)
         {
-            return false;
+            throw new ArgumentException("Item not found or you do not have permission to delete this item.");
         }
-        context.Items.Remove(entity);
+
+        context.Items.Remove(item);
         await context.SaveChangesAsync();
-        return true;
+        return mapper.Map<Item>(item);
     }
 
-    public async Task<bool> CompleteItem(C context, int id)
+    public async Task<Item> CompleteItem(C context, int itemID, Guid userID)
     {
-        var entity = await context.Items.FindAsync(id);
-        if (entity == null)
+        var item = await context.Clipboards.Join(context.Items,
+            cID => cID.ID,
+            iID => iID.ClipboardID,
+            (c, i) => new { Clipboard = c, Item = i })
+            .Where(c => c.Clipboard.UserID == userID && c.Item.ID == itemID)
+            .Select(c => c.Item)
+            .SingleOrDefaultAsync();
+
+        if (item == null)
         {
-            return false;
+            throw new ArgumentException("Item not found or you do not have permission to delete this item.");
         }
-        entity.IsComplete = true;
+
+        item.IsComplete = true;
         await context.SaveChangesAsync();
-        return true;
+        return mapper.Map<Item>(item);
     }
 
-    public async Task<bool> UnfinishItem(C context, int id)
+    public async Task<Item> UnfinishItem(C context, int itemID, Guid userID)
     {
-        var entity = await context.Items.FindAsync(id);
-        if (entity == null)
+        var item = await context.Clipboards.Join(context.Items,
+            cID => cID.ID,
+            iID => iID.ClipboardID,
+            (c, i) => new { Clipboard = c, Item = i })
+            .Where(c => c.Clipboard.UserID == userID && c.Item.ID == itemID)
+            .Select(c => c.Item)
+            .SingleOrDefaultAsync();
+
+        if (item == null)
         {
-            return false;
+            throw new ArgumentException("Item not found or you do not have permission to delete this item.");
         }
-        entity.IsComplete = false;
+
+        item.IsComplete = false;
         await context.SaveChangesAsync();
-        return true;
+        return mapper.Map<Item>(item);
     }
 
-    public async Task<bool> EditItem(C context, int id, string name)
+    public async Task<Item> EditItem(C context, int itemID, string name, Guid userID)
     {
-        if (name.Trim().Length == 0 || await context.Items.AnyAsync(i => i.Name == name))
+        var item = await context.Clipboards.Join(context.Items,
+            cID => cID.ID,
+            iID => iID.ClipboardID,
+            (c, i) => new { Clipboard = c, Item = i })
+            .Where(c => c.Clipboard.UserID == userID && c.Item.ID == itemID)
+            .Select(c => c.Item)
+            .SingleOrDefaultAsync();
+
+        if (item == null)
         {
-            return false;
+            throw new ArgumentException("Item not found or you do not have permission to delete this item.");
         }
 
-        var entity = await context.Items.FindAsync(id);
-        if (entity == null)
-        {
-            return false;
-        }
-        entity.Name = name;
+        item.Name = name;
         await context.SaveChangesAsync();
-        return true;
+        return mapper.Map<Item>(item);
     }
 }

@@ -2,11 +2,14 @@ import './login.css';
 import { useMsal } from '@azure/msal-react';
 import { loginRequest, AUTH_CONFIG } from '../../auth-config';
 import { useEffect, useState } from 'react';
+import { useSnackbar } from '../snackbar/snackbar';
 
 export default function Login() {
   const { instance, accounts, inProgress } = useMsal();
   const [userDisplayName, setUserDisplayName] = useState<string>('');
-  
+  // Error state removed; error is shown only in snackbar
+  const showSnackbar = useSnackbar();
+
   const isAuthenticated = accounts.length > 0;
 
   useEffect(() => {
@@ -22,7 +25,17 @@ export default function Login() {
   }, [accounts, instance, isAuthenticated]);
 
   const handleLogin = () => {
-    instance.loginRedirect(loginRequest).catch((error) => console.error(error));
+    console.log('Starting login popup with request:', loginRequest);
+    instance.loginPopup(loginRequest)
+      .then((response) => {
+        if (response && response.account) {
+          instance.setActiveAccount(response.account);
+        }
+      })
+      .catch((error) => {
+        showSnackbar('Sign-in Failed', { isError: true });
+        console.error(error);
+      });
   };
 
   const handleLogout = () => {
@@ -38,6 +51,7 @@ export default function Login() {
 
   return (
     <div className="login-container">
+      {/* Error message is now shown only in snackbar, not here */}
       {isAuthenticated ? (
         <div className="user-info">
           <span className="user-name">{userDisplayName}</span>
