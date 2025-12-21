@@ -1,3 +1,5 @@
+
+import { environment } from '../environments/environment';
 /**
  * Azure Entra ID Authentication Configuration
  * 
@@ -14,19 +16,19 @@
 
 export const AUTH_CONFIG = {
   // Set to true to bypass authentication in development (reads from environment)
-  BYPASS_AUTH_IN_DEV: import.meta.env.NG_APP_bypassAuthInDev === 'false',
+  BYPASS_AUTH_IN_DEV: environment.NG_APP_bypassAuthInDev === false,
 
   // Azure AD Configuration (read from environment with fallbacks)
-  CLIENT_ID: import.meta.env.NG_APP_AzureAd__ClientID,
-  TENANT_ID: import.meta.env.NG_APP_AzureAd__TenantId,
-  REDIRECT_URI: import.meta.env.NG_APP_RedirectUri,
+  CLIENT_ID: environment.NG_APP_AzureAd__ClientID,
+  TENANT_ID: environment.NG_APP_AzureAd__TenantId,
+  REDIRECT_URI: environment.NG_APP_RedirectUri,
 
   // API Configuration
-  API_BASE_URL: import.meta.env.NG_APP_API_BASE_URL,
-  API_SCOPES: import.meta.env.NG_APP_apiScopes?.split(',').map((s: string) => s.trim()) || [],
+  API_BASE_URL: environment.NG_APP_API_BASE_URL,
+  API_SCOPES: environment.NG_APP_apiScopes?.split(',').map((s: string) => s.trim()) || [],
 
   // Optional: Post logout redirect URI
-  POST_LOGOUT_REDIRECT_URI: import.meta.env.NG_APP_PostLogoutRedirectUri
+  POST_LOGOUT_REDIRECT_URI: environment.NG_APP_PostLogoutRedirectUri
 };
 
 // Debug: Log AUTH_CONFIG to verify environment variable injection
