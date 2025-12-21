@@ -67,7 +67,7 @@ Before running this application, ensure you have the following tools installed a
    ```bash
    pwsh --version  # Verify installation
    ```
-   - **Required for running PowerShell scripts in Manual-Non-Aspire-Local-Dev workflows and by Aspire AppHost orchestration**
+   - **Required for running PowerShell scripts by Aspire AppHost orchestration**
 
 ### Optional Development Tools
 
@@ -478,3 +478,18 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - [Angular with MSAL](https://github.com/AzureAD/microsoft-authentication-library-for-js/tree/dev/lib/msal-angular)
 - [React with MSAL](https://github.com/AzureAD/microsoft-authentication-library-for-js/tree/dev/lib/msal-react)
 - [GitHub OIDC with Azure](GITHUB_OIDC_SETUP.md)
+
+## Azure Entra ID User Flows (Self-Service Sign Up)
+
+> **Note:** Terraform cannot directly create Azure Entra ID User Flows (B2C policies). You must manually create and configure User Flows in the Azure Portal and associate them with your app registrations.
+
+**Manual Steps:**
+1. Go to [Azure Portal > Azure Active Directory > External Identities > User Flows](https://portal.azure.com/#view/Microsoft_AAD_B2C/UserFlowsBlade).
+2. Click **+ New user flow** and select the desired flow (e.g., sign up and sign in).
+3. Configure the flow (attributes, claims, etc.) and create it.
+4. Under **Applications**, add both the React and Angular app registrations to the user flow.
+5. Save and test with a personal email (e.g., Gmail).
+
+> The GitHub OIDC app registration is also created manually and does not require user flow association.
+
+> **Note:** For local development, the app registrations created by Aspire/Terraform do not require a User Flow. These registrations are for demo purposes only and use standard Azure AD authentication. User Flows are only needed for self-service sign-up scenarios in production or multi-tenant environments.

@@ -4,6 +4,8 @@ using Microsoft.Extensions.Caching.Distributed;
 using Todo.API;
 using Todo.Data.Entity;
 using Todo.Data.Service;
+using Microsoft.Identity.Web;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -198,10 +200,12 @@ app.MapPatch("api/item/{id}", async (HttpContext httpContext, IDistributedCache 
 
 #region Clipboard Endpoints
 
-app.MapGet("api/clipboards", async (HttpContext httpContext, IDistributedCache cache, ClipboardService clipboardService, Context context) =>
+app.MapGet("api/clipboards", async (HttpContext httpContext, ClaimsPrincipal claimsPrincipal, IDistributedCache cache, ClipboardService clipboardService, Context context) =>
 {
     // TODO: httpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
 
+    var userId = claimsPrincipal.GetObjectId(); // Exampl
+    // e of getting user info from token
     string cacheKey = "clipboards";
     var cachedClipboards = await cache.GetAsync<IList<Todo.Data.Access.Clipboard>>(cacheKey);
 

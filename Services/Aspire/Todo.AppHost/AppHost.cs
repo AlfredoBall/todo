@@ -69,6 +69,7 @@ var api = builder.AddProject<Todo_API>("API")
        context.EnvironmentVariables["AzureAd__ClientId"] = cachedOutputs.ApiClientId;
        context.EnvironmentVariables["AzureAd__TenantId"] = cachedOutputs.TenantId;
        context.EnvironmentVariables["AzureAd__Audience"] = cachedOutputs.ApiAudience;
+       context.EnvironmentVariables["AzureAD__Instance"] = "https://login.microsoftonline.com/";
        // Required for CORS since they are differen't ports than the API
        context.EnvironmentVariables["ANGULAR_URL"] = "https://localhost:4200/";
        context.EnvironmentVariables["REACT_URL"] = "https://localhost:5173/";
@@ -84,10 +85,10 @@ var generateAngularEnv = builder.AddExecutable(
     "-EnvPath", Path.GetFullPath(Path.Combine(builder.AppHostDirectory, "../../../Services/Web/Angular/todo/.env"))
 ).WithWorkingDirectory(Path.GetFullPath(Path.Combine(builder.AppHostDirectory, "../../../DevOps/Scripts"))).WaitForCompletion(terraformApply);
     
-builder.AddNpmApp("Todo-Angular", "../../Web/Angular/todo")
-    .WithReference(api)
-    .WaitFor(api)
-    .WaitForCompletion(generateAngularEnv);
+//builder.AddNpmApp("Todo-Angular", "../../Web/Angular/todo")
+//    .WithReference(api)
+//    .WaitFor(api)
+//    .WaitForCompletion(generateAngularEnv);
 
 builder.AddNpmApp("Todo-React", "../../Web/React/todo", "dev")
   .WithReference(api)

@@ -54,9 +54,7 @@ Terraform cannot create its own backend storage during initialization. This is a
 
 **Why?** Terraform's backend configuration is evaluated during `terraform init` before any resources can be created. This creates a chicken-and-egg problem that requires the backend storage to exist beforehand.
 
-**After creating the backend storage**, use the provided initialization scripts:
-- PowerShell: `.\DevOps\Scripts\terraform-init.ps1`
-- Bash: `./DevOps/Scripts/terraform-init.sh`
+**After creating the backend storage**, use Aspire AppHost orchestration for local development.
 
 See `backend.env.example` for the required environment variables.
 
