@@ -11,17 +11,7 @@ This directory contains Terraform configuration for creating **development-only*
 
 ## Quick Start
 
-Run the setup script from the repository root:
-
-**Windows**:
-```powershell
-.\DevOps\Scripts\setup-dev-environment.ps1
-```
-
-**Linux/macOS**:
-```bash
-./DevOps/Scripts/setup-dev-environment.sh
-```
+Local development setup is now fully automated by Aspire AppHost orchestration.
 
 ## Manual Usage
 
