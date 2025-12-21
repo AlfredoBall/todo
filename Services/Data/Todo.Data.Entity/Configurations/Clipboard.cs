@@ -17,7 +17,7 @@ internal class ClipboardConfiguration : IEntityTypeConfiguration<Clipboard>
 
         builder.Property(p => p.ID).ValueGeneratedOnAdd();
 
-        builder.HasIndex(c => c.Name).IsUnique();
+        builder.HasIndex(c => new { c.Name, c.UserID }).IsUnique();
 
         builder.Property(p => p.Name)
             .IsRequired()

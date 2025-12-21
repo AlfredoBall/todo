@@ -4,4 +4,4 @@ using System.Text;
 
 namespace Todo.Data.Access;
 
-public record Item(int ID, string Name, int ClipboardId, bool IsComplete = false);
+public record Item(int ID, string Name, int ClipboardID, bool IsComplete = false);

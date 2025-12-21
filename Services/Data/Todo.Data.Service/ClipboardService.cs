@@ -11,21 +11,24 @@ namespace Todo.Data.Service;
 
 public class ClipboardService(IMapper mapper)
 {
-    public async Task<IList<Clipboard>> GetClipboards(C context)
+    private readonly Guid demoUserID = new Guid("52515368-4ad4-4bae-9319-6886c234ee5a");
+
+    public async Task<IList<Clipboard>> GetClipboards(C context, Guid userID)
     {
         return await context.Clipboards
+            .Where(c => c.UserID == userID || c.UserID == demoUserID)
             .Select(i => mapper.Map<Clipboard>(i))
             .ToListAsync();
     }
 
-    public async Task<Clipboard?> AddClipboard(C context, string name)
+    public async Task<Clipboard?> AddClipboard(C context, string name, Guid userID)
     {
-        if (name.Trim().Length == 0 || await context.Clipboards.AnyAsync(i => i.Name == name))
+        if (name.Trim().Length == 0 || await context.Clipboards.AnyAsync(c => c.Name == name && c.UserID == userID))
         {
-            return null;
+            throw new ArgumentException("Invalid clipboard name or clipboard already exists.");
         }
 
-        var entity = new E.Clipboard { Name = name };
+        var entity = new E.Clipboard { Name = name, UserID = userID };
         await context.Clipboards.AddAsync(entity);
         await context.SaveChangesAsync();
 
@@ -36,32 +39,35 @@ public class ClipboardService(IMapper mapper)
         return mapper.Map<Clipboard>(addedEntity);
     }
 
-    public async Task<bool> DeleteClipboard(C context, int id)
+    public async Task<Clipboard> DeleteClipboard(C context, int clipboardID, Guid userID)
     {
-        var entity = await context.Clipboards.FindAsync(id);
-        if (entity == null)
+        var entity = await context.Clipboards.SingleOrDefaultAsync(c => c.ID == clipboardID);
+
+        if (entity == null || entity.UserID != userID)
         {
-            return false;
+            throw new Exception("Clipboard not found or you do not have access to delete this clipboard.");
         }
+
         context.Clipboards.Remove(entity);
         await context.SaveChangesAsync();
-        return true;
+        return mapper.Map<Clipboard>(entity);
     }
 
-    public async Task<bool> EditClipboard(C context, int id, string name)
+    public async Task<Clipboard> EditClipboard(C context, int clipboardID, string name, Guid userID)
     {
-        if (name.Trim().Length == 0 || await context.Clipboards.AnyAsync(i => i.Name == name))
+        if (name.Trim().Length == 0 || await context.Clipboards.AnyAsync(i => i.Name == name && i.UserID == userID))
         {
-            return false;
+            throw new Exception("Invalid clipboard name or clipboard already exists.");
         }
 
-        var entity = await context.Clipboards.FindAsync(id);
-        if (entity == null)
+        var clipboard = await context.Clipboards.SingleOrDefaultAsync(c => c.ID == clipboardID && c.UserID == userID);
+        if (clipboard == null)
         {
-            return false;
+            throw new Exception("Clipboard not found or you do not have access to edit this clipboard.");
         }
-        entity.Name = name;
+
+        clipboard.Name = name;
         await context.SaveChangesAsync();
-        return true;
+        return mapper.Map<Clipboard>(clipboard);
     }
 }

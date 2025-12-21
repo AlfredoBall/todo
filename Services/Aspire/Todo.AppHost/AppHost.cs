@@ -84,14 +84,20 @@ var generateAngularEnv = builder.AddExecutable(
     "-TerraformDir", terraformDir,
     "-EnvPath", Path.GetFullPath(Path.Combine(builder.AppHostDirectory, "../../../Services/Web/Angular/todo/.env"))
 ).WithWorkingDirectory(Path.GetFullPath(Path.Combine(builder.AppHostDirectory, "../../../DevOps/Scripts"))).WaitForCompletion(terraformApply);
-    
+
+// For the Angular and React Apps, .WaitforCompletion(terraformApply) is necessary,
+// even though the API waits for completion of the terraformApply resource and the Web App's resource waits for the API.
+// WaitFor only means it waits for the API resource to be configured, not that the terraformApply resource itself has completed.
+
 //builder.AddNpmApp("Todo-Angular", "../../Web/Angular/todo")
 //    .WithReference(api)
+//    .WaitForCompletion(terraformApply)
 //    .WaitFor(api)
 //    .WaitForCompletion(generateAngularEnv);
 
 builder.AddNpmApp("Todo-React", "../../Web/React/todo", "dev")
   .WithReference(api)
+  .WaitForCompletion(terraformApply)
   .WaitFor(api)
   .WithEnvironment(async context =>
   {
