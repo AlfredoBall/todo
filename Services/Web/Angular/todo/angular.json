@@ -16,8 +16,10 @@
         "build": {
           "builder": "@ngx-env/builder:application",
           "options": {
-            "outputPath": "dist/todo/browser",
+            "outputPath": "dist/todo",
+            "index": "src/index.html",
             "browser": "src/main.ts",
+            "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
             "assets": [
               {
@@ -25,6 +27,9 @@
                 "input": "public"
               }
             ],
+            "ngxEnv": {
+              "unsecure": true
+            },
             "styles": [
               "src/custom-theme.scss",
               "src/styles.css"
@@ -53,6 +58,9 @@
             }
           },
           "defaultConfiguration": "production"
+        },
+        "extract-i18n": {
+          "builder": "@ngx-env/builder:extract-i18n"
         },
         "serve": {
           "builder": "@ngx-env/builder:dev-server",
