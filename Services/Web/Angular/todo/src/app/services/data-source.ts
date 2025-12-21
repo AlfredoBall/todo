@@ -1,9 +1,10 @@
+
+import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 
-console.log('API Base URL:', import.meta.env.NG_APP_API_BASE_URL);
-// @ts-ignore
-const API_BASE_URL = import.meta.env.NG_APP_API_BASE_URL + '/api' || '/api';
+console.log('API Base URL:', environment.NG_APP_API_BASE_URL);
+const API_BASE_URL = environment.NG_APP_API_BASE_URL + '/api' || '/api';
 
 @Injectable({
   providedIn: 'root',
