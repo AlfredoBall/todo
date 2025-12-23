@@ -1,6 +1,5 @@
 import './app.css'
 
-
 import Home from './pages/home/home'
 import Navbar from './components/navbar/navbar'
 import { Route, BrowserRouter as Router, Routes, Link, useLocation } from 'react-router-dom'
@@ -10,7 +9,7 @@ import { MsalProvider } from '@azure/msal-react'
 import PrivacyPolicy from './pages/privacy-policy/privacy-policy'
 import TermsOfUse from './pages/terms-of-use/terms-of-use'
 import type { IPublicClientApplication } from '@azure/msal-browser'
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 
 interface AppProps {
   msalInstance: IPublicClientApplication
