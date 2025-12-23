@@ -159,7 +159,8 @@ Services/Web/ssl/
 *.pfx
 
 # Secrets and sensitive config
-.appsettings.Development.json
+environment.development.ts
+appsettings.Development.json
 appsettings.*.json
 !appsettings.json
 .vscode/*
