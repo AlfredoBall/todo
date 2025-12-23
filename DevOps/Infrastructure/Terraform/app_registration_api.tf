@@ -15,33 +15,18 @@ resource "azuread_application" "api_app_registration" {
       user_consent_description   = "Allow the application to access the To Do API on your behalf."
       user_consent_display_name  = "Access To Do API"
     }
+    requested_access_token_version = 2
   }
 
   feature_tags {
     enterprise = false
     hide       = false
   }
-
-  # Optional: add web redirect URIs, owners, or additional settings as needed.
-  # reply_urls = ["https://your-app/callback"]
-}
-
-# Set identifier URI after app is created using time_sleep for replication
-resource "time_sleep" "wait_for_api_app" {
-  depends_on = [azuread_application.api_app_registration]
-  create_duration = "60s"
 }
 
 resource "azuread_application_identifier_uri" "api_identifier_uri" {
   application_id = azuread_application.api_app_registration.id
   identifier_uri = "api://${azuread_application.api_app_registration.client_id}"
-  
-  depends_on = [time_sleep.wait_for_api_app]
-}
-
-resource "time_sleep" "wait_for_api_sp" {
-  depends_on = [azuread_application_identifier_uri.api_identifier_uri]
-  create_duration = "30s"
 }
 
 resource "azuread_service_principal" "api_sp" {
@@ -50,8 +35,4 @@ resource "azuread_service_principal" "api_sp" {
   feature_tags {
     enterprise = false
   }
-  
-  depends_on = [time_sleep.wait_for_api_sp]
 }
-
-
