@@ -8,6 +8,7 @@ import { SnackbarProvider } from './components/snackbar/snackbar'
 import { MsalProvider } from '@azure/msal-react'
 import PrivacyPolicy from './pages/privacy-policy/privacy-policy'
 import TermsOfUse from './pages/terms-of-use/terms-of-use'
+import DeleteData from './pages/delete-data/delete-data'
 import type { IPublicClientApplication } from '@azure/msal-browser'
 import { useEffect } from 'react';
 
@@ -29,17 +30,21 @@ function App({ msalInstance }: AppProps) {
     <MsalProvider instance={msalInstance}>
       <SnackbarProvider>
         <Router>
-          <ScrollToTop />
-          <Navbar />
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-            <Route path="/terms-of-use" element={<TermsOfUse />} />
-          </Routes>
-          <footer style={{ textAlign: 'center', margin: '2rem 0 1rem 0', fontSize: '1.05em' }}>
+          <div className="app-content">
+            <ScrollToTop />
+            <Navbar />
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/terms-of-use" element={<TermsOfUse />} />
+              <Route path="/delete-data" element={<DeleteData />} />
+            </Routes>
+          </div>
+          <footer className="footer">
             <Link to="/privacy-policy" style={{ marginRight: '2rem' }}>Privacy Policy</Link>
-            <Link to="/terms-of-use">Terms of Use</Link>
+            <Link to="/terms-of-use" style={{ marginRight: '2rem' }}>Terms of Use</Link>
+            <Link to="/delete-data">Delete Data</Link>
           </footer>
         </Router>
       </SnackbarProvider>
