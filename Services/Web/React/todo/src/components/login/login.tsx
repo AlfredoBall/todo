@@ -7,7 +7,7 @@ import { useSnackbar } from '../snackbar/snackbar';
 export default function Login() {
   const { instance, accounts, inProgress } = useMsal();
   const [userDisplayName, setUserDisplayName] = useState<string>('');
-  // Error state removed; error is shown only in snackbar
+
   const showSnackbar = useSnackbar();
 
   const isAuthenticated = accounts.length > 0;
