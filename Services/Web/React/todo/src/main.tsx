@@ -28,10 +28,17 @@ msalInstance.initialize().then(() => {
   }
 
   // Listen for sign-in event and set active account
+
   msalInstance.addEventCallback((event) => {
     if (event.eventType === EventType.LOGIN_SUCCESS && event.payload) {
       const account = (event.payload as any).account;
       msalInstance.setActiveAccount(account);
+    }
+    if (event.eventType === EventType.LOGIN_FAILURE && event.error) {
+      // Show a user-friendly error (replace with Snackbar if you want)
+      alert("Sign-in failed");
+      // Log full error for debugging
+      console.error("MSAL LOGIN_FAILURE", event.error);
     }
   });
 

@@ -26,9 +26,9 @@ public class Context : DbContext
         modelBuilder.ApplyConfiguration(new ItemConfiguration());
 
         modelBuilder.Entity<Clipboard>().HasData(
-            new Clipboard { ID = 1, Name = "Clipboard 1" },
-            new Clipboard { ID = 2, Name = "Clipboard 2" },
-            new Clipboard { ID = 3, Name = "Clipboard 3" }
+            new Clipboard { ID = 1, Name = "Clipboard 1", UserID = new Guid("52515368-4ad4-4bae-9319-6886c234ee5a") },
+            new Clipboard { ID = 2, Name = "Clipboard 2", UserID = new Guid("52515368-4ad4-4bae-9319-6886c234ee5a") },
+            new Clipboard { ID = 3, Name = "Clipboard 3", UserID = new Guid("52515368-4ad4-4bae-9319-6886c234ee5a") }
         );
 
         modelBuilder.Entity<Item>().HasData(

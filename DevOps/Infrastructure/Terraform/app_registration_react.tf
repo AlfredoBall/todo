@@ -1,7 +1,7 @@
 // Azure AD App Registration for the React client
 resource "azuread_application" "react_app" {
   display_name     = "To Do React App"
-  sign_in_audience = "AzureADMyOrg"
+  sign_in_audience = var.sign_in_audience
   prevent_duplicate_names = true
 
   single_page_application {
@@ -36,19 +36,27 @@ resource "azuread_application" "react_app" {
   }
 }
 
-resource "time_sleep" "wait_for_react_app" {
-  depends_on = [azuread_application.react_app]
-  create_duration = "30s"
-}
-
 resource "azuread_service_principal" "react_sp" {
   client_id = azuread_application.react_app.client_id
   
   feature_tags {
     enterprise = false
   }
-  
-  depends_on = [time_sleep.wait_for_react_app]
 }
 
+# Grant admin consent for API access_as_user to To Do React App service principal
+resource "azuread_service_principal_delegated_permission_grant" "react_api_access_as_user" {
+  service_principal_object_id           = azuread_service_principal.react_sp.object_id
+  resource_service_principal_object_id  = azuread_service_principal.api_sp.object_id
+  claim_values                         = ["access_as_user"]
+}
 
+# Grant admin consent for Microsoft Graph User.Read to To Do React App service principal
+resource "azuread_service_principal_delegated_permission_grant" "react_graph_user_read" {
+  service_principal_object_id          = azuread_service_principal.react_sp.object_id
+  resource_service_principal_object_id = data.azuread_service_principal.microsoft_graph.object_id
+  claim_values                        = ["User.Read", "openid"]
+
+  # Enforce the order you observed to ensure openid is applied correctly
+  depends_on = [azuread_service_principal_delegated_permission_grant.react_api_access_as_user]
+}

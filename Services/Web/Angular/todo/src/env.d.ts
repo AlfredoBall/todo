@@ -8,7 +8,6 @@ interface ImportMetaEnv {
   readonly NG_APP_RedirectUri: string;
   readonly NG_APP_PostLogoutRedirectUri: string;
   readonly NG_APP_apiScopes: string;
-  readonly NG_APP_bypassAuthInDev: string;
   readonly NG_APP_AzureAd__Audience: string;
   readonly NG_APP_AzureAd__Instance: string;
   readonly NG_APP_API_BASE_URL: string;

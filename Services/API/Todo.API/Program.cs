@@ -1,11 +1,12 @@
 using System.Reflection;
+using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Identity.Web;
 using Todo.API;
+using Todo.Data.Access;
 using Todo.Data.Entity;
 using Todo.Data.Service;
-using Microsoft.Identity.Web;
-using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -93,7 +94,7 @@ if (runWithAuth)
 
 #region Item Endpoints
 
-app.MapGet("api/items/{clipboardId}", async (HttpContext httpContext, IDistributedCache cache, ItemService itemService, Context context, int clipboardId) =>
+app.MapGet("api/items/{clipboardId}", async (HttpContext httpContext, ClaimsPrincipal user, IDistributedCache cache, ItemService itemService, Context context, int clipboardId) =>
 {
     //httpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
 
@@ -106,7 +107,8 @@ app.MapGet("api/items/{clipboardId}", async (HttpContext httpContext, IDistribut
         return Results.Ok(cachedItems);
     }
 
-    var items = await itemService.GetItems(context, clipboardId);
+    // TODO: Check for ArgumentException or UnauthorizedAccessException
+    var items = await itemService.GetItems(context, clipboardId, Guid.Parse(user.GetObjectId()!));
 
     var options = new DistributedCacheEntryOptions()
         .SetSlidingExpiration(TimeSpan.FromSeconds(10)) // Remove if not accessed for 10 seconds
@@ -118,81 +120,98 @@ app.MapGet("api/items/{clipboardId}", async (HttpContext httpContext, IDistribut
 })
 .WithName("GetItems");
 
-app.MapPost("api/item", async (HttpContext httpContext, IDistributedCache cache, ItemService itemService, Context context, int clipboardId, string name) =>
+// Handle ArgumentException for invalid clipboard ID or unauthorized access
+app.MapPost("api/item", async (HttpContext httpContext, ClaimsPrincipal user, IDistributedCache cache, ItemService itemService, Context context, int clipboardId, string name) =>
 {
-    var result = await itemService.AddItem(context, clipboardId, name.Trim());
-    
-    if (result != null)
+    try
     {
-        // Invalidate cache for this clipboard
-        await cache.RemoveAsync("items" + clipboardId);
-    }
+        var items = await itemService.AddItem(context, name.Trim(), clipboardId, Guid.Parse(user.GetObjectId()!));
 
-    return result == null ? Results.BadRequest() : Results.Ok(result);
+        if (items != null)
+        {
+            // Invalidate cache for this clipboard
+            await cache.RemoveAsync("items" + clipboardId);
+        }
+
+        return Results.Ok(items);
+    }
+    catch (Exception ex)
+    {
+        // TODO: Maybe return different types of errors
+        return Results.BadRequest();
+    }
 })
 .WithName("AddItem");
 
-app.MapDelete("api/item/{id}", async (HttpContext httpContext, IDistributedCache cache, ItemService itemService, Context context, int id) =>
+app.MapDelete("api/item/{itemID}", async (HttpContext httpContext, ClaimsPrincipal user, IDistributedCache cache, ItemService itemService, Context context, int itemID) =>
 {
-    // Get the item to find its clipboard before deleting
-    var item = await context.Items.FindAsync(id);
-    var result = await itemService.DeleteItem(context, id);
-
-    if (result && item != null)
+    try
     {
-        // Invalidate cache for this clipboard
+        var item = await itemService.DeleteItem(context, itemID, Guid.Parse(user.GetObjectId()!));
+
         await cache.RemoveAsync("items" + item.ClipboardID);
+
+        return Results.Ok(item);
     }
-    
-    return result ? Results.Ok() : Results.NotFound();
+    catch (Exception ex)
+    {
+        // TODO: Maybe return different types of errors
+        return Results.BadRequest();
+    }
 })
 .WithName("DeleteItem");
 
-app.MapPost("api/item/{id}/complete", async (HttpContext httpContext, IDistributedCache cache, ItemService itemService, Context context, int id) =>
+app.MapPost("api/item/{itemID}/complete", async (HttpContext httpContext, ClaimsPrincipal user, IDistributedCache cache, ItemService itemService, Context context, int itemID) =>
 {
-    // Get the item to find its clipboardS
-    var item = await context.Items.FindAsync(id);
-    var result = await itemService.CompleteItem(context, id);
-    
-    if (result && item != null)
+    try
     {
-        // Invalidate cache for this clipboard
+        var item = await itemService.CompleteItem(context, itemID, Guid.Parse(user.GetObjectId()!));
+
         await cache.RemoveAsync("items" + item.ClipboardID);
+
+        return Results.Ok(item);
     }
-    
-    return result ? Results.Ok() : Results.NotFound();
+    catch (Exception ex)
+    {
+        // TODO: Maybe return different types of errors
+        return Results.BadRequest();
+    }
 })
 .WithName("CompleteItem");
 
-app.MapPost("api/item/{id}/unfinish", async (HttpContext httpContext, IDistributedCache cache, ItemService itemService, Context context, int id) =>
+app.MapPost("api/item/{id}/unfinish", async (HttpContext httpContext, ClaimsPrincipal user, IDistributedCache cache, ItemService itemService, Context context, int id) =>
 {
-    // Get the item to find its clipboard
-    var item = await context.Items.FindAsync(id);
-    var result = await itemService.UnfinishItem(context, id);
-    
-    if (result && item != null)
+    try
     {
-        // Invalidate cache for this clipboard
+        var item = await itemService.UnfinishItem(context, id, Guid.Parse(user.GetObjectId()!));
+
         await cache.RemoveAsync("items" + item.ClipboardID);
+
+        return Results.Ok();
     }
-    
-    return result ? Results.Ok() : Results.NotFound();
+    catch (Exception ex)
+    {
+        // TODO: Maybe return different types of errors
+        return Results.BadRequest();
+    }
 })
 .WithName("UnfinishItem");
 
-app.MapPatch("api/item/{id}", async (HttpContext httpContext, IDistributedCache cache, ItemService itemService, Context context, int id, string name) =>
+app.MapPatch("api/item/{id}", async (HttpContext httpContext, ClaimsPrincipal user, IDistributedCache cache, ItemService itemService, Context context, int id, string name) =>
 {
-    // Get the item to find its clipboard
-    var item = await context.Items.FindAsync(id);
-    var result = await itemService.EditItem(context, id, name);
-    
-    if (result && item != null)
+    try
     {
-        // Invalidate cache for this clipboard
+        var item = await itemService.EditItem(context, id, name, Guid.Parse(user.GetObjectId()!));
+
         await cache.RemoveAsync("items" + item.ClipboardID);
+
+        return Results.Ok(item);
     }
-    
-    return result ? Results.Ok() : Results.BadRequest();
+    catch (Exception ex)
+    {
+        // TODO: Maybe return different types of errors
+        return Results.BadRequest();
+    }
 })
 .WithName("EditItem");
 
@@ -200,12 +219,8 @@ app.MapPatch("api/item/{id}", async (HttpContext httpContext, IDistributedCache 
 
 #region Clipboard Endpoints
 
-app.MapGet("api/clipboards", async (HttpContext httpContext, ClaimsPrincipal claimsPrincipal, IDistributedCache cache, ClipboardService clipboardService, Context context) =>
+app.MapGet("api/clipboards", async (HttpContext httpContext, ClaimsPrincipal user, IDistributedCache cache, ClipboardService clipboardService, Context context) =>
 {
-    // TODO: httpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
-
-    var userId = claimsPrincipal.GetObjectId(); // Exampl
-    // e of getting user info from token
     string cacheKey = "clipboards";
     var cachedClipboards = await cache.GetAsync<IList<Todo.Data.Access.Clipboard>>(cacheKey);
 
@@ -215,7 +230,7 @@ app.MapGet("api/clipboards", async (HttpContext httpContext, ClaimsPrincipal cla
         return Results.Ok(cachedClipboards);
     }
 
-    var clipboards = await clipboardService.GetClipboards(context);
+    var clipboards = await clipboardService.GetClipboards(context, Guid.Parse(user.GetObjectId()!));
 
     var options = new DistributedCacheEntryOptions()
         .SetSlidingExpiration(TimeSpan.FromSeconds(10)) // Remove if not accessed for 10 seconds
@@ -227,25 +242,51 @@ app.MapGet("api/clipboards", async (HttpContext httpContext, ClaimsPrincipal cla
 })
 .WithName("GetClipboards");
 
-app.MapPost("api/clipboard", async (HttpContext httpContext, ClipboardService clipboardService, Context context, string name) =>
+app.MapPost("api/clipboard", async (HttpContext httpContext, ClaimsPrincipal user, ClipboardService clipboardService, Context context, string name) =>
 {
-    var result = await clipboardService.AddClipboard(context, name.Trim());
+    try
+    {
+        var clipboard = await clipboardService.AddClipboard(context, name, Guid.Parse(user.GetObjectId()!));
 
-    return result == null ? Results.BadRequest() : Results.Ok(result);
+        return Results.Ok(clipboard);
+    }
+    catch (Exception ex)
+    {
+        // TODO: Maybe return different types of errors
+        return Results.BadRequest();
+    }
 })
 .WithName("AddClipboard");
 
-app.MapPatch("api/clipboard/{id}", async (HttpContext httpContext, ClipboardService clipboardService, Context context, int id, string name) =>
+app.MapPatch("api/clipboard/{clipboardID}", async (HttpContext httpContext, ClaimsPrincipal user, ClipboardService clipboardService, Context context, int clipboardID, string name) =>
 {
-    var result = await clipboardService.EditClipboard(context, id, name);
-    return result ? Results.Ok() : Results.BadRequest();
+    try
+    {
+        var clipboard = await clipboardService.EditClipboard(context, clipboardID, name, Guid.Parse(user.GetObjectId()!));
+
+        return Results.Ok(clipboard);
+    }
+    catch (Exception ex)
+    {
+        // TODO: Maybe return different types of errors
+        return Results.BadRequest();
+    }
 })
 .WithName("EditClipboard");
 
-app.MapDelete("api/clipboard/{id}", async (HttpContext httpContext, ClipboardService clipboardService, Context context, int id) =>
+app.MapDelete("api/clipboard/{clipboardID}", async (HttpContext httpContext, ClaimsPrincipal user, ClipboardService clipboardService, Context context, int clipboardID) =>
 {
-    var result = await clipboardService.DeleteClipboard(context, id);
-    return result ? Results.Ok() : Results.NotFound();
+    try
+    {
+        var clipboard = await clipboardService.DeleteClipboard(context, clipboardID, Guid.Parse(user.GetObjectId()!));
+
+        return Results.Ok(clipboard);
+    }
+    catch (Exception ex)
+    {
+        // TODO: Maybe return different types of errors
+        return Results.BadRequest();
+    }
 })
 .WithName("DeleteClipboard");
 

@@ -83,6 +83,11 @@ variable "react_app_registration_name" {
   default     = "To Do React"
 }
 
+variable "sign_in_audience" {
+  description = "Sign-in audience for Azure AD applications"
+  type        = string
+}
+
 /*
 Backend values (resource_group_name, storage_account_name, container_name, key)
 should be supplied at `terraform init` with `-backend-config` or managed outside

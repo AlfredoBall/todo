@@ -8,5 +8,6 @@ public class Clipboard
 {
     public int ID { get; set; }
     public required string Name { get; set; }
-    public List<Item>? Items { get; set; }
+    public List<Item> Items { get; set; } = new List<Item>();
+    public Guid UserID { get; set; }
 }
