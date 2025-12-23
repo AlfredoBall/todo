@@ -4,6 +4,10 @@ resource "azuread_application" "react_app" {
   sign_in_audience = var.sign_in_audience
   prevent_duplicate_names = true
 
+  api {
+    requested_access_token_version = 2
+  }
+
   single_page_application {
     redirect_uris = [
       "https://${azurerm_static_web_app.react.default_host_name}/"
