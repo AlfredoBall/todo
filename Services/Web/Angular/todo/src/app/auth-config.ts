@@ -12,6 +12,8 @@ import { environment } from '../environments/environment';
  * - TENANT_ID: Directory (tenant) ID from Azure app registration
  * - REDIRECT_URI: Must match the redirect URI configured in Azure
  * - API_SCOPES: The custom scopes for your .NET API (format: api://<CLIENT_ID>/<scope>)
+ * - API_BASE_URL: The base URL for your protected API
+ * - POST_LOGOUT_REDIRECT_URI: Where to redirect after logout
  */
 
 export const AUTH_CONFIG = {
@@ -27,6 +29,3 @@ export const AUTH_CONFIG = {
   // Optional: Post logout redirect URI
   POST_LOGOUT_REDIRECT_URI: environment.NG_APP_PostLogoutRedirectUri
 };
-
-// Debug: Log AUTH_CONFIG to verify environment variable injection
-console.log('AUTH_CONFIG:', AUTH_CONFIG);

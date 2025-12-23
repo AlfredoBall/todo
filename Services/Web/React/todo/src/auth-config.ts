@@ -8,14 +8,11 @@ import { LogLevel } from '@azure/msal-browser';
  * - TENANT_ID: Directory (tenant) ID from Azure app registration
  * - REDIRECT_URI: Must match the redirect URI configured in Azure (e.g., https://localhost:<YOUR_PORT>)
  * - API_SCOPES: The custom scopes for your .NET API (format: api://<CLIENT_ID>/<scope>)
+ * - API_BASE_URL: The base URL for your protected API
+ * - POST_LOGOUT_REDIRECT_URI: Where to redirect after logout
  */
 
 const _env = (import.meta && (import.meta as any).env) || {};
-
-function _parseBool(val: any, def = false) {
-  if (val === undefined || val === null) return def;
-  return String(val).toLowerCase() === 'true';
-}
 
 function _parseArray(val: any, def: any[] = []) {
   if (val === undefined || val === null) return def;
@@ -40,8 +37,6 @@ export const AUTH_CONFIG = {
   // Optional: Post logout redirect URI
   POST_LOGOUT_REDIRECT_URI: _env.VITE_POST_LOGOUT_REDIRECT_URI,
 };
-
-console.log('AUTH_CONFIG:', AUTH_CONFIG);
 
 /**
  * Configuration object to be passed to MSAL instance on creation. 
