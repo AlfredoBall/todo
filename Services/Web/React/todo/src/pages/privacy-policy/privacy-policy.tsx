@@ -2,28 +2,30 @@ import './privacy-policy.css';
 
 export default function PrivacyPolicy() {
   return (
-    <div className="container">
-      <h1>Privacy Policy</h1>
-      <div className="meta">Effective Date: December 22, 2025</div>
-      <p>This Privacy Policy describes how <strong>To Do - React</strong> ("we," "us," or "our") handles your information. Your privacy is our priority, and we are committed to protecting it through our compliance with this policy.</p>
-      <h2>1. Information Collection</h2>
-      <p>We do not collect, store, or access any personal information (such as your name, email address, or phone number) while you use <strong>To Do - React</strong>. Any data generated within the app is stored locally on your device and is not transmitted to our servers.</p>
-      <h2>2. No Data Sharing or Selling</h2>
-      <p>We do not sell, trade, or otherwise transfer your information to outside parties. Because we do not collect your data, there is no information available to be shared with third-party advertisers, data brokers, or marketing firms.</p>
-      <h2>3. Third-Party Services</h2>
-      <p>Our app does not contain links to third-party websites or services that collect user data, nor do we use third-party analytics or advertising SDKs that track your behavior across the web.</p>
-      <h2>4. Security</h2>
-      <p>We take the security of your device-stored data seriously. Since all data remains on your physical device, its security is subject to your device’s own security settings (such as passcodes or biometric locks).</p>
-      <h2>5. Children’s Privacy</h2>
-      <p>Our app is safe for users of all ages. We do not knowingly collect or solicit personal information from children under the age of 13.</p>
-      <h2>6. Changes to This Policy</h2>
-      <p>We may update our Privacy Policy from time to time. Any changes will be posted on this page with an updated "Effective Date." We encourage you to review this policy periodically.</p>
-      <h2>7. Contact Us</h2>
-      <div className="contact">
-        <p>If you have any questions about this Privacy Policy, please contact us at:</p>
-        <ul>
-          <li>Email: <a href="mailto:alfredo.ball@gmail.com">alfredo.ball@gmail.com</a></li>
-        </ul>
+    <div className="privacy-policy-page">
+      <div className="container">
+        <h1>Privacy Policy</h1>
+        <div className="meta">Effective Date: December 22, 2025</div>
+        <p>This Privacy Policy describes how <strong>To Do - React</strong> ("we," "us," or "our") handles your information. Your privacy is our priority, and we are committed to protecting it through our compliance with this policy.</p>
+        <h2>1. Information Collection</h2>
+        <p>We do not collect, store, or access any personal information (such as your name, email address, or phone number) while you use <strong>To Do - React</strong>. Any data generated within the app is stored locally on your device and is not transmitted to our servers.</p>
+        <h2>2. No Data Sharing or Selling</h2>
+        <p>We do not sell, trade, or otherwise transfer your information to outside parties. Because we do not collect your data, there is no information available to be shared with third-party advertisers, data brokers, or marketing firms.</p>
+        <h2>3. Third-Party Services</h2>
+        <p>Our app does not contain links to third-party websites or services that collect user data, nor do we use third-party analytics or advertising SDKs that track your behavior across the web.</p>
+        <h2>4. Security</h2>
+        <p>We take the security of your device-stored data seriously. Since all data remains on your physical device, its security is subject to your devices own security settings (such as passcodes or biometric locks).</p>
+        <h2>5. Childrens Privacy</h2>
+        <p>Our app is safe for users of all ages. We do not knowingly collect or solicit personal information from children under the age of 13.</p>
+        <h2>6. Changes to This Policy</h2>
+        <p>We may update our Privacy Policy from time to time. Any changes will be posted on this page with an updated "Effective Date." We encourage you to review this policy periodically.</p>
+        <h2>7. Contact Us</h2>
+        <div className="contact">
+          <p>If you have any questions about this Privacy Policy, please contact us at:</p>
+          <ul>
+            <li>Email: <a href="mailto:alfredo.ball@gmail.com">alfredo.ball@gmail.com</a></li>
+          </ul>
+        </div>
       </div>
     </div>
   );
