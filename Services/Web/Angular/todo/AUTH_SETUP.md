@@ -36,7 +36,6 @@ In your app registration:
 ```typescript
 // File: src/app/auth-config.ts
 export const AUTH_CONFIG = {
-  BYPASS_AUTH_IN_DEV: false,  // ← Change to false to enable auth
   CLIENT_ID: '<YOUR_ANGULAR_CLIENT_ID>',
   TENANT_ID: '<YOUR_TENANT_ID>',
   REDIRECT_URI: 'https://localhost:<YOUR_ANGULAR_DEV_PORT>',

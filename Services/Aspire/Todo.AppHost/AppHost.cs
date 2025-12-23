@@ -20,11 +20,8 @@ var terraformInit = builder.AddExecutable("terraform-init", "terraform", terrafo
 // Add Terraform as an executable resource with environment variables
 var terraformApply = builder.AddExecutable("terraform-setup", "terraform", terraformDir, "apply", "-auto-approve")
     .WaitForCompletion(terraformInit)
-    .WithEnvironment("TF_CLI_ARGS", "-no-color")
-    .WithEnvironment("TF_VAR_tenant_id", tenantId)
-    .WithEnvironment("TF_VAR_api_redirect_uri", "https://localhost:7258/")
-    .WithEnvironment("TF_VAR_react_redirect_uri", "https://localhost:5173/")
-    .WithEnvironment("TF_VAR_angular_redirect_uri", "https://localhost:4200/");
+    .WithEnvironment("TF_CLI_ARGS", "-no-color");
+
 // Note: GitHub OIDC variables are NOT needed for local development
 // GitHub Actions integration is configured in the production Terraform directory
 
@@ -82,18 +79,18 @@ var generateAngularEnv = builder.AddExecutable(
     "-File",
     Path.GetFullPath(Path.Combine(builder.AppHostDirectory, "../../../DevOps/Scripts/generate-angular-dev-env.ps1")),
     "-TerraformDir", terraformDir,
-    "-EnvPath", Path.GetFullPath(Path.Combine(builder.AppHostDirectory, "../../../Services/Web/Angular/todo/.env"))
+    "-EnvPath", Path.GetFullPath(Path.Combine(builder.AppHostDirectory, "../../../Services/Web/Angular/todo/src/environments/environment.development.ts"))
 ).WithWorkingDirectory(Path.GetFullPath(Path.Combine(builder.AppHostDirectory, "../../../DevOps/Scripts"))).WaitForCompletion(terraformApply);
 
 // For the Angular and React Apps, .WaitforCompletion(terraformApply) is necessary,
 // even though the API waits for completion of the terraformApply resource and the Web App's resource waits for the API.
 // WaitFor only means it waits for the API resource to be configured, not that the terraformApply resource itself has completed.
 
-//builder.AddNpmApp("Todo-Angular", "../../Web/Angular/todo")
-//    .WithReference(api)
-//    .WaitForCompletion(terraformApply)
-//    .WaitFor(api)
-//    .WaitForCompletion(generateAngularEnv);
+builder.AddNpmApp("Todo-Angular", "../../Web/Angular/todo")
+    .WithReference(api)
+    .WaitForCompletion(terraformApply)
+    .WaitFor(api)
+    .WaitForCompletion(generateAngularEnv);
 
 builder.AddNpmApp("Todo-React", "../../Web/React/todo", "dev")
   .WithReference(api)
@@ -107,7 +104,6 @@ builder.AddNpmApp("Todo-React", "../../Web/React/todo", "dev")
       context.EnvironmentVariables["VITE_REDIRECT_URI"] = "https://localhost:5173";
       context.EnvironmentVariables["VITE_POST_LOGOUT_REDIRECT_URI"] = "https://localhost:5173";
       context.EnvironmentVariables["VITE_API_BASE_URL"] = "/api";
-      context.EnvironmentVariables["VITE_BYPASS_AUTH_IN_DEV"] = "false";
   });
 
 await builder.Build().RunAsync();

@@ -1,7 +1,7 @@
 // Azure AD App Registration for the API
 resource "azuread_application" "api_app_registration" {
   display_name     = "To Do API"
-  sign_in_audience = "AzureADMyOrg"
+  sign_in_audience = var.sign_in_audience
   prevent_duplicate_names = true
 
   # Expose an API scope so other apps can request consent
@@ -15,9 +15,6 @@ resource "azuread_application" "api_app_registration" {
       user_consent_description   = "Allow the application to access the To Do API on your behalf."
       user_consent_display_name  = "Access To Do API"
     }
-    
-    # CRITICAL: Set this to 2 to ensure tokens have the api:// prefix in the aud claim
-    requested_access_token_version = 2
   }
 
   feature_tags {

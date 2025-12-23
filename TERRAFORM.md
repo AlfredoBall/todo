@@ -91,7 +91,6 @@ When deploying the front-end and API to Azure, you must set the following Applic
 - `VITE_API_SCOPES` — API scopes (JSON array, e.g., `["api://<client-id>/access_as_user"]`)
 - `VITE_REDIRECT_URI` / `VITE_POST_LOGOUT_REDIRECT_URI` — Redirect URIs for the React app
 - `VITE_API_BASE_URL` — API base URL
-- `VITE_BYPASS_AUTH_IN_DEV` — Optional (development only)
 
 Set these in the Azure Portal under your App Service or Static Web App -> Configuration, or manage them via Terraform using the appropriate app settings blocks in your deployment configuration.
 
