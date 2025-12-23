@@ -39,19 +39,19 @@ resource "azuread_service_principal" "angular_dev_sp" {
   owners      = [data.azuread_client_config.current.object_id]
 }
 
-# Grant admin consent for Microsoft Graph User.Read to todo-angular-dev service principal
-resource "azuread_service_principal_delegated_permission_grant" "angular_dev_graph_user_read" {
-  service_principal_object_id           = azuread_service_principal.angular_dev_sp.object_id
-  resource_service_principal_object_id  = data.azuread_service_principal.microsoft_graph.object_id
-  claim_values                         = ["openid","User.Read"]
-}
-
 # Grant admin consent for API access_as_user to todo-angular-dev service principal
 resource "azuread_service_principal_delegated_permission_grant" "angular_dev_api_access_as_user" {
   service_principal_object_id           = azuread_service_principal.angular_dev_sp.object_id
   resource_service_principal_object_id  = azuread_service_principal.api_dev_sp.object_id
   claim_values                         = ["access_as_user"]
-  
+}
+
+# Grant admin consent for Microsoft Graph User.Read to todo-angular-dev service principal
+resource "azuread_service_principal_delegated_permission_grant" "angular_dev_graph_user_read" {
+  service_principal_object_id           = azuread_service_principal.angular_dev_sp.object_id
+  resource_service_principal_object_id  = data.azuread_service_principal.microsoft_graph.object_id
+  claim_values                         = ["openid","User.Read"]
+
   # Enforce the order you observed to ensure openid is applied correctly
   depends_on = [azuread_service_principal_delegated_permission_grant.angular_dev_api_access_as_user]
 }
