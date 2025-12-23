@@ -42,7 +42,6 @@ Expose an API scope for your API (Microsoft Entra ID → App registrations → s
 Update `Services/Web/React/todo/.env` (Vite picks up `VITE_` variables). Example values:
 
 ```
-VITE_BYPASS_AUTH_IN_DEV=true
 VITE_CLIENT_ID=<YOUR_REACT_CLIENT_ID>
 VITE_TENANT_ID=<YOUR_TENANT_ID>
 VITE_REDIRECT_URI=https://localhost:<REACT_DEV_PORT>
@@ -51,7 +50,6 @@ VITE_API_BASE_URL=/api
 VITE_API_SCOPES=["api://<YOUR_API_CLIENT_ID>/scope"]
 ```
 
-- `VITE_BYPASS_AUTH_IN_DEV`: when `true` the app bypasses auth for easier development (see `src/auth-config.ts`).
 - `VITE_API_SCOPES` can be a JSON array or a comma-separated string; `src/auth-config.ts` parses both.
 
 ## 4. React config file
@@ -97,8 +95,6 @@ app.UseAuthorization();
 
 ## 7. Development tips
 - Dev server runs at `https://localhost:<REACT_DEV_PORT>` (Vite). Ensure Azure redirect URI exactly matches this origin plus path if used.
-- If you use `VITE_BYPASS_AUTH_IN_DEV=true`, the UI will show a dev-mode warning and not require login.
-- To test real auth set `VITE_BYPASS_AUTH_IN_DEV=false`, update `.env`, restart the dev server, and sign in.
 
 ## 8. Troubleshooting
 - AADSTS50011: redirect URI mismatch — ensure the redirect URI in Azure matches `VITE_REDIRECT_URI` exactly.
@@ -112,7 +108,6 @@ app.UseAuthorization();
 ## Next steps
 1. Create the two app registrations and expose your API scope.
 2. Populate `Services/Web/React/todo/.env` with real values.
-3. Set `VITE_BYPASS_AUTH_IN_DEV=false` to test authentication.
 
 Enjoy! 🎯
 

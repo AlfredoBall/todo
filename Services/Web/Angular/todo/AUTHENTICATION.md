@@ -71,9 +71,6 @@ Edit `src/app/auth-config.ts` and replace the placeholder values:
 
 ```typescript
 export const AUTH_CONFIG = {
-  // Set to false to enable authentication
-  BYPASS_AUTH_IN_DEV: true,  // Change to false when ready to test auth
-
   // Replace these with your ANGULAR app registration values
   CLIENT_ID: '<YOUR_ANGULAR_CLIENT_ID>',
   TENANT_ID: '<YOUR_TENANT_ID>',
@@ -126,39 +123,6 @@ export const AUTH_CONFIG = {
 - `src/app/components/navbar/navbar.html` - Added login component to navbar
 - `src/index.html` - Added `<app-redirect>` for MSAL redirects
 - `package.json` - Added MSAL dependencies
-
-## 🚀 Development Mode
-
-### Bypass Authentication (Default)
-By default, authentication is **bypassed** in development mode for easier testing:
-
-```typescript
-BYPASS_AUTH_IN_DEV: true
-```
-
-When bypassed:
-- ⚠️ Warning displayed in navbar: "Auth Disabled (Dev Mode)"
-- All routes accessible without login
-- No Azure connection required
-- API calls will NOT include authentication tokens
-
-### Enable Authentication
-To test with real authentication:
-
-1. Complete Azure app registration (steps above)
-2. Update `auth-config.ts` with your values
-3. Set `BYPASS_AUTH_IN_DEV: false`
-4. Restart dev server
-5. Click "Sign In" to authenticate
-
-## 🛡️ Protected Routes
-
-The following routes require authentication (when `BYPASS_AUTH_IN_DEV: false`):
-- `/` (Home page)
-- `/clipboard/:clipboardId` (Clipboard detail page)
-
-Public routes (no auth required):
-- `/about` (About page)
 
 ## 🔧 Backend API Configuration
 
@@ -243,7 +207,6 @@ No manual header manipulation needed!
 1. **Complete Azure app registration** (see instructions above)
 2. **Update auth-config.ts** with your Azure values
 3. **Configure your .NET API** to validate tokens
-4. **Set BYPASS_AUTH_IN_DEV to false** when ready to test
 5. **Test the authentication flow** by clicking "Sign In"
 
 Enjoy your game! The authentication is ready when you are! 🎯

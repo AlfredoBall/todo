@@ -1,8 +1,10 @@
 // Azure AD App Registration for the Angular client
 resource "azuread_application" "angular_app" {
   display_name     = "To Do Angular App"
-  sign_in_audience = "AzureADMyOrg"
+  sign_in_audience = var.sign_in_audience
   prevent_duplicate_names = true
+
+
 
   single_page_application {
     redirect_uris = [
@@ -36,19 +38,27 @@ resource "azuread_application" "angular_app" {
   }
 }
 
-resource "time_sleep" "wait_for_angular_app" {
-  depends_on = [azuread_application.angular_app]
-  create_duration = "30s"
-}
-
 resource "azuread_service_principal" "angular_sp" {
   client_id = azuread_application.angular_app.client_id
   
   feature_tags {
     enterprise = false
   }
-  
-  depends_on = [time_sleep.wait_for_angular_app]
 }
 
+# Grant admin consent for API access_as_user to To Do Angular App service principal
+resource "azuread_service_principal_delegated_permission_grant" "angular_api_access_as_user" {
+  service_principal_object_id           = azuread_service_principal.angular_sp.object_id
+  resource_service_principal_object_id  = azuread_service_principal.api_sp.object_id
+  claim_values                         = ["access_as_user"]
+}
 
+# Grant admin consent for Microsoft Graph User.Read to To Do Angular App service principal
+resource "azuread_service_principal_delegated_permission_grant" "angular_graph_user_read" {
+  service_principal_object_id          = azuread_service_principal.angular_sp.object_id
+  resource_service_principal_object_id = data.azuread_service_principal.microsoft_graph.object_id
+  claim_values                        = ["User.Read", "openid"]
+
+  # Enforce the order you observed to ensure openid is applied correctly
+  depends_on = [azuread_service_principal_delegated_permission_grant.angular_api_access_as_user]
+}

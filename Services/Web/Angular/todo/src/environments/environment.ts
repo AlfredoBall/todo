@@ -5,5 +5,4 @@ export const environment = {
     NG_APP_RedirectUri: '', // replaced by CI
     NG_APP_PostLogoutRedirectUri: '', // replaced by CI
     NG_APP_apiScopes: '', // replaced by CI
-    NG_APP_bypassAuthInDev: false // replaced by CI
 };

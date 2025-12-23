@@ -2,10 +2,7 @@ import type { IClipboardItem, ITodoItem } from "../types";
 import type { IPublicClientApplication } from "@azure/msal-browser";
 import { AUTH_CONFIG } from "../auth-config";
 
-// Use '/api' for development (proxy), or VITE_API_BASE_URL for production
-const API_BASE_URL = import.meta.env.MODE === 'production' 
-  ? (import.meta.env.VITE_API_BASE_URL + '/api' || '/api')
-  : '/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 
 export class ApiService {
   private msalInstance: IPublicClientApplication | null = null;
@@ -18,10 +15,6 @@ export class ApiService {
     const headers: HeadersInit = {
       'Content-Type': 'application/json'
     };
-
-    if (AUTH_CONFIG.BYPASS_AUTH_IN_DEV) {
-      return headers;
-    }
 
     if (!this.msalInstance) {
       return headers;
@@ -134,7 +127,7 @@ export class ApiService {
 
   public async addClipboard(name: string): Promise<Response> {
     const headers = await this.getAuthHeaders();
-    return await fetch(`${API_BASE_URL}/api/clipboard?name=${encodeURIComponent(name)}`, {
+    return await fetch(`${API_BASE_URL}/clipboard?name=${encodeURIComponent(name)}`, {
       method: 'POST',
       headers
     });

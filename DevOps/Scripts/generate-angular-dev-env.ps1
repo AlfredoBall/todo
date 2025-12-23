@@ -1,7 +1,7 @@
 # Generates a .env file for Angular from Terraform outputs
 param(
     [string]$TerraformDir = "../../../../DevOps/Infrastructure/Terraform-Dev",
-    [string]$EnvPath = "../../Services/Web/Angular/todo/.env"
+    [string]$EnvPath = "../../Services/Web/Angular/todo/src/environments/environment.development.ts"
 )
 
 Write-Host "[generate-angular-dev-env.ps1] Starting script..."
@@ -44,16 +44,30 @@ $envVars = @{
     "NG_APP_PostLogoutRedirectUri"  = "https://localhost:4200"
     "NG_APP_API_BASE_URL"           = "/api"
     "NG_APP_AzureAd__Scopes"        = "access_as_user"
-    "NG_APP_bypassAuthInDev"        = "false"
     "NG_APP_production"             = "false"
 }
 
-# Write to .env file
+# Write to environment.development.ts file
 try {
-    $lines = $envVars.GetEnumerator() | ForEach-Object { "{0}={1}" -f $_.Key, $_.Value }
-    $lines | Set-Content -Path $EnvPath -Encoding UTF8
-    Write-Host "[generate-angular-dev-env.ps1] .env file generated at $EnvPath"
+    $tsContent = @()
+    $tsContent += "export const environment = {"
+    foreach ($kvp in $envVars.GetEnumerator()) {
+        $key = $kvp.Key
+        $value = $kvp.Value
+        if ($value -eq $null) { $value = '' }
+        if ($value -eq 'true' -or $value -eq 'false') {
+            $tsContent += "    $($key): $($value),"
+        } elseif ($value -match '^[0-9]+$') {
+            $tsContent += "    $($key): $($value),"
+        } else {
+            $escaped = $value.Replace("'", "\'")
+            $tsContent += "    $($key): '$escaped',"
+        }
+    }
+    $tsContent += "};"
+    $tsContent | Set-Content -Path $EnvPath -Encoding UTF8
+    Write-Host "[generate-angular-dev-env.ps1] environment.development.ts file generated at $EnvPath"
 } catch {
-    Write-Error "[generate-angular-dev-env.ps1] Failed to write .env file: $_"
+    Write-Error "[generate-angular-dev-env.ps1] Failed to write environment.development.ts file: $_"
     exit 1
 }

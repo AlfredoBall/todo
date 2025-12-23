@@ -13,11 +13,6 @@ A full-stack todo application built with .NET 10, Angular 21, React 19, and Azur
 - **Infrastructure**: Terraform for Azure AD app registrations
 -
 
-## Live demo
-- **React (deployed)**: https://ambitious-dune-011767210.1.azurestaticapps.net
-- This currently only works if you have an account within my tenant.
-- I'm going to setup self registration next... coming soon.
-
 ![Top Todo Image](./pic1.png)
 
 <hr style="border: 2px solid gray">
@@ -131,8 +126,6 @@ The AppHost will automatically:
 4. ✅ Inject all environment variables into API, React, and Angular
 5. ✅ Start all services with correct configuration
 6. ✅ Open the Aspire dashboard in your browser
-
-**No .env files or manual configuration needed! (The .env file is generated automatically for the Angular app)**
 
 ## Aspire Dependency Graph
 ![Aspire Dependency Graph](./pic3.png)
@@ -307,23 +300,9 @@ Everything else is automatically configured from Terraform outputs:
 - `NG_APP_apiScopes` - API access scope
 - All other NG_APP_* variables
 
-**React receives:**
-- `VITE_CLIENT_ID` - React client ID
-- `VITE_TENANT_ID` - Tenant ID
-- `VITE_API_SCOPES` - API access scope
-- All other VITE_* variables
 
-### Customizing Ports
 
-To change the default ports, edit `AppHost.cs`:
 
-```csharp
-.WithEnvironment("TF_VAR_api_redirect_uri", "https://localhost:YOUR_PORT/")
-.WithEnvironment("TF_VAR_react_redirect_uri", "https://localhost:YOUR_PORT/")
-.WithEnvironment("TF_VAR_angular_redirect_uri", "https://localhost:YOUR_PORT/")
-```
-
-**Note**: You must also update the corresponding `launch.json` files for Angular/React to use the same ports.
 
 ## Troubleshooting
 
@@ -451,12 +430,6 @@ The production Terraform configuration (`DevOps/Infrastructure/Terraform`) can a
 ![Azure Resource Group Resources](./pic6.png)
 
 **Note:** This is separate from local development (`Terraform-Dev`) and only needed for CI/CD deployments.
-
-## ⚠️ Important Security Note
-
-**The production `terraform.tfvars` file is checked into this repository for educational purposes only.**
-
-This is a **security exception** made for demonstration and learning. In production environments, `terraform.tfvars` should NEVER be committed because it contains sensitive subscription IDs, tenant IDs, and infrastructure details. See [TERRAFORM.md](TERRAFORM.md) for detailed security best practices.
 
 ## Contributing
 

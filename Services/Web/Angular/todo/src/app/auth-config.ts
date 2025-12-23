@@ -15,9 +15,6 @@ import { environment } from '../environments/environment';
  */
 
 export const AUTH_CONFIG = {
-  // Set to true to bypass authentication in development (reads from environment)
-  BYPASS_AUTH_IN_DEV: environment.NG_APP_bypassAuthInDev === false,
-
   // Azure AD Configuration (read from environment with fallbacks)
   CLIENT_ID: environment.NG_APP_AzureAd__ClientID,
   TENANT_ID: environment.NG_APP_AzureAd__TenantId,

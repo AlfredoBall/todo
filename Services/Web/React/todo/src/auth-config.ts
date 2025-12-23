@@ -28,9 +28,6 @@ function _parseArray(val: any, def: any[] = []) {
 }
 
 export const AUTH_CONFIG = {
-  // Set to true to bypass authentication in development (reads Vite env)
-  BYPASS_AUTH_IN_DEV: _parseBool(_env.VITE_BYPASS_AUTH_IN_DEV, false),
-
   // Azure AD Configuration (read from Vite env with fallbacks)
   CLIENT_ID: _env.VITE_CLIENT_ID,
   TENANT_ID: _env.VITE_TENANT_ID,
