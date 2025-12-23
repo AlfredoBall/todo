@@ -61,6 +61,6 @@ resource "azuread_service_principal_delegated_permission_grant" "react_graph_use
   resource_service_principal_object_id = data.azuread_service_principal.microsoft_graph.object_id
   claim_values                        = ["User.Read", "openid"]
 
-  # Enforce the order you observed to ensure openid is applied correctly
+  # Enforce the order to ensure openid is applied correctly
   depends_on = [azuread_service_principal_delegated_permission_grant.react_api_access_as_user]
 }

@@ -81,4 +81,3 @@ resource "azurerm_resource_group" "rg" {
   location = var.location
   tags     = var.resource_tags
 }
-
