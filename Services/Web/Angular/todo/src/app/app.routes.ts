@@ -15,4 +15,13 @@ export const routes: Routes = [
         path: '',
         component: Home,
     }
+    ,
+    {
+        path: 'privacy-policy',
+        loadComponent: () => import('./pages/privacy-policy/privacy-policy').then(m => m.PrivacyPolicyComponent)
+    },
+    {
+        path: 'terms-of-use',
+        loadComponent: () => import('./pages/terms-of-use/terms-of-use').then(m => m.TermsOfUseComponent)
+    }
 ];

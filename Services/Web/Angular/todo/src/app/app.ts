@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterOutlet, RouterLink, Router, NavigationEnd } from '@angular/router';
 import { Navbar } from './components/navbar/navbar';
 import { MsalService, MsalBroadcastService, MsalInterceptor, MsalInterceptorConfiguration } from '@azure/msal-angular';
 import { InteractionStatus, EventMessage, EventType, AuthenticationResult, InteractionType } from '@azure/msal-browser';
@@ -10,7 +10,7 @@ import { AUTH_CONFIG } from './auth-config';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Navbar],
+  imports: [RouterOutlet, RouterLink, Navbar],
   templateUrl: './app.html',
   styleUrl: './app.css',
   providers: [
@@ -24,11 +24,22 @@ import { AUTH_CONFIG } from './auth-config';
 export class App implements OnInit, OnDestroy {
   private msalService = inject(MsalService);
   private msalBroadcastService = inject(MsalBroadcastService);
+  private router = inject(Router);
   private readonly destroy$ = new Subject<void>();
 
   ngOnInit(): void {
     // Handle redirect after login
     this.msalService.handleRedirectObservable().subscribe();
+
+    // Scroll to top on route change
+    this.router.events
+      .pipe(
+        filter(event => event instanceof NavigationEnd),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(() => {
+        window.scrollTo(0, 0);
+      });
 
     // Set active account when interaction is complete
     this.msalBroadcastService.inProgress$
