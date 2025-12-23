@@ -1,8 +1,9 @@
-.container { max-width: 700px; margin: auto; background: #fff; padding: 2rem 2.5rem; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); }
-h1 { color: #2d6cdf; margin-bottom: 0.5rem; }
-h2 { color: #444; margin-top: 2rem; }
 p, li { line-height: 1.7; }
 ul { padding-left: 1.2rem; }
-.meta { color: #888; font-size: 0.95em; margin-bottom: 2rem; }
-.contact { margin-top: 2rem; font-size: 1.05em; }
-body { font-family: 'Segoe UI', Arial, sans-serif; margin: 2rem; background: #fafbfc; color: #222; }
+.terms-of-use-page .container { max-width: 700px; margin: auto; background: #fff; padding: 2rem 2.5rem; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); }
+.terms-of-use-page h1 { color: #2d6cdf; margin-bottom: 0.5rem; }
+.terms-of-use-page h2 { color: #444; margin-top: 2rem; }
+.terms-of-use-page p, .terms-of-use-page li { line-height: 1.7; }
+.terms-of-use-page ul { padding-left: 1.2rem; }
+.terms-of-use-page .meta { color: #888; font-size: 0.95em; margin-bottom: 2rem; }
+.terms-of-use-page .contact { margin-top: 2rem; font-size: 1.05em; }

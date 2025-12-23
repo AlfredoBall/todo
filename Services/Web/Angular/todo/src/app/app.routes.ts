@@ -23,5 +23,9 @@ export const routes: Routes = [
     {
         path: 'terms-of-use',
         loadComponent: () => import('./pages/terms-of-use/terms-of-use').then(m => m.TermsOfUseComponent)
+    },
+    {
+        path: 'delete-data',
+        loadComponent: () => import('./pages/delete-data/delete-data').then(m => m.DeleteDataComponent)
     }
 ];
