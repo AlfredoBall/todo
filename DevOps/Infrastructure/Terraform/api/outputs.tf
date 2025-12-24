@@ -7,14 +7,14 @@ output "api_app_registration_client_id" {
   value = azuread_application.api_app_registration.client_id
 }
 
-output "api_scope" {
-  description = "API scope for authentication (format: api://client-id/scope)"
+output "api_scope_string" {
+  description = "API scope string for authentication (format: api://client-id/scope), used by client apps."
   value       = "api://${azuread_application.api_app_registration.client_id}/access_as_user"
 }
 
-output "api_scope_id" {
-  value = tolist(azuread_application.api_app_registration.api.oauth2_permission_scope)[0].id
-  description = "The UUID of the API scope for delegated permission. Use this for advanced authentication scenarios."
+output "api_scope_uuid" {
+  value = "b7e7e8e2-8c2a-4e2a-9e2a-123456789abc"
+  description = "The UUID (GUID) of the API scope for delegated permission. Used for Azure AD wiring and automation."
 }
 
 output "api_service_principal_id" {
