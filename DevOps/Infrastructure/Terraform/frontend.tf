@@ -9,7 +9,8 @@ resource "azuread_application" "frontend_app" {
 
   single_page_application {
     redirect_uris = [
-      "https://${azurerm_linux_web_app.frontend.default_hostname}/auth-callback"
+      "https://${azurerm_linux_web_app.frontend.default_hostname}/todo/react",
+      "https://${azurerm_linux_web_app.frontend.default_hostname}/todo/angular"
       # Add additional redirect URIs as needed for your Angular/React apps
     ]
   }
