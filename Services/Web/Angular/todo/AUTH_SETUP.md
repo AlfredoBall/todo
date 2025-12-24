@@ -40,7 +40,7 @@ export const AUTH_CONFIG = {
   TENANT_ID: '<YOUR_TENANT_ID>',
   REDIRECT_URI: 'https://localhost:<YOUR_ANGULAR_DEV_PORT>',
   API_BASE_URL: '/api',
-  API_SCOPES: ['api://<YOUR_API_CLIENT_ID>/access_as_user'],
+  API_SCOPE_URI: ['api://<YOUR_API_CLIENT_ID>/access_as_user'],
   POST_LOGOUT_REDIRECT_URI: 'https://localhost:<YOUR_ANGULAR_DEV_PORT>'
 };
 ```

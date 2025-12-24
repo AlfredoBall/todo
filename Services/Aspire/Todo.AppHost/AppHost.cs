@@ -100,7 +100,7 @@ builder.AddNpmApp("Todo-React", "../../Web/React/todo", "dev")
   {
       context.EnvironmentVariables["VITE_CLIENT_ID"] = cachedOutputs.ReactClientId;
       context.EnvironmentVariables["VITE_TENANT_ID"] = cachedOutputs.TenantId;
-      context.EnvironmentVariables["VITE_API_SCOPES"] = $"[\"{cachedOutputs.ApiScopeUri}\"]";
+      context.EnvironmentVariables["VITE_API_SCOPE_URI"] = $"[\"{cachedOutputs.ApiScopeUri}\"]";
       context.EnvironmentVariables["VITE_REDIRECT_URI"] = "https://localhost:5173";
       context.EnvironmentVariables["VITE_POST_LOGOUT_REDIRECT_URI"] = "https://localhost:5173";
       context.EnvironmentVariables["VITE_API_BASE_URL"] = "/api";

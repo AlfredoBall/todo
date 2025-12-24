@@ -30,7 +30,7 @@ This file contains the MSAL configuration with Azure app registration values:
 - `CLIENT_ID`: Application (client) ID from Azure
 - `TENANT_ID`: Directory (tenant) ID from Azure
 - `REDIRECT_URI`: Must match the redirect URI in Azure (e.g., https://localhost:<YOUR_PORT>)
-- `API_SCOPES`: Custom scopes for your .NET API
+- `API_SCOPE_URI`: Custom scopes for your .NET API
 - `BYPASS_AUTHENTICATION`: Set to true to bypass auth during development
 
 ## Step 3: Update Main Entry Point
@@ -146,7 +146,7 @@ In the Azure Entra admin center:
 - Ensure CLIENT_ID and TENANT_ID are correct in authConfig.ts
 
 ### API returns 401 Unauthorized
-- Verify API_SCOPES matches the exposed API scope in Azure
+- Verify API_SCOPE_URI matches the exposed API scope in Azure
 - Check that API is configured to validate the token
 - Ensure API accepts tokens from your tenant
 

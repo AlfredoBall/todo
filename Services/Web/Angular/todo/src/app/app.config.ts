@@ -55,7 +55,7 @@ export function MSALInstanceFactory(): IPublicClientApplication {
  */
 export function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
   const protectedResourceMap = new Map<string, Array<string>>();
-  protectedResourceMap.set(`${AUTH_CONFIG.API_BASE_URL}`, AUTH_CONFIG.API_SCOPES);
+  protectedResourceMap.set(`${AUTH_CONFIG.API_BASE_URL}`, AUTH_CONFIG.API_SCOPE_URI);
   return {
     interactionType: InteractionType.Popup,
     protectedResourceMap

@@ -7,7 +7,7 @@ import { LogLevel } from '@azure/msal-browser';
  * - CLIENT_ID: Application (client) ID from Azure app registration
  * - TENANT_ID: Directory (tenant) ID from Azure app registration
  * - REDIRECT_URI: Must match the redirect URI configured in Azure (e.g., https://localhost:<YOUR_PORT>)
- * - API_SCOPES: The custom scopes for your .NET API (format: api://<CLIENT_ID>/<scope>)
+ * - API_SCOPE_URI: The custom scopes for your .NET API (format: api://<CLIENT_ID>/<scope>)
  * - API_BASE_URL: The base URL for your protected API
  * - POST_LOGOUT_REDIRECT_URI: Where to redirect after logout
  */
@@ -91,7 +91,7 @@ export const msalConfig = {
  * https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-permissions-and-consent#openid-connect-scopes
  */
 export const loginRequest = {
-  scopes: [...AUTH_CONFIG.API_SCOPES],
+  scopes: [...AUTH_CONFIG.API_SCOPE_URI],
 };
 
 /**
@@ -100,6 +100,6 @@ export const loginRequest = {
 export const protectedResources = {
   apiTodoList: {
     endpoint: AUTH_CONFIG.API_BASE_URL,
-    scopes: AUTH_CONFIG.API_SCOPES,
+    scopes: AUTH_CONFIG.API_SCOPE_URI,
   },
 };
