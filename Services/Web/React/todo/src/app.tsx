@@ -2,7 +2,7 @@ import './app.css'
 
 import Home from './pages/home/home'
 import Navbar from './components/navbar/navbar'
-import { Route, BrowserRouter as Router, Routes, Link, useLocation } from 'react-router-dom'
+import { Route, BrowserRouter, Routes, Link, useLocation } from 'react-router-dom'
 import { About } from './pages/about/about'
 import { SnackbarProvider } from './components/snackbar/snackbar'
 import { MsalProvider } from '@azure/msal-react'
@@ -29,7 +29,7 @@ function App({ msalInstance }: AppProps) {
   return (
     <MsalProvider instance={msalInstance}>
       <SnackbarProvider>
-        <Router>
+        <BrowserRouter basename="/todo/react">
           <div className="app-content">
             <ScrollToTop />
             <Navbar />
@@ -46,7 +46,7 @@ function App({ msalInstance }: AppProps) {
             <Link to="/terms-of-use" style={{ marginRight: '2rem' }}>Terms of Use</Link>
             <Link to="/delete-data">Delete Data</Link>
           </footer>
-        </Router>
+        </BrowserRouter>
       </SnackbarProvider>
     </MsalProvider>
   )
