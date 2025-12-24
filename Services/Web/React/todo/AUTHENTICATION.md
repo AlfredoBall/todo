@@ -58,7 +58,7 @@ Key variables used in code:
 - `AUTH_CONFIG.TENANT_ID` → `VITE_TENANT_ID`
 - `AUTH_CONFIG.REDIRECT_URI` → `VITE_REDIRECT_URI`
 - `AUTH_CONFIG.API_BASE_URL` → `VITE_API_BASE_URL`
-- `AUTH_CONFIG.API_SCOPES` → `VITE_API_SCOPES`
+- `AUTH_CONFIG.API_SCOPE_URI` → `VITE_API_SCOPE_URI`
 
 ## 5. How authentication works
 1. User clicks Sign In (MSAL React triggers a redirect or popup)

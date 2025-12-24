@@ -79,7 +79,7 @@ export const AUTH_CONFIG = {
   // Your .NET API configuration
   API_BASE_URL: '/api',
   // Use the full scope URI from your API's "Expose an API" section
-  API_SCOPES: ['api://<YOUR_API_CLIENT_ID>/scope'],
+  API_SCOPE_URI: ['api://<YOUR_API_CLIENT_ID>/scope'],
   
   POST_LOGOUT_REDIRECT_URI: 'https://localhost:<YOUR_ANGULAR_DEV_PORT>'
 };
@@ -193,7 +193,7 @@ No manual header manipulation needed!
 
 ### Token not added to API requests
 - Check `API_BASE_URL` matches your actual API URL
-- Verify `API_SCOPES` are configured correctly
+- Verify `API_SCOPE_URI` are configured correctly
 - Ensure interceptor is configured in `app.config.ts`
 
 ## 📚 Resources

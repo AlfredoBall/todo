@@ -123,7 +123,7 @@ context.EnvironmentVariables["AzureAd__Audience"] = outputs.ApiAudience;
 ```csharp
 context.EnvironmentVariables["VITE_CLIENT_ID"] = outputs.ReactClientId;
 context.EnvironmentVariables["VITE_TENANT_ID"] = outputs.TenantId;
-context.EnvironmentVariables["VITE_API_SCOPES"] = $"[\"{outputs.ApiScope}\"]";
+context.EnvironmentVariables["VITE_API_SCOPE_URI"] = $"[\"{outputs.ApiScope}\"]";
 // ... all other VITE_* variables
 ```
 
