@@ -38,7 +38,7 @@ output "tenant_id" {
   value       = var.tenant_id
 }
 
-output "api_scope_string" {
-  description = "API scope for authentication (format: api://client-id/scope)"
-  value       = module.api.api_scope_string
+output "api_scope_uri" {
+  description = "API scope URI for authentication (format: api://client-id/scope)"
+  value       = module.api.api_scope_uri
 }
