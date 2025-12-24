@@ -18,9 +18,9 @@ on:
       tenant_id:
         description: 'Azure AD Tenant ID'
         value: ${{ jobs.terraform.outputs.tenant_id }}
-      api_scope:
+      api_scope_string:
         description: 'API OAuth Scope'
-        value: ${{ jobs.terraform.outputs.api_scope }}
+        value: ${{ jobs.terraform.outputs.api_scope_string }}
   workflow_dispatch:
 
 jobs:
@@ -38,7 +38,7 @@ jobs:
       frontend_client_id: ${{ steps.terraform_output.outputs.frontend_client_id }}
       api_client_id: ${{ steps.terraform_output.outputs.api_client_id }}
       tenant_id: ${{ steps.terraform_output.outputs.tenant_id }}
-      api_scope: ${{ steps.terraform_output.outputs.api_scope }}
+      api_scope_string: ${{ steps.terraform_output.outputs.api_scope_string }}
     
     steps:
       - name: Checkout repository
