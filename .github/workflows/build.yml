@@ -23,7 +23,7 @@ on:
         description: 'API app registration client ID'
         required: false
         type: string
-      api_scope:
+      api_scope_string:
         description: 'API scope for authentication'
         required: false
         type: string
@@ -69,7 +69,7 @@ jobs:
           VITE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
           VITE_REDIRECT_URI: ${{ inputs.react_url }}
           VITE_POST_LOGOUT_REDIRECT_URI: ${{ inputs.react_url }}
-          VITE_API_SCOPES: ${{ inputs.api_scope }}
+          VITE_API_SCOPES: ${{ inputs.api_scope_string }}
         run: npm run build
 
       - name: Generate Angular environment.ts file
@@ -83,7 +83,7 @@ jobs:
             NG_APP_AzureAd__TenantId: '${{ secrets.AZURE_TENANT_ID }}',
             NG_APP_RedirectUri: '${{ inputs.angular_url }}',
             NG_APP_PostLogoutRedirectUri: '${{ inputs.angular_url }}',
-            NG_APP_apiScopes: '${{ inputs.api_scope }}'
+            NG_APP_apiScopes: '${{ inputs.api_scope_string }}'
           };
           EOF
 

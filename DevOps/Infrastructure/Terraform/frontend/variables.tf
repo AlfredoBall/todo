@@ -33,9 +33,14 @@ variable "api_app_registration_client_id" {
   description = "Client ID of the API app registration"
 }
 
-variable "api_scope_id" {
+variable "api_scope_string" {
   type        = string
-  description = "ID of the API scope"
+  description = "API scope string for authentication (format: api://client-id/scope), used by client apps."
+}
+
+variable "api_scope_uuid" {
+  type        = string
+  description = "UUID (GUID) of the API scope for delegated permission. Used for Azure AD wiring and automation."
 }
 
 variable "api_service_principal_id" {

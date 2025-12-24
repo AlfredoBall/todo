@@ -38,9 +38,9 @@ output "tenant_id" {
   value       = var.tenant_id
 }
 
-output "api_scope" {
+output "api_scope_string" {
   description = "API scope for authentication (format: api://client-id/scope)"
-  value       = module.api.api_scope
+  value       = module.api.api_scope_string
 }
 
 # Outputs for DNS TXT validation tokens for custom domains (for manual DNS setup)
