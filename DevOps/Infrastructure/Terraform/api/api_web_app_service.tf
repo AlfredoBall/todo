@@ -35,5 +35,6 @@ resource "azurerm_linux_web_app" "api" {
     "AzureAd__Scopes"   = "access_as_user"
     # Application Insights configuration
     "API_APP_INSIGHTS_CONNECTION_STRING" = azurerm_application_insights.api.connection_string
+    "ApplicationInsightsAgent_EXTENSION_VERSION" = "~3"
   }
 }
