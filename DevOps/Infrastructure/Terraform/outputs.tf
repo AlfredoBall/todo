@@ -3,7 +3,6 @@ output "api_app_service_default_url" {
   value       = "https://${azurerm_linux_web_app.api.name}.azurewebsites.net"
 }
 
-
 output "resource_group_name" {
   value       = azurerm_resource_group.rg.name
   description = "Name of the todo resource group"
@@ -27,6 +26,11 @@ output "api_app_service_principal_id" {
 output "frontend_app_service_default_url" {
   description = "Default URL for the combined frontend App Service (Angular + React)"
   value       = "https://${azurerm_linux_web_app.frontend.name}.azurewebsites.net"
+}
+
+output "frontend_app_id" {
+  description = "The Application (client) ID for the Frontend app registration"
+  value       = azuread_application.frontend_app.client_id
 }
 
 output "tenant_id" {
