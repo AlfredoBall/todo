@@ -100,7 +100,7 @@ builder.AddNpmApp("Todo-React", "../../Web/React/todo", "dev")
   {
       context.EnvironmentVariables["VITE_CLIENT_ID"] = cachedOutputs.ReactClientId;
       context.EnvironmentVariables["VITE_TENANT_ID"] = cachedOutputs.TenantId;
-      context.EnvironmentVariables["VITE_API_SCOPES"] = $"[\"{cachedOutputs.ApiScope}\"]";
+      context.EnvironmentVariables["VITE_API_SCOPES"] = $"[\"{cachedOutputs.ApiScopeUri}\"]";
       context.EnvironmentVariables["VITE_REDIRECT_URI"] = "https://localhost:5173";
       context.EnvironmentVariables["VITE_POST_LOGOUT_REDIRECT_URI"] = "https://localhost:5173";
       context.EnvironmentVariables["VITE_API_BASE_URL"] = "/api";
@@ -119,7 +119,7 @@ static async Task<TerraformOutputs> GetTerraformOutputs(string terraformDir)
         ReactClientId = json["react_client_id"]!["value"]!.GetValue<string>(),
         AngularClientId = json["angular_client_id"]!["value"]!.GetValue<string>(),
         TenantId = json["tenant_id"]!["value"]!.GetValue<string>(),
-        ApiScope = json["api_scope"]!["value"]!.GetValue<string>(),
+        ApiScopeUri = json["api_scope_uri"]!["value"]!.GetValue<string>(),
         ApiAudience = json["api_audience"]!["value"]!.GetValue<string>()
     };
 }
@@ -162,6 +162,6 @@ record TerraformOutputs
     public required string ReactClientId { get; init; }
     public required string AngularClientId { get; init; }
     public required string TenantId { get; init; }
-    public required string ApiScope { get; init; }
+    public required string ApiScopeUri { get; init; }
     public required string ApiAudience { get; init; }
 }

@@ -32,7 +32,7 @@ export const AUTH_CONFIG = {
 
   // API Configuration
   API_BASE_URL: _env.VITE_API_BASE_URL,
-  API_SCOPES: _parseArray(_env.VITE_API_SCOPES),
+  API_SCOPE_URI: _parseArray(_env.VITE_API_SCOPE_URI),
 
   // Optional: Post logout redirect URI
   POST_LOGOUT_REDIRECT_URI: _env.VITE_POST_LOGOUT_REDIRECT_URI,

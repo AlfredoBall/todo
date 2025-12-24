@@ -23,8 +23,8 @@ on:
         description: 'API app registration client ID'
         required: false
         type: string
-      api_scope_string:
-        description: 'API scope for authentication'
+      api_scope_uri:
+        description: 'API scope URI for authentication'
         required: false
         type: string
 
@@ -74,7 +74,7 @@ jobs:
           VITE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
           VITE_REDIRECT_URI: ${{ inputs.react_url }}
           VITE_POST_LOGOUT_REDIRECT_URI: ${{ inputs.react_url }}
-          VITE_API_SCOPES: ${{ inputs.api_scope_string }}
+          VITE_API_SCOPE_URI: ${{ inputs.api_scope_uri }}
         run: npm run build
 
       - name: Generate Angular environment.ts file
