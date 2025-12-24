@@ -28,6 +28,7 @@ resource "azurerm_linux_web_app" "api" {
     # (Update this if you use custom domains)
     cors {
       allowed_origins = [
+        "https://${azurerm_linux_web_app.frontend.default_hostname}",
         "https://${azurerm_linux_web_app.frontend.default_hostname}"
       ]
       support_credentials = true
@@ -46,8 +47,6 @@ resource "azurerm_linux_web_app" "api" {
     "AzureAd__Scopes"   = "access_as_user"
   }
 }
-
-
 
 // Terraform resources for the Todo infrastructure
 

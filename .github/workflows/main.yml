@@ -21,10 +21,9 @@ jobs:
     secrets: inherit
     with:
       api_url: ${{ needs.terraform.outputs.api_url }}
-      angular_url: ${{ needs.terraform.outputs.frontend_url }}/todo/angular/
-      react_url: ${{ needs.terraform.outputs.frontend_url }}/todo/react/
-      angular_client_id: ${{ needs.terraform.outputs.frontend_client_id }}
-      react_client_id: ${{ needs.terraform.outputs.frontend_client_id }}
+      angular_url: ${{ needs.terraform.outputs.frontend_url }}/todo/angular
+      react_url: ${{ needs.terraform.outputs.frontend_url }}/todo/react
+      frontend_client_id: ${{ needs.terraform.outputs.frontend_client_id }}
       api_client_id: ${{ needs.terraform.outputs.api_client_id }}
       api_scope: ${{ needs.terraform.outputs.api_scope }}
 
