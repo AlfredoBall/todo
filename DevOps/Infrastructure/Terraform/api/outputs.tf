@@ -7,8 +7,8 @@ output "api_app_registration_client_id" {
   value = azuread_application.api_app_registration.client_id
 }
 
-output "api_scope_string" {
-  description = "API scope string for authentication (format: api://client-id/scope), used by client apps."
+output "api_scope_uri" {
+  description = "API scope URI for authentication (format: api://client-id/scope), used by client apps."
   value       = "api://${azuread_application.api_app_registration.client_id}/access_as_user"
 }
 
@@ -19,9 +19,4 @@ output "api_scope_uuid" {
 
 output "api_service_principal_id" {
   value = azuread_service_principal.api_sp.object_id
-}
-
-output "api_app_insights_connection_string" {
-  value = azurerm_application_insights.api.connection_string
-  sensitive = true
 }

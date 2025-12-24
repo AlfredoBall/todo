@@ -61,12 +61,8 @@ builder.Services.AddCors(options =>
     });
 });
 
-var appInsightsConnectionString = builder.Configuration["API_APP_INSIGHTS_CONNECTION_STRING"];
-
-builder.Services.AddApplicationInsightsTelemetry(options =>
-{
-    options.ConnectionString = appInsightsConnectionString;
-});
+// The Connection String is setup in terraform and injected as an environment variable
+builder.Services.AddApplicationInsightsTelemetry();
 
 var app = builder.Build();
 

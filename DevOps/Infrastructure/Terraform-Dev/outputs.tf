@@ -18,7 +18,7 @@ output "tenant_id" {
   value       = var.tenant_id
 }
 
-output "api_scope" {
+output "api_scope_uri" {
   description = "API scope for authentication"
   value       = "api://${azuread_application.api_dev.client_id}/access_as_user"
 }
