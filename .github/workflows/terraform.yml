@@ -21,6 +21,9 @@ on:
       api_scope_string:
         description: 'API OAuth Scope'
         value: ${{ jobs.terraform.outputs.api_scope_string }}
+      api_app_insights_instrumentation_key:
+        description: 'API Application Insights Instrumentation Key'
+        value: ${{ jobs.terraform.outputs.api_app_insights_instrumentation_key }}
   workflow_dispatch:
 
 jobs:
@@ -39,6 +42,7 @@ jobs:
       api_client_id: ${{ steps.terraform_output.outputs.api_client_id }}
       tenant_id: ${{ steps.terraform_output.outputs.tenant_id }}
       api_scope_string: ${{ steps.terraform_output.outputs.api_scope_string }}
+      api_app_insights_instrumentation_key: ${{ steps.terraform_output.outputs.api_app_insights_instrumentation_key }}
     
     steps:
       - name: Checkout repository
@@ -97,10 +101,12 @@ jobs:
           API_CLIENT_ID=$(terraform output -raw api_app_registration_app_id)
           TENANT_ID=$(terraform output -raw tenant_id)
           API_SCOPE_STRING=$(terraform output -raw api_scope_string)
+          API_APP_INSIGHTS_INSTRUMENTATION_KEY=$(terraform output -raw api_app_insights_instrumentation_key)
           echo "api_url=$API_URL" >> $GITHUB_OUTPUT
           echo "frontend_url=$FRONTEND_URL" >> $GITHUB_OUTPUT
           echo "frontend_client_id=$FRONTEND_CLIENT_ID" >> $GITHUB_OUTPUT
           echo "api_client_id=$API_CLIENT_ID" >> $GITHUB_OUTPUT
           echo "tenant_id=$TENANT_ID" >> $GITHUB_OUTPUT
           echo "api_scope_string=$API_SCOPE_STRING" >> $GITHUB_OUTPUT
+          echo "api_app_insights_instrumentation_key=$API_APP_INSIGHTS_INSTRUMENTATION_KEY" >> $GITHUB_OUTPUT
 
