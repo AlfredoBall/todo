@@ -65,6 +65,12 @@ jobs:
           cp -r angular_artifact/todo/browser/* frontend_package/todo/angular/
           cp -r react_artifact/* frontend_package/todo/react/
 
+      - name: Deploy API to Azure Web App (Linux)
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ vars.AZURE_API_APP_SERVICE_NAME }}
+          package: api_artifact
+
       - name: Deploy combined frontend to Azure Web App (Linux)
         uses: azure/webapps-deploy@v3
         with:
