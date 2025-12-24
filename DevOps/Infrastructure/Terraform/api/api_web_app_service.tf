@@ -27,6 +27,7 @@ resource "azurerm_linux_web_app" "api" {
   app_settings = {
     "WEBSITE_RUN_FROM_PACKAGE" = "1"
     "FRONTEND_URL"             = "https://${var.frontend_default_hostname}"
+    "WEBSITES_DISABLE_APP_SERVICE_AUTHENTICATION" = "true"
     # Azure AD configuration for token validation
     "AzureAd__TenantId" = var.tenant_id
     "AzureAd__ClientId" = azuread_application.api_app_registration.client_id
