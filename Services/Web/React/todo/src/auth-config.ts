@@ -38,6 +38,8 @@ export const AUTH_CONFIG = {
   POST_LOGOUT_REDIRECT_URI: _env.VITE_POST_LOGOUT_REDIRECT_URI,
 };
 
+console.log('AUTH_CONFIG:', AUTH_CONFIG);
+
 /**
  * Configuration object to be passed to MSAL instance on creation. 
  * For a full list of MSAL.js configuration parameters, visit:
