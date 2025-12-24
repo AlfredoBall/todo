@@ -43,4 +43,7 @@ output "api_scope_string" {
   value       = module.api.api_scope_string
 }
 
-# Outputs for DNS TXT validation tokens for custom domains (for manual DNS setup)
+output "api_app_insights_instrumentation_key" {
+  description = "API Application Insights Instrumentation Key"
+  value       = module.api.api_app_insights_instrumentation_key
+}

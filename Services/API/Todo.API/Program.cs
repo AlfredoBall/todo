@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Security.Claims;
+using Microsoft.ApplicationInsights;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Identity.Web;
@@ -60,7 +61,12 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.ConfigureAuth(Boolean.TryParse(builder.Configuration["RunWithAuth"], out bool runWithAuth) ? runWithAuth : false);
+var appInsightsKey = builder.Configuration["API_APP_INSIGHTS_INSTRUMENTATION_KEY"];
+
+builder.Services.AddApplicationInsightsTelemetry(options =>
+{
+    options.ConnectionString = $"InstrumentationKey={appInsightsKey}";
+});
 
 var app = builder.Build();
 
@@ -85,11 +91,8 @@ app.UseCors();
 
 app.UseHttpsRedirection();
 
-if (runWithAuth)
-{
-    app.UseAuthentication();
-    app.UseAuthorization();
-}
+app.UseAuthentication();
+app.UseAuthorization();
 
 // TODO: Implement scopes, var scopeRequiredByApi = app.Configuration["AzureAd:Scopes"] ?? "";
 
@@ -220,7 +223,7 @@ app.MapPatch("api/item/{id}", async (HttpContext httpContext, ClaimsPrincipal us
 
 #region Clipboard Endpoints
 
-app.MapGet("api/clipboards", async (HttpContext httpContext, ClaimsPrincipal user, IDistributedCache cache, ClipboardService clipboardService, Context context) =>
+app.MapGet("api/clipboards", async (HttpContext httpContext, TelemetryClient telemetryClient, ClaimsPrincipal user, IDistributedCache cache, ClipboardService clipboardService, Context context) =>
 {
     string cacheKey = "clipboards";
     var cachedClipboards = await cache.GetAsync<IList<Todo.Data.Access.Clipboard>>(cacheKey);
@@ -231,15 +234,25 @@ app.MapGet("api/clipboards", async (HttpContext httpContext, ClaimsPrincipal use
         return Results.Ok(cachedClipboards);
     }
 
-    var clipboards = await clipboardService.GetClipboards(context, Guid.Parse(user.GetObjectId()!));
+    try
+    {
+        var clipboards = await clipboardService.GetClipboards(context, Guid.Parse(user.GetObjectId()!));
 
-    var options = new DistributedCacheEntryOptions()
-        .SetSlidingExpiration(TimeSpan.FromSeconds(10)) // Remove if not accessed for 10 seconds
-        .SetAbsoluteExpiration(TimeSpan.FromHours(1)); // Max 1 hour storage
+        var options = new DistributedCacheEntryOptions()
+            .SetSlidingExpiration(TimeSpan.FromSeconds(10)) // Remove if not accessed for 10 seconds
+            .SetAbsoluteExpiration(TimeSpan.FromHours(1)); // Max 1 hour storage
 
-    await cache.SetAsync(cacheKey, clipboards, options);
+        await cache.SetAsync(cacheKey, clipboards, options);
 
-    return Results.Ok(clipboards);
+        return Results.Ok(clipboards);
+    }
+    catch (Exception ex)
+    {
+        telemetryClient.TrackException(ex);
+        
+        return Results.BadRequest();
+    }
+    
 })
 .WithName("GetClipboards");
 

@@ -27,12 +27,13 @@ resource "azurerm_linux_web_app" "api" {
   app_settings = {
     "WEBSITE_RUN_FROM_PACKAGE" = "1"
     "FRONTEND_URL"             = "https://${var.frontend_default_hostname}"
-    "RunWithAuth"              = "true"
     # Azure AD configuration for token validation
     "AzureAd__TenantId" = var.tenant_id
     "AzureAd__ClientId" = azuread_application.api_app_registration.client_id
     "AzureAd__Audience" = "api://${azuread_application.api_app_registration.client_id}"
     "AzureAd__Instance" = "https://login.microsoftonline.com/"
     "AzureAd__Scopes"   = "access_as_user"
+    # Application Insights configuration
+    "API_APP_INSIGHTS_INSTRUMENTATION_KEY" = azurerm_application_insights.api.instrumentation_key
   }
 }
