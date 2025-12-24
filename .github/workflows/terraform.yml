@@ -96,17 +96,11 @@ jobs:
           FRONTEND_CLIENT_ID=$(terraform output -raw frontend_app_id)
           API_CLIENT_ID=$(terraform output -raw api_app_registration_app_id)
           TENANT_ID=$(terraform output -raw tenant_id)
-          API_SCOPE=$(terraform output -raw api_scope)
+          API_SCOPE_STRING=$(terraform output -raw api_scope_string)
           echo "api_url=$API_URL" >> $GITHUB_OUTPUT
           echo "frontend_url=$FRONTEND_URL" >> $GITHUB_OUTPUT
           echo "frontend_client_id=$FRONTEND_CLIENT_ID" >> $GITHUB_OUTPUT
           echo "api_client_id=$API_CLIENT_ID" >> $GITHUB_OUTPUT
           echo "tenant_id=$TENANT_ID" >> $GITHUB_OUTPUT
-          echo "api_scope=$API_SCOPE" >> $GITHUB_OUTPUT
-          echo "API URL: $API_URL"
-          echo "Frontend URL: $FRONTEND_URL"
-          echo "Frontend Client ID: $FRONTEND_CLIENT_ID"
-          echo "API Client ID: $API_CLIENT_ID"
-          echo "Tenant ID: $TENANT_ID"
-          echo "API Scope: $API_SCOPE"
+          echo "api_scope_string=$API_SCOPE_STRING" >> $GITHUB_OUTPUT
 
