@@ -11,6 +11,7 @@ console.log('Vite dev server proxy target for /api:', target);
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: '/todo/react/',
   plugins: [react()],
   server: {
     https: process.env.NODE_ENV === 'development' ? {
