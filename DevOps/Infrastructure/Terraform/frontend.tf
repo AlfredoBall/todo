@@ -61,7 +61,6 @@ resource "azurerm_linux_web_app" "frontend" {
 
 data "azuread_service_principal" "microsoft_graph" {
   client_id    = "00000003-0000-0000-c000-000000000000"
-  display_name = "Microsoft Graph"
 }
 
 # Grant admin consent for API access_as_user to the frontend app service principal
