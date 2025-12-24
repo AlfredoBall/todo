@@ -3,6 +3,10 @@ resource "azuread_application" "frontend_app" {
   sign_in_audience        = var.sign_in_audience
   prevent_duplicate_names = true
 
+  api {
+    requested_access_token_version = 2
+  }
+
   single_page_application {
     redirect_uris = [
       "https://${azurerm_linux_web_app.frontend.default_hostname}/auth-callback"
