@@ -43,16 +43,17 @@ builder.Services.AddDbContext<Context>(options =>
 builder.Services.AddSingleton<ClipboardService>();
 builder.Services.AddSingleton<ItemService>();
 
-// Configure CORS to allow Static Web Apps
-
-var reactUrl = builder.Configuration["REACT_URL"] ?? throw new InvalidOperationException("REACT_URL configuration is required");
-var angularUrl = builder.Configuration["ANGULAR_URL"] ?? throw new InvalidOperationException("ANGULAR_URL configuration is required");
+// Configure CORS
+// TODO Fix this if it's decided that the local development will host nginx for a combined frontend
+//var reactUrl = builder.Configuration["REACT_URL"] ?? throw new InvalidOperationException("REACT_URL configuration is required");
+//var angularUrl = builder.Configuration["ANGULAR_URL"] ?? throw new InvalidOperationException("ANGULAR_URL configuration is required");
+var frontendURL = builder.Configuration["FRONTEND_URL"] ?? throw new InvalidOperationException("ANGULAR_URL configuration is required");
 
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins(reactUrl, angularUrl)
+        policy.WithOrigins(frontendURL)
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials();
