@@ -36,6 +36,3 @@ resource "azuread_service_principal" "api_sp" {
     enterprise = false
   }
 }
-
-
-# Grant admin consent for API access_as_user to the frontend app service principal
