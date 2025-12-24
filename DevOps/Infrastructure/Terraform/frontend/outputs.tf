@@ -1,3 +1,7 @@
+output "frontend_default_hostname" {
+  value = azurerm_linux_web_app.frontend.default_hostname
+  description = "Default hostname of the frontend web app for CORS and URLs"
+}
 output "frontend_app_service_default_url" {
   description = "Default URL for the combined frontend App Service (Angular + React)"
   value       = "https://${azurerm_linux_web_app.frontend.name}.azurewebsites.net"
