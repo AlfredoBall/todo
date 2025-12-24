@@ -28,7 +28,7 @@ resource "azuread_application" "frontend_app" {
     resource_app_id = azuread_application.api_app_registration.client_id
 
     resource_access {
-      id   = "b3a1d2e4-9c3f-4d1b-8a2f-1d2e3f4a5b6c" # access_as_user
+      id   = azuread_application.api_app_registration.oauth2_permission_scope[0].id
       type = "Scope"
     }
   }
