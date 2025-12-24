@@ -88,7 +88,7 @@ When deploying the front-end and API to Azure, you must set the following Applic
 **React (VITE_*)**
 - `VITE_CLIENT_ID` — React client ID
 - `VITE_TENANT_ID` — Tenant ID
-- `VITE_API_SCOPES` — API scopes (JSON array, e.g., `["api://<client-id>/access_as_user"]`)
+- `VITE_API_SCOPE_URI` — API scopes (JSON array, e.g., `["api://<client-id>/access_as_user"]`)
 - `VITE_REDIRECT_URI` / `VITE_POST_LOGOUT_REDIRECT_URI` — Redirect URIs for the React app
 - `VITE_API_BASE_URL` — API base URL
 

@@ -191,7 +191,7 @@ These match the ports in the respective `launch.json` files to ensure predictabl
                  ├──► React (NPM app)
                  │    - VITE_CLIENT_ID
                  │    - VITE_TENANT_ID
-                 │    - VITE_API_SCOPES
+                 │    - VITE_API_SCOPE_URI
                  │
                  └──► Angular (NPM app)
                       - NG_APP_AzureAd__ClientID
