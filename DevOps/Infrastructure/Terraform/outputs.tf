@@ -43,7 +43,7 @@ output "api_scope_string" {
   value       = module.api.api_scope_string
 }
 
-output "api_app_insights_instrumentation_key" {
-  description = "API Application Insights Instrumentation Key"
-  value       = module.api.api_app_insights_instrumentation_key
+output "api_app_insights_connection_string" {
+  description = "API Application Insights Connection String"
+  value       = module.api.api_app_insights_connection_string
 }

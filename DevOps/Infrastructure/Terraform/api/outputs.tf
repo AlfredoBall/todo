@@ -20,3 +20,8 @@ output "api_scope_uuid" {
 output "api_service_principal_id" {
   value = azuread_service_principal.api_sp.object_id
 }
+
+output "api_app_insights_connection_string" {
+  value = azurerm_application_insights.api.connection_string
+  sensitive = true
+}

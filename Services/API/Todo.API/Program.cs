@@ -61,11 +61,11 @@ builder.Services.AddCors(options =>
     });
 });
 
-var appInsightsKey = builder.Configuration["API_APP_INSIGHTS_INSTRUMENTATION_KEY"];
+var appInsightsConnectionString = builder.Configuration["API_APP_INSIGHTS_CONNECTION_STRING"];
 
 builder.Services.AddApplicationInsightsTelemetry(options =>
 {
-    options.ConnectionString = $"InstrumentationKey={appInsightsKey}";
+    options.ConnectionString = appInsightsConnectionString;
 });
 
 var app = builder.Build();
