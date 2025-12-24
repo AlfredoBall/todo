@@ -1,7 +1,7 @@
 
 
-variable "api_service_plan_name" {
-  description = "Name of the Azure App Service Plan for the Todo API"
+variable "service_plan_name" {
+  description = "Name of the Azure App Service Plan for the Todo Web App Services"
   type        = string
 }
 

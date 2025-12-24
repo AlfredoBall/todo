@@ -1,0 +1,44 @@
+variable "frontend_app_service_name" {
+  type        = string
+  description = "Name of the Azure App Service for the combined frontend (Angular + React)"
+}
+
+variable "sign_in_audience" {
+  type        = string
+  description = "Sign-in audience for Azure AD applications"
+}
+
+variable "tenant_id" {
+  type        = string
+  description = "Azure Tenant ID"
+}
+
+variable "location" {
+  type        = string
+  description = "Azure location for resources"
+}
+
+variable "resource_group_name" {
+  type        = string
+  description = "Name of the resource group"
+}
+
+variable "service_plan_id" {
+  type        = string
+  description = "ID of the Azure App Service Plan"
+}
+
+variable "api_app_registration_client_id" {
+  type        = string
+  description = "Client ID of the API app registration"
+}
+
+variable "api_scope_id" {
+  type        = string
+  description = "ID of the API scope"
+}
+
+variable "api_service_principal_id" {
+  type        = string
+  description = "Object ID of the API service principal"
+}
