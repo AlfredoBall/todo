@@ -33,9 +33,9 @@ variable "api_app_registration_client_id" {
   description = "Client ID of the API app registration"
 }
 
-variable "api_scope_string" {
+variable "api_scope_uri" {
   type        = string
-  description = "API scope string for authentication (format: api://client-id/scope), used by client apps."
+  description = "API scope URI for authentication (format: api://client-id/scope), used by client apps."
 }
 
 variable "api_scope_uuid" {

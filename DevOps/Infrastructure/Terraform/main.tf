@@ -33,7 +33,7 @@ module "frontend" {
   resource_group_name            = var.resource_group_name
   service_plan_id                = azurerm_service_plan.service_plan.id
   api_app_registration_client_id = module.api.api_app_registration_client_id
-  api_scope_string               = module.api.api_scope_string
+  api_scope_uri                  = module.api.api_scope_uri
   api_scope_uuid                 = module.api.api_scope_uuid
   api_service_principal_id       = module.api.api_service_principal_id
 }

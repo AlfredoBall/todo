@@ -18,12 +18,9 @@ on:
       tenant_id:
         description: 'Azure AD Tenant ID'
         value: ${{ jobs.terraform.outputs.tenant_id }}
-      api_scope_string:
-        description: 'API OAuth Scope'
-        value: ${{ jobs.terraform.outputs.api_scope_string }}
-      api_app_insights_connection_string:
-        description: 'API Application Insights Connection String'
-        value: ${{ jobs.terraform.outputs.api_app_insights_connection_string }}
+      api_scope_uri:
+        description: 'API OAuth Scope URI'
+        value: ${{ jobs.terraform.outputs.api_scope_uri }}
   workflow_dispatch:
 
 jobs:
@@ -41,8 +38,7 @@ jobs:
       frontend_client_id: ${{ steps.terraform_output.outputs.frontend_client_id }}
       api_client_id: ${{ steps.terraform_output.outputs.api_client_id }}
       tenant_id: ${{ steps.terraform_output.outputs.tenant_id }}
-      api_scope_string: ${{ steps.terraform_output.outputs.api_scope_string }}
-      api_app_insights_connection_string: ${{ steps.terraform_output.outputs.api_app_insights_connection_string }}
+      api_scope_uri: ${{ steps.terraform_output.outputs.api_scope_uri }}
     
     steps:
       - name: Checkout repository
@@ -100,13 +96,13 @@ jobs:
           FRONTEND_CLIENT_ID=$(terraform output -raw frontend_app_id)
           API_CLIENT_ID=$(terraform output -raw api_app_registration_app_id)
           TENANT_ID=$(terraform output -raw tenant_id)
-          API_SCOPE_STRING=$(terraform output -raw api_scope_string)
+          API_SCOPE_URI=$(terraform output -raw api_scope_uri)
           API_APP_INSIGHTS_CONNECTION_STRING=$(terraform output -raw api_app_insights_connection_string)
           echo "api_url=$API_URL" >> $GITHUB_OUTPUT
           echo "frontend_url=$FRONTEND_URL" >> $GITHUB_OUTPUT
           echo "frontend_client_id=$FRONTEND_CLIENT_ID" >> $GITHUB_OUTPUT
           echo "api_client_id=$API_CLIENT_ID" >> $GITHUB_OUTPUT
           echo "tenant_id=$TENANT_ID" >> $GITHUB_OUTPUT
-          echo "api_scope_string=$API_SCOPE_STRING" >> $GITHUB_OUTPUT
+          echo "api_scope_uri=$API_SCOPE_URI" >> $GITHUB_OUTPUT
           echo "api_app_insights_connection_string=$API_APP_INSIGHTS_CONNECTION_STRING" >> $GITHUB_OUTPUT
 

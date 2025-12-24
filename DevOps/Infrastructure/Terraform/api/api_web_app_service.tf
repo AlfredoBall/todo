@@ -33,8 +33,8 @@ resource "azurerm_linux_web_app" "api" {
     "AzureAd__Audience" = "api://${azuread_application.api_app_registration.client_id}"
     "AzureAd__Instance" = "https://login.microsoftonline.com/"
     "AzureAd__Scopes"   = "access_as_user"
-    # Application Insights configuration
-    "API_APP_INSIGHTS_CONNECTION_STRING" = azurerm_application_insights.api.connection_string
+    # Application Insights connection string now set in app_settings
     "ApplicationInsightsAgent_EXTENSION_VERSION" = "~3"
+    "APPLICATIONINSIGHTS_CONNECTION_STRING" = azurerm_application_insights.api.connection_string
   }
 }

@@ -47,10 +47,8 @@ VITE_TENANT_ID=<YOUR_TENANT_ID>
 VITE_REDIRECT_URI=https://localhost:<REACT_DEV_PORT>
 VITE_POST_LOGOUT_REDIRECT_URI=https://localhost:<REACT_DEV_PORT>
 VITE_API_BASE_URL=/api
-VITE_API_SCOPES=["api://<YOUR_API_CLIENT_ID>/scope"]
+VITE_API_SCOPE_URI=["api://<YOUR_API_CLIENT_ID>/scope"]
 ```
-
-- `VITE_API_SCOPES` can be a JSON array or a comma-separated string; `src/auth-config.ts` parses both.
 
 ## 4. React config file
 The app reads configuration from `src/auth-config.ts`. Replace the placeholder values or set the `.env` values above.
@@ -99,7 +97,7 @@ app.UseAuthorization();
 ## 8. Troubleshooting
 - AADSTS50011: redirect URI mismatch — ensure the redirect URI in Azure matches `VITE_REDIRECT_URI` exactly.
 - Consent errors — add required API permissions and grant admin consent if needed.
-- Tokens not sent — verify `VITE_API_BASE_URL` matches the API endpoint and `VITE_API_SCOPES` contains the API scope.
+- Tokens not sent — verify `VITE_API_BASE_URL` matches the API endpoint and `VITE_API_SCOPE_URI` contains the API scope.
 
 ## 9. Useful links
 - MSAL React: https://github.com/AzureAD/microsoft-authentication-library-for-js/tree/dev/lib/msal-react

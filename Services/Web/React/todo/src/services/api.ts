@@ -27,7 +27,7 @@ export class ApiService {
       }
 
       const request = {
-        scopes: AUTH_CONFIG.API_SCOPES,
+        scopes: AUTH_CONFIG.API_SCOPE_URI,
         account: accounts[0]
       };
 
