@@ -1,13 +1,4 @@
 
-variable "react_static_web_app_name" {
-  description = "Name of the Azure Static Web App for the React app"
-  type        = string
-}
-
-variable "angular_static_web_app_name" {
-  description = "Name of the Azure Static Web App for the Angular app"
-  type        = string
-}
 
 variable "api_service_plan_name" {
   description = "Name of the Azure App Service Plan for the Todo API"
@@ -71,16 +62,9 @@ variable "api_app_registration_name" {
   default     = "To Do API"
 }
 
-variable "angular_app_registration_name" {
-  description = "Name of the Azure AD App Registration for the Angular Todo app"
+variable "frontend_app_service_name" {
+  description = "Name of the Azure App Service for the combined frontend (Angular + React)"
   type        = string
-  default     = "To Do Angular"
-}
-
-variable "react_app_registration_name" {
-  description = "Name of the Azure AD App Registration for the React Todo app"
-  type        = string
-  default     = "To Do React"
 }
 
 variable "sign_in_audience" {

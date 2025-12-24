@@ -1,29 +1,3 @@
-// Static Web App for React
-resource "azurerm_static_web_app" "react" {
-  name                = var.react_static_web_app_name
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = azurerm_resource_group.rg.location
-  sku_tier            = "Free"
-  sku_size            = "Free"
-  # Managed identity is not supported on Free tier and not required for AAD authentication
-  # See documentation for configuring authentication and custom domains
-  # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/static_web_app
-}
-
-
-// Static Web App for Angular
-resource "azurerm_static_web_app" "angular" {
-  name                = var.angular_static_web_app_name
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = azurerm_resource_group.rg.location
-  sku_tier            = "Free"
-  sku_size            = "Free"
-  # Managed identity is not supported on Free tier and not required for AAD authentication
-  # See documentation for configuring authentication and custom domains
-  # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/static_web_app
-}
-
-
 // App Service Plan for the API
 resource "azurerm_service_plan" "api_service_plan" {
   name                = var.api_service_plan_name
@@ -50,11 +24,11 @@ resource "azurerm_linux_web_app" "api" {
     }
     always_on = false
 
-    # Configure App Service CORS origins to allow requests from the Static Web Apps
+    # Configure App Service CORS origins to allow requests from the frontend web app
+    # (Update this if you use custom domains)
     cors {
       allowed_origins = [
-        "https://${azurerm_static_web_app.react.default_host_name}",
-        "https://${azurerm_static_web_app.angular.default_host_name}"
+        "https://${azurerm_linux_web_app.frontend.default_hostname}"
       ]
       support_credentials = true
     }
@@ -62,8 +36,7 @@ resource "azurerm_linux_web_app" "api" {
 
   app_settings = {
     "WEBSITE_RUN_FROM_PACKAGE" = "1"
-    "REACT_URL"                = "https://${azurerm_static_web_app.react.default_host_name}"
-    "ANGULAR_URL"              = "https://${azurerm_static_web_app.angular.default_host_name}"
+    "FRONTEND_URL"             = "https://${azurerm_linux_web_app.frontend.default_hostname}"
     "RunWithAuth"              = "true"
     # Azure AD configuration for token validation
     "AzureAd__TenantId" = var.tenant_id
@@ -74,6 +47,8 @@ resource "azurerm_linux_web_app" "api" {
   }
 }
 
+
+
 // Terraform resources for the Todo infrastructure
 
 resource "azurerm_resource_group" "rg" {
@@ -81,4 +56,3 @@ resource "azurerm_resource_group" "rg" {
   location = var.location
   tags     = var.resource_tags
 }
-

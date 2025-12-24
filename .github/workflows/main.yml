@@ -21,10 +21,6 @@ jobs:
     secrets: inherit
     with:
       api_url: ${{ needs.terraform.outputs.api_url }}
-      angular_url: ${{ needs.terraform.outputs.angular_url }}
-      react_url: ${{ needs.terraform.outputs.react_url }}
-      angular_client_id: ${{ needs.terraform.outputs.angular_client_id }}
-      react_client_id: ${{ needs.terraform.outputs.react_client_id }}
       api_client_id: ${{ needs.terraform.outputs.api_client_id }}
       api_scope: ${{ needs.terraform.outputs.api_scope }}
 
@@ -38,5 +34,3 @@ jobs:
       contents: read
     with:
       api_url: ${{ needs.terraform.outputs.api_url }}
-      angular_url: ${{ needs.terraform.outputs.angular_url }}
-      react_url: ${{ needs.terraform.outputs.react_url }}
