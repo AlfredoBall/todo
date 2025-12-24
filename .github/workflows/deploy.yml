@@ -30,22 +30,24 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+
       - name: Download API artifact
         uses: actions/download-artifact@v4
         with:
           name: api
           path: api_artifact
-      - name: Download React artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: react
-          path: react_artifact
 
       - name: Download Angular artifact
         uses: actions/download-artifact@v4
         with:
           name: angular
           path: angular_artifact
+
+      - name: Download React artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: react
+          path: react_artifact
 
       - name: Azure Login (OIDC)
         uses: azure/login@v2
@@ -56,22 +58,17 @@ jobs:
           enable-AzPSSession: false
           allow-no-subscriptions: true
 
-      - name: Deploy API to Azure Web App
+      - name: Prepare combined frontend package
+        run: |
+          mkdir -p frontend_package/todo/angular
+          mkdir -p frontend_package/todo/react
+          cp -r angular_artifact/* frontend_package/todo/angular/
+          cp -r react_artifact/* frontend_package/todo/react/
+          # Copy NGINX config for SPA routing
+          cp nginx.conf frontend_package/nginx.conf
+
+      - name: Deploy combined frontend to Azure Web App (Linux)
         uses: azure/webapps-deploy@v3
         with:
-          app-name: ${{ vars.AZURE_API_APP_SERVICE_NAME }}
-          package: api_artifact
-
-      # https://azure.github.io/static-web-apps-cli/docs/cli/swa-deploy/
-      
-        # Only the 'production' environment exists for Azure Static Web Apps unless using PR previews.
-        # Use --env production to deploy to the persistent environment.
-      - name: Deploy React to Azure Static Web App
-        run: |
-          npm install -g @azure/static-web-apps-cli
-          swa deploy ./react_artifact --env production --subscription-id ${{ secrets.AZURE_SUBSCRIPTION_ID }} --resource-group ${{ vars.AZURE_RESOURCE_GROUP }} --app-name ${{ vars.AZURE_STATIC_WEBAPP_NAME_REACT }} --no-use-keychain
-
-      - name: Deploy Angular to Azure Static Web App
-        run: |
-          npm install -g @azure/static-web-apps-cli
-          swa deploy ./angular_artifact/todo/browser --env production --subscription-id ${{ secrets.AZURE_SUBSCRIPTION_ID }} --resource-group ${{ vars.AZURE_RESOURCE_GROUP }} --app-name ${{ vars.AZURE_STATIC_WEBAPP_NAME_ANGULAR }} --no-use-keychain
+          app-name: ${{ vars.AZURE_FRONTEND_APP_SERVICE_NAME }}
+          package: frontend_package

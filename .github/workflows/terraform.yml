@@ -6,18 +6,12 @@ on:
       api_url:
         description: 'API App Service URL'
         value: ${{ jobs.terraform.outputs.api_url }}
-      react_url:
-        description: 'React Static Web App URL'
-        value: ${{ jobs.terraform.outputs.react_url }}
-      angular_url:
-        description: 'Angular Static Web App URL'
-        value: ${{ jobs.terraform.outputs.angular_url }}
-      angular_client_id:
-        description: 'Angular App Registration Client ID'
-        value: ${{ jobs.terraform.outputs.angular_client_id }}
-      react_client_id:
-        description: 'React App Registration Client ID'
-        value: ${{ jobs.terraform.outputs.react_client_id }}
+      frontend_url:
+        description: 'Frontend App Service URL'
+        value: ${{ jobs.terraform.outputs.frontend_url }}
+      frontend_client_id:
+        description: 'Frontend App Registration Client ID'
+        value: ${{ jobs.terraform.outputs.frontend_client_id }}
       api_client_id:
         description: 'API App Registration Client ID'
         value: ${{ jobs.terraform.outputs.api_client_id }}
@@ -40,10 +34,8 @@ jobs:
       TERRAFORM_DIR: DevOps/Infrastructure/Terraform
     outputs:
       api_url: ${{ steps.terraform_output.outputs.api_url }}
-      react_url: ${{ steps.terraform_output.outputs.react_url }}
-      angular_url: ${{ steps.terraform_output.outputs.angular_url }}
-      angular_client_id: ${{ steps.terraform_output.outputs.angular_client_id }}
-      react_client_id: ${{ steps.terraform_output.outputs.react_client_id }}
+      frontend_url: ${{ steps.terraform_output.outputs.frontend_url }}
+      frontend_client_id: ${{ steps.terraform_output.outputs.frontend_client_id }}
       api_client_id: ${{ steps.terraform_output.outputs.api_client_id }}
       tenant_id: ${{ steps.terraform_output.outputs.tenant_id }}
       api_scope: ${{ steps.terraform_output.outputs.api_scope }}
@@ -100,26 +92,20 @@ jobs:
         working-directory: ${{ env.TERRAFORM_DIR }}
         run: |
           API_URL=$(terraform output -raw api_app_service_default_url)
-          REACT_URL=$(terraform output -raw react_static_web_app_default_url)
-          ANGULAR_URL=$(terraform output -raw angular_static_web_app_default_url)
-          ANGULAR_CLIENT_ID=$(terraform output -raw angular_app_id)
-          REACT_CLIENT_ID=$(terraform output -raw react_app_id)
+          FRONTEND_URL=$(terraform output -raw frontend_app_service_default_url)
+          FRONTEND_CLIENT_ID=$(terraform output -raw frontend_app_id)
           API_CLIENT_ID=$(terraform output -raw api_app_registration_app_id)
           TENANT_ID=$(terraform output -raw tenant_id)
           API_SCOPE=$(terraform output -raw api_scope)
           echo "api_url=$API_URL" >> $GITHUB_OUTPUT
-          echo "react_url=$REACT_URL" >> $GITHUB_OUTPUT
-          echo "angular_url=$ANGULAR_URL" >> $GITHUB_OUTPUT
-          echo "angular_client_id=$ANGULAR_CLIENT_ID" >> $GITHUB_OUTPUT
-          echo "react_client_id=$REACT_CLIENT_ID" >> $GITHUB_OUTPUT
+          echo "frontend_url=$FRONTEND_URL" >> $GITHUB_OUTPUT
+          echo "frontend_client_id=$FRONTEND_CLIENT_ID" >> $GITHUB_OUTPUT
           echo "api_client_id=$API_CLIENT_ID" >> $GITHUB_OUTPUT
           echo "tenant_id=$TENANT_ID" >> $GITHUB_OUTPUT
           echo "api_scope=$API_SCOPE" >> $GITHUB_OUTPUT
           echo "API URL: $API_URL"
-          echo "React URL: $REACT_URL"
-          echo "Angular URL: $ANGULAR_URL"
-          echo "Angular Client ID: $ANGULAR_CLIENT_ID"
-          echo "React Client ID: $REACT_CLIENT_ID"
+          echo "Frontend URL: $FRONTEND_URL"
+          echo "Frontend Client ID: $FRONTEND_CLIENT_ID"
           echo "API Client ID: $API_CLIENT_ID"
           echo "Tenant ID: $TENANT_ID"
           echo "API Scope: $API_SCOPE"
