@@ -46,4 +46,5 @@ output "api_scope_string" {
 output "api_app_insights_connection_string" {
   description = "API Application Insights Connection String"
   value       = module.api.api_app_insights_connection_string
+    sensitive = true
 }
