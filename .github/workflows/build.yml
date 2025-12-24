@@ -11,32 +11,22 @@ on:
         description: 'Angular Static Web App URL from Terraform'
         required: false
         type: string
-        default: ''
       react_url:
         description: 'React Static Web App URL from Terraform'
         required: false
         type: string
-        default: ''
-      angular_client_id:
-        description: 'Angular app registration client ID'
+      frontend_client_id:
+        description: 'Frontend app registration client ID'
         required: false
         type: string
-        default: ''
-      react_client_id:
-        description: 'React app registration client ID'
-        required: false
-        type: string
-        default: ''
       api_client_id:
         description: 'API app registration client ID'
         required: false
         type: string
-        default: ''
       api_scope:
         description: 'API scope for authentication'
         required: false
         type: string
-        default: ''
 
 jobs:
   build:
@@ -75,7 +65,7 @@ jobs:
         working-directory: ${{ matrix.project }}
         env:
           VITE_API_BASE_URL: ${{ inputs.api_url }}/api
-          VITE_CLIENT_ID: ${{ inputs.react_client_id }}
+          VITE_CLIENT_ID: ${{ inputs.frontend_client_id }}
           VITE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
           VITE_REDIRECT_URI: ${{ inputs.react_url }}
           VITE_POST_LOGOUT_REDIRECT_URI: ${{ inputs.react_url }}
@@ -89,7 +79,7 @@ jobs:
           cat <<EOF > src/environments/environment.ts
           export const environment = {
             NG_APP_API_BASE_URL: '${{ inputs.api_url }}/api',
-            NG_APP_AzureAd__ClientID: '${{ inputs.angular_client_id }}',
+            NG_APP_AzureAd__ClientID: '${{ inputs.frontend_client_id }}',
             NG_APP_AzureAd__TenantId: '${{ secrets.AZURE_TENANT_ID }}',
             NG_APP_RedirectUri: '${{ inputs.angular_url }}',
             NG_APP_PostLogoutRedirectUri: '${{ inputs.angular_url }}',
