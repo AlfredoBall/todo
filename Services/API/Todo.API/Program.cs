@@ -110,6 +110,8 @@ app.UseCors();
 
 app.UseHttpsRedirection();
 
+app.UseForwardedHeaders();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
