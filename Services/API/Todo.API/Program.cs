@@ -64,7 +64,30 @@ builder.Services.AddCors(options =>
 // The Connection String is setup in terraform and injected as an environment variable
 builder.Services.AddApplicationInsightsTelemetry();
 
+
+// Middleware to log selected headers to Application Insights
+builder.Services.AddSingleton<TelemetryClient>();
+
 var app = builder.Build();
+
+// Log selected headers (e.g., Authorization) to Application Insights as a trace
+app.Use(async (context, next) =>
+{
+    var telemetryClient = context.RequestServices.GetService<TelemetryClient>();
+    if (telemetryClient != null)
+    {
+        var headersToLog = new[] { "Authorization", "X-Forwarded-For", "X-ARR-LOG-ID" };
+        foreach (var header in headersToLog)
+        {
+            if (context.Request.Headers.TryGetValue(header, out var value))
+            {
+                telemetryClient.TrackTrace($"Header: {header} = {value}",
+                    new Dictionary<string, string> { { "Header", header }, { "Value", value } });
+            }
+        }
+    }
+    await next();
+});
 
 // Ensure database is created and seeded
 using (var scope = app.Services.CreateScope())
