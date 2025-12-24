@@ -25,10 +25,10 @@ resource "azuread_application" "frontend_app" {
 	}
 
 	required_resource_access {
-		resource_app_id = azuread_application.api_app_registration.client_id
+		resource_app_id = var.api_app_registration_client_id
 
 		resource_access {
-			id   = azuread_application_oauth2_permission_scope.api_access_as_user.id
+			id   = var.api_scope_id
 			type = "Scope"
 		}
 	}

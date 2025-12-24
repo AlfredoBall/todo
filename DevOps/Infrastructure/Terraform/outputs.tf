@@ -1,6 +1,6 @@
 output "api_app_service_default_url" {
   description = "Default URL for the API App Service"
-  value       = "https://${azurerm_linux_web_app.api.name}.azurewebsites.net"
+  value       = module.api.api_app_service_default_url
 }
 
 output "resource_group_name" {
@@ -15,22 +15,22 @@ output "resource_group_location" {
 
 output "api_app_registration_app_id" {
   description = "The Application (client) ID for the API app registration"
-  value       = azuread_application.api_app_registration.client_id
+  value       = module.api.api_app_registration_client_id
 }
 
 output "api_app_service_principal_id" {
   description = "Object ID of the service principal for the API app registration"
-  value       = azuread_service_principal.api_sp.id
+  value       = module.api.api_service_principal_id
 }
 
 output "frontend_app_service_default_url" {
   description = "Default URL for the combined frontend App Service (Angular + React)"
-  value       = "https://${azurerm_linux_web_app.frontend.name}.azurewebsites.net"
+  value       = module.frontend.frontend_app_service_default_url
 }
 
 output "frontend_app_id" {
   description = "The Application (client) ID for the Frontend app registration"
-  value       = azuread_application.frontend_app.client_id
+  value       = module.frontend.frontend_app_registration_client_id
 }
 
 output "tenant_id" {
@@ -40,7 +40,7 @@ output "tenant_id" {
 
 output "api_scope" {
   description = "API scope for authentication (format: api://client-id/scope)"
-  value       = "api://${azuread_application.api_app_registration.client_id}/access_as_user"
+  value       = module.api.api_scope
 }
 
 # Outputs for DNS TXT validation tokens for custom domains (for manual DNS setup)
