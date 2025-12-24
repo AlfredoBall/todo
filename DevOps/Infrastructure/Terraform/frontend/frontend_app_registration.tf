@@ -28,7 +28,7 @@ resource "azuread_application" "frontend_app" {
 		resource_app_id = var.api_app_registration_client_id
 
 		resource_access {
-			id   = var.api_scope_id
+			id   = var.api_scope_uuid
 			type = "Scope"
 		}
 	}
