@@ -33,11 +33,6 @@ output "frontend_app_id" {
   value       = module.frontend.frontend_app_registration_client_id
 }
 
-output "tenant_id" {
-  description = "Azure AD Tenant ID"
-  value       = var.tenant_id
-}
-
 output "api_scope_uri" {
   description = "API scope URI for authentication (format: api://client-id/scope)"
   value       = module.api.api_scope_uri

@@ -4,22 +4,22 @@ on:
   workflow_call:
     outputs:
       api_url:
-        description: 'API App Service URL'
+        description: "API App Service URL"
         value: ${{ jobs.terraform.outputs.api_url }}
       frontend_url:
-        description: 'Frontend App Service URL'
+        description: "Frontend App Service URL"
         value: ${{ jobs.terraform.outputs.frontend_url }}
       frontend_client_id:
-        description: 'Frontend App Registration Client ID'
+        description: "Frontend App Registration Client ID"
         value: ${{ jobs.terraform.outputs.frontend_client_id }}
       api_client_id:
-        description: 'API App Registration Client ID'
+        description: "API App Registration Client ID"
         value: ${{ jobs.terraform.outputs.api_client_id }}
       tenant_id:
-        description: 'Azure AD Tenant ID'
+        description: "Azure AD Tenant ID"
         value: ${{ jobs.terraform.outputs.tenant_id }}
       api_scope_uri:
-        description: 'API OAuth Scope URI'
+        description: "API OAuth Scope URI"
         value: ${{ jobs.terraform.outputs.api_scope_uri }}
   workflow_dispatch:
 
@@ -33,13 +33,13 @@ jobs:
     env:
       TERRAFORM_DIR: DevOps/Infrastructure/Terraform
     outputs:
+      tenant_id: ${{ secrets.AZURE_TENANT_ID }}
       api_url: ${{ steps.terraform_output.outputs.api_url }}
       frontend_url: ${{ steps.terraform_output.outputs.frontend_url }}
       frontend_client_id: ${{ steps.terraform_output.outputs.frontend_client_id }}
       api_client_id: ${{ steps.terraform_output.outputs.api_client_id }}
-      tenant_id: ${{ steps.terraform_output.outputs.tenant_id }}
       api_scope_uri: ${{ steps.terraform_output.outputs.api_scope_uri }}
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -82,6 +82,9 @@ jobs:
       - name: Terraform Plan
         working-directory: ${{ env.TERRAFORM_DIR }}
         run: terraform plan -out=tfplan
+        env:
+          TF_VAR_tenant_id: ${{ secrets.AZURE_TENANT_ID }}
+          TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Terraform Apply
         working-directory: ${{ env.TERRAFORM_DIR }}

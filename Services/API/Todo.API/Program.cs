@@ -45,21 +45,22 @@ builder.Services.AddSingleton<ClipboardService>();
 builder.Services.AddSingleton<ItemService>();
 
 // Configure CORS
-// TODO Fix this if it's decided that the local development will host nginx for a combined frontend
-//var reactUrl = builder.Configuration["REACT_URL"] ?? throw new InvalidOperationException("REACT_URL configuration is required");
-//var angularUrl = builder.Configuration["ANGULAR_URL"] ?? throw new InvalidOperationException("ANGULAR_URL configuration is required");
+var reactUrl = builder.Configuration["REACT_URL"] ?? throw new InvalidOperationException("REACT_URL configuration is required");
+var angularUrl = builder.Configuration["ANGULAR_URL"] ?? throw new InvalidOperationException("ANGULAR_URL configuration is required");
 var frontendURL = builder.Configuration["FRONTEND_URL"] ?? throw new InvalidOperationException("FRONTEND_URL configuration is required");
 
-Console.WriteLine($"Configuring CORS for frontend URL: {frontendURL}");
-
+builder.Environment.IsDevelopment();
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins(frontendURL)
-                .AllowAnyHeader()
-                .AllowAnyMethod()
-                .AllowCredentials();
+        policy.WithOrigins(
+            builder.Environment.IsDevelopment() ?
+                                    new[] { reactUrl, angularUrl } :
+                                    new[] { frontendURL })
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
     });
 });
 
@@ -70,7 +71,7 @@ builder.Services.AddApplicationInsightsTelemetry();
 // Middleware to log selected headers to Application Insights
 builder.Services.AddSingleton<TelemetryClient>();
 
-builder.ConfigureAuth();
+await builder.ConfigureAuth();
 
 var app = builder.Build();
 
@@ -274,10 +275,10 @@ app.MapGet("api/clipboards", async (HttpContext httpContext, TelemetryClient tel
     catch (Exception ex)
     {
         telemetryClient.TrackException(ex);
-        
+
         return Results.BadRequest();
     }
-    
+
 })
 .WithName("GetClipboards");
 
