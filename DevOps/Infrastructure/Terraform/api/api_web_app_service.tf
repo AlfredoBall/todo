@@ -18,7 +18,6 @@ resource "azurerm_linux_web_app" "api" {
     cors {
       allowed_origins = [
         "https://${var.frontend_default_hostname}",
-        "https://${var.frontend_default_hostname}"
       ]
       support_credentials = true
     }
