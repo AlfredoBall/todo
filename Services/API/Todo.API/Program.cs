@@ -70,6 +70,8 @@ builder.Services.AddApplicationInsightsTelemetry();
 // Middleware to log selected headers to Application Insights
 builder.Services.AddSingleton<TelemetryClient>();
 
+builder.ConfigureAuth();
+
 var app = builder.Build();
 
 // Log selected headers (e.g., Authorization) to Application Insights as a trace
