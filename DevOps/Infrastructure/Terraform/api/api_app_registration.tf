@@ -24,11 +24,11 @@ resource "azuread_application" "api_app_registration" {
 		enterprise = false
 		hide       = false
 	}
-}
 
-resource "azuread_application_identifier_uri" "api_identifier_uri" {
-	application_id = azuread_application.api_app_registration.id
-	identifier_uri = "api://${azuread_application.api_app_registration.client_id}"
+	lifecycle {
+		# Prevents this resource from overwriting the URI managed below
+		ignore_changes = [identifier_uris]
+	}
 }
 
 resource "azuread_service_principal" "api_sp" {
@@ -37,4 +37,11 @@ resource "azuread_service_principal" "api_sp" {
 	feature_tags {
 		enterprise = false
 	}
+}
+
+resource "azuread_application_identifier_uri" "api_identifier_uri" {
+	application_id = azuread_application.api_app_registration.id
+	identifier_uri = "api://${azuread_application.api_app_registration.client_id}"
+
+	depends_on = [azuread_service_principal.api_sp]
 }
