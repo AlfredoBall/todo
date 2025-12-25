@@ -15,13 +15,12 @@ resource "azurerm_linux_web_app" "api" {
     always_on = false
 
     # Configure App Service CORS origins to allow requests from the frontend web app
-    # cors {
-    #   allowed_origins = [
-    #     "https://${var.frontend_default_hostname}",
-    #     "https://${var.frontend_default_hostname}"
-    #   ]
-    #   support_credentials = true
-    # }
+    cors {
+      allowed_origins = [
+        "https://${var.frontend_default_hostname}",
+      ]
+      support_credentials = true
+    }
   }
 
   app_settings = {
