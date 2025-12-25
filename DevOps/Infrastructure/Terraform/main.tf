@@ -17,7 +17,6 @@ module "api" {
   api_app_service_name      = var.api_app_service_name
   api_app_registration_name = var.api_app_registration_name
   sign_in_audience          = var.sign_in_audience
-  tenant_id                 = var.tenant_id
   location                  = var.location
   resource_group_name       = var.resource_group_name
   service_plan_id           = azurerm_service_plan.service_plan.id
