@@ -1,5 +1,3 @@
-
-
 variable "service_plan_name" {
   description = "Name of the Azure App Service Plan for the Todo Web App Services"
   type        = string
@@ -71,14 +69,3 @@ variable "sign_in_audience" {
   description = "Sign-in audience for Azure AD applications"
   type        = string
 }
-
-/*
-Backend values (resource_group_name, storage_account_name, container_name, key)
-should be supplied at `terraform init` with `-backend-config` or managed outside
-of committed files. Do NOT store secrets or access keys in the repo.
-Example:
-  terraform init -backend-config="resource_group_name=rg-terraform-state" \
-    -backend-config="storage_account_name=mystorageacct" \
-    -backend-config="container_name=tfstate" \
-    -backend-config="key=todo.terraform.tfstate"
-*/

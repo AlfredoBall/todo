@@ -1,23 +1,17 @@
-# Local Development App Registrations
-# This creates Azure AD app registrations for local development only
-# State is stored locally - do not commit terraform.tfstate
-
-terraform {
-  required_version = "1.14.2"
-  required_providers {
-    azuread = {
-      source  = "hashicorp/azuread"
-      version = "3.7.0"
-    }
-  }
+module "api" {
+  source           = "./api"
+  sign_in_audience = var.sign_in_audience
 }
 
-provider "azuread" {
-  tenant_id = var.tenant_id
-}
+module "frontend" {
+  source                                = "./frontend"
+  sign_in_audience                      = var.sign_in_audience
+  api_app_registration_client_id        = module.api.app_registration_client_id
+  api_app_registration_service_principal_id = module.api.app_registration_service_principal_id
+  react_redirect_uri                    = var.react_redirect_uri
+  angular_redirect_uri                  = var.angular_redirect_uri
 
-# GitHub provider is NOT used for local development
-# GitHub Actions integration is configured in the production Terraform directory
+}
 
 data "azuread_client_config" "current" {}
 

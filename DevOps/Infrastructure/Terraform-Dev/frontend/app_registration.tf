@@ -1,5 +1,5 @@
 # React App Registration (Development)
-resource "azuread_application" "react_dev" {
+resource "azuread_application" "app_registration" {
   display_name = "todo-react-dev"
   owners       = [data.azuread_client_config.current.object_id]
   sign_in_audience = var.sign_in_audience
@@ -11,12 +11,12 @@ resource "azuread_application" "react_dev" {
   single_page_application {
     redirect_uris = [
       var.react_redirect_uri,
-      "${var.react_redirect_uri}/redirect"
+      var.angular_redirect_uri
     ]
   }
 
   required_resource_access {
-    resource_app_id = azuread_application.api_dev.client_id
+    resource_app_id = var.api_app_registration_client_id
 
     resource_access {
       id   = "00000000-0000-0000-0000-000000000001"
@@ -34,25 +34,25 @@ resource "azuread_application" "react_dev" {
   }
 }
 
-resource "azuread_service_principal" "react_dev_sp" {
-  client_id   = azuread_application.react_dev.client_id
+resource "azuread_service_principal" "service_principal" {
+  client_id   = azuread_application.app_registration.client_id
   owners      = [data.azuread_client_config.current.object_id]
 }
 
-# Grant admin consent for API access_as_user to todo-react-dev service principal
-resource "azuread_service_principal_delegated_permission_grant" "react_dev_api_access_as_user" {
-  service_principal_object_id           = azuread_service_principal.react_dev_sp.object_id
-  resource_service_principal_object_id  = azuread_service_principal.api_dev_sp.object_id
+# Grant admin consent for API access_as_user to frontend service principal
+resource "azuread_service_principal_delegated_permission_grant" "api_access_as_user" {
+  service_principal_object_id           = azuread_service_principal.service_principal.object_id
+  resource_service_principal_object_id  = var.api_app_registration_service_principal_id
   claim_values                         = ["access_as_user"]
 }
 
 # Grant admin consent for Microsoft Graph User.Read to todo-react-dev service principal
-resource "azuread_service_principal_delegated_permission_grant" "react_dev_graph_user_read" {
-  service_principal_object_id           = azuread_service_principal.react_dev_sp.object_id
+resource "azuread_service_principal_delegated_permission_grant" "frontend_graph_user_read" {
+  service_principal_object_id           = azuread_service_principal.service_principal.object_id
   resource_service_principal_object_id  = data.azuread_service_principal.microsoft_graph.object_id
   claim_values                         = ["openid","User.Read"]
 
    # Enforce the order to ensure openid is applied correctly
-  depends_on = [azuread_service_principal_delegated_permission_grant.react_dev_api_access_as_user]
+  depends_on = [azuread_service_principal_delegated_permission_grant.api_access_as_user]
 }
 
