@@ -50,6 +50,8 @@ builder.Services.AddSingleton<ItemService>();
 //var angularUrl = builder.Configuration["ANGULAR_URL"] ?? throw new InvalidOperationException("ANGULAR_URL configuration is required");
 var frontendURL = builder.Configuration["FRONTEND_URL"] ?? throw new InvalidOperationException("FRONTEND_URL configuration is required");
 
+Console.WriteLine($"Configuring CORS for frontend URL: {frontendURL}");
+
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
