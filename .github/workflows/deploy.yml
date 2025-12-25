@@ -70,9 +70,11 @@ jobs:
         with:
           app-name: ${{ vars.AZURE_API_APP_SERVICE_NAME }}
           package: api_artifact
+          clean: true
 
       - name: Deploy combined frontend to Azure Web App (Linux)
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ vars.AZURE_FRONTEND_APP_SERVICE_NAME }}
           package: frontend_package
+          clean: true
