@@ -48,7 +48,7 @@ builder.Services.AddSingleton<ItemService>();
 // TODO Fix this if it's decided that the local development will host nginx for a combined frontend
 //var reactUrl = builder.Configuration["REACT_URL"] ?? throw new InvalidOperationException("REACT_URL configuration is required");
 //var angularUrl = builder.Configuration["ANGULAR_URL"] ?? throw new InvalidOperationException("ANGULAR_URL configuration is required");
-var frontendURL = builder.Configuration["FRONTEND_URL"] ?? throw new InvalidOperationException("ANGULAR_URL configuration is required");
+var frontendURL = builder.Configuration["FRONTEND_URL"] ?? throw new InvalidOperationException("FRONTEND_URL configuration is required");
 
 builder.Services.AddCors(options =>
 {
