@@ -52,16 +52,16 @@ var frontendURL = builder.Configuration["FRONTEND_URL"] ?? throw new InvalidOper
 
 Console.WriteLine($"Configuring CORS for frontend URL: {frontendURL}");
 
-// builder.Services.AddCors(options =>
-// {
-//     options.AddDefaultPolicy(policy =>
-//     {
-//         policy.WithOrigins(frontendURL)
-//                 .AllowAnyHeader()
-//                 .AllowAnyMethod()
-//                 .AllowCredentials();
-//     });
-// });
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.WithOrigins(frontendURL)
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials();
+    });
+});
 
 // The Connection String is setup in terraform and injected as an environment variable
 builder.Services.AddApplicationInsightsTelemetry();
@@ -110,7 +110,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-// app.UseCors();
+app.UseCors();
 
 app.UseHttpsRedirection();
 
