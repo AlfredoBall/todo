@@ -18,11 +18,13 @@ variable "location" {
 variable "tenant_id" {
   description = "Azure Tenant ID"
   type        = string
+  sensitive   = true
 }
 
 variable "subscription_id" {
   description = "Azure Subscription ID"
   type        = string
+  sensitive   = true
 }
 
 variable "resource_group_name" {
@@ -33,7 +35,7 @@ variable "resource_group_name" {
 
 variable "resource_tags" {
   description = "Common tags applied to resources"
-  type = map(string)
+  type        = map(string)
   default = {
     project = "todo"
   }
