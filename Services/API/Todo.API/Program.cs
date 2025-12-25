@@ -49,15 +49,15 @@ var reactUrl = builder.Configuration["REACT_URL"] ?? throw new InvalidOperationE
 var angularUrl = builder.Configuration["ANGULAR_URL"] ?? throw new InvalidOperationException("ANGULAR_URL configuration is required");
 var frontendURL = builder.Configuration["FRONTEND_URL"] ?? throw new InvalidOperationException("FRONTEND_URL configuration is required");
 
-builder.Environment.IsDevelopment();
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
         policy.WithOrigins(
-            builder.Environment.IsDevelopment() ?
-                                    new[] { reactUrl, angularUrl } :
-                                    new[] { frontendURL })
+            // builder.Environment.IsDevelopment() ?
+            //                         new[] { reactUrl, angularUrl } :
+            //                         new[] { frontendURL })
+                            new[] { frontendURL })
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();
