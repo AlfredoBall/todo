@@ -28,7 +28,6 @@ module "frontend" {
   source                         = "./frontend"
   frontend_app_service_name      = var.frontend_app_service_name
   sign_in_audience               = var.sign_in_audience
-  tenant_id                      = var.tenant_id
   location                       = var.location
   resource_group_name            = var.resource_group_name
   service_plan_id                = azurerm_service_plan.service_plan.id
@@ -37,3 +36,5 @@ module "frontend" {
   api_scope_uuid                 = module.api.api_scope_uuid
   api_service_principal_id       = module.api.api_service_principal_id
 }
+
+data "azuread_client_config" "current" {}

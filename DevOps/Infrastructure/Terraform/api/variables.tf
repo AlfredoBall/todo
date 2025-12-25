@@ -17,11 +17,6 @@ variable "sign_in_audience" {
   description = "Sign-in audience for Azure AD applications"
 }
 
-variable "tenant_id" {
-  type        = string
-  description = "Azure Tenant ID"
-}
-
 variable "location" {
   type        = string
   description = "Azure location for resources"
