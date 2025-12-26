@@ -1,6 +1,6 @@
 output "api_app_service_default_url" {
   description = "Default URL for the API App Service"
-  value       = "https://${azurerm_linux_web_app.api.name}.azurewebsites.net"
+  value       = "https://${azurerm_windows_web_app.api.name}.azurewebsites.net"
 }
 
 output "api_app_registration_client_id" {
