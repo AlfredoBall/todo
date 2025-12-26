@@ -1,6 +1,8 @@
 using System.Reflection;
 using System.Security.Claims;
 using Microsoft.ApplicationInsights;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Identity.Web;
@@ -92,6 +94,12 @@ app.Use(async (context, next) =>
     }
     await next();
 });
+
+// 2. Map the health check endpoint and allow anonymous access
+app.MapHealthChecks("/healthz", new HealthCheckOptions
+{
+    AllowCachingResponses = false // Optional: ensures fresh results
+}).WithMetadata(new AllowAnonymousAttribute()); // *** Crucial line for anonymous access ***
 
 // Ensure database is created and seeded
 using (var scope = app.Services.CreateScope())
