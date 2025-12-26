@@ -45,19 +45,18 @@ builder.Services.AddSingleton<ClipboardService>();
 builder.Services.AddSingleton<ItemService>();
 
 // Configure CORS
-var reactUrl = builder.Configuration["REACT_URL"] ?? throw new InvalidOperationException("REACT_URL configuration is required");
-var angularUrl = builder.Configuration["ANGULAR_URL"] ?? throw new InvalidOperationException("ANGULAR_URL configuration is required");
-var frontendURL = builder.Configuration["FRONTEND_URL"] ?? throw new InvalidOperationException("FRONTEND_URL configuration is required");
+// var reactUrl = builder.Configuration["REACT_URL"] ?? throw new InvalidOperationException("REACT_URL configuration is required");
+// var angularUrl = builder.Configuration["ANGULAR_URL"] ?? throw new InvalidOperationException("ANGULAR_URL configuration is required");
+// var frontendURL = builder.Configuration["FRONTEND_URL"] ?? throw new InvalidOperationException("FRONTEND_URL configuration is required");
 
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
         policy.WithOrigins(
-            // builder.Environment.IsDevelopment() ?
-            //                         new[] { reactUrl, angularUrl } :
-            //                         new[] { frontendURL })
-                            new[] { frontendURL })
+            builder.Environment.IsDevelopment() ?
+                                    new[] { builder.Configuration["REACT_URL"]!, builder.Configuration["ANGULAR_URL"]! } :
+                                    new[] { builder.Configuration["FRONTEND_URL"]! })
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();
