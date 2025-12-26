@@ -10,12 +10,12 @@ resource "azurerm_windows_web_app" "api" {
 
   site_config {
     application_stack {
-      dotnet_version = "10.0"
+      dotnet_version = "v10.0"
     }
     remote_debugging_enabled = var.api_build_configuration == "Debug" ? true : false
     # remote_debugging_version = var.visual_studio_version
     health_check_path = "/healthz"
-    health_check_eviction_time_in_min = 1
+    health_check_eviction_time_in_min = 2
     always_on = true
   }
 
