@@ -35,7 +35,6 @@ variable "subscription_id" {
 variable "resource_group_name" {
   description = "Name of the resource group"
   type        = string
-  default     = "rg-todo"
 }
 
 variable "resource_tags" {
@@ -87,4 +86,9 @@ variable "visual_studio_version" {
   description = "Version of Visual Studio to use for building the projects"
   type        = string
   default     = "VS2022"
+}
+
+variable "target_env" {
+  description = "ASP.NET Core environment (e.g., Development, Staging, Production)"
+  type        = string
 }
