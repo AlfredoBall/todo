@@ -20,7 +20,7 @@ resource "azurerm_windows_web_app" "api" {
   }
 
   app_settings = {
-    # "WEBSITE_RUN_FROM_PACKAGE" = "1"
+    "ASPNETCORE_ENVIRONMENT" = "${ title(var.target_env) }"
     "FRONTEND_URL"             = "https://${var.frontend_default_hostname}"
     "WEBSITES_DISABLE_APP_SERVICE_AUTHENTICATION" = "true"
     # Azure AD configuration for token validation

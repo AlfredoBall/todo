@@ -41,3 +41,8 @@ variable "visual_studio_version" {
   description = "Version of Visual Studio to use for building the projects"
   type        = string
 }
+
+variable "target_env" {
+  description = "ASP.NET Core environment (e.g., Development, Staging, Production)"
+  type        = string
+}

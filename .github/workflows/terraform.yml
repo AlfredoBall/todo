@@ -39,6 +39,7 @@ jobs:
     env:
       TERRAFORM_DIR: DevOps/Infrastructure/Terraform
       TF_VAR_api_build_configuration: ${{ vars.API_BUILD_CONFIGURATION }}
+      TF_VAR_target_env: ${{ inputs.target_env }}
     outputs:
       tenant_id: ${{ steps.terraform_output.outputs.tenant_id }}
       api_url: ${{ steps.terraform_output.outputs.api_url }}
@@ -107,11 +108,9 @@ jobs:
           API_CLIENT_ID=$(terraform output -raw api_app_registration_app_id)
           TENANT_ID=${{ secrets.AZURE_TENANT_ID }}
           API_SCOPE_URI=$(terraform output -raw api_scope_uri)
-          API_BUILD_CONFIGURATION=${{ vars.API_BUILD_CONFIGURATION }}
           echo "api_url=$API_URL" >> $GITHUB_OUTPUT
           echo "frontend_url=$FRONTEND_URL" >> $GITHUB_OUTPUT
           echo "frontend_client_id=$FRONTEND_CLIENT_ID" >> $GITHUB_OUTPUT
           echo "api_client_id=$API_CLIENT_ID" >> $GITHUB_OUTPUT
           echo "tenant_id=$TENANT_ID" >> $GITHUB_OUTPUT
           echo "api_scope_uri=$API_SCOPE_URI" >> $GITHUB_OUTPUT
-          echo "api_build_configuration=$API_BUILD_CONFIGURATION" >> $GITHUB_OUTPUT

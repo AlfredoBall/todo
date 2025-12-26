@@ -43,6 +43,7 @@ variable "resource_tags" {
   type        = map(string)
   default = {
     project = "todo"
+    environment = "${ var.target_env }"
   }
 }
 
@@ -87,4 +88,9 @@ variable "visual_studio_version" {
   description = "Version of Visual Studio to use for building the projects"
   type        = string
   default     = "VS2022"
+}
+
+variable "target_env" {
+  description = "ASP.NET Core environment (e.g., Development, Staging, Production)"
+  type        = string
 }
