@@ -13,6 +13,8 @@ jobs:
     permissions:
       id-token: write
       contents: read
+    with:
+      api_build_configuration: ${{ vars.API_BUILD_CONFIGURATION }}
 
   build:
     name: Build Applications
@@ -26,7 +28,7 @@ jobs:
       frontend_client_id: ${{ needs.terraform.outputs.frontend_client_id }}
       api_client_id: ${{ needs.terraform.outputs.api_client_id }}
       api_scope_uri: ${{ needs.terraform.outputs.api_scope_uri }}
-
+      api_build_configuration: ${{ vars.API_BUILD_CONFIGURATION }}
   deploy:
     name: Deploy Applications
     needs: [terraform, build]
