@@ -10,7 +10,7 @@ jobs:
     name: Provision Infrastructure
     uses: ./.github/workflows/terraform.yml
     with:
-      api_build_configuration: ${{ vars.API_BUILD_CONFIGURATION }}
+      target_env: 'development'
     secrets: inherit
     permissions:
       id-token: write
@@ -22,13 +22,13 @@ jobs:
     uses: ./.github/workflows/build.yml
     secrets: inherit
     with:
+      target_env: 'development'
       api_url: ${{ needs.terraform.outputs.api_url }}
       angular_url: ${{ needs.terraform.outputs.frontend_url }}/todo/angular
       react_url: ${{ needs.terraform.outputs.frontend_url }}/todo/react
       frontend_client_id: ${{ needs.terraform.outputs.frontend_client_id }}
       api_client_id: ${{ needs.terraform.outputs.api_client_id }}
       api_scope_uri: ${{ needs.terraform.outputs.api_scope_uri }}
-      api_build_configuration: ${{ vars.API_BUILD_CONFIGURATION }}
   deploy:
     name: Deploy Applications
     needs: [terraform, build]
