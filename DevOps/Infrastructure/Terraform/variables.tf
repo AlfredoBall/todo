@@ -1,5 +1,10 @@
-variable "service_plan_name" {
-  description = "Name of the Azure App Service Plan for the Todo Web App Services"
+variable "service_plan_linux_name" {
+  description = "Name of the Linux Azure App Service Plan for the Todo Web App Services"
+  type        = string
+}
+
+variable "service_plan_windows_name" {
+  description = "Name of the Windows Azure App Service Plan for the Todo Web App Services"
   type        = string
 }
 
@@ -70,4 +75,16 @@ variable "frontend_app_service_name" {
 variable "sign_in_audience" {
   description = "Sign-in audience for Azure AD applications"
   type        = string
+}
+
+variable "api_build_configuration" {
+  description = "Build configuration for the API project"
+  type        = string
+  default     = "Release"
+}
+
+variable "visual_studio_version" {
+  description = "Version of Visual Studio to use for building the projects"
+  type        = string
+  default     = "VS2022"
 }

@@ -27,6 +27,11 @@ on:
         description: 'API scope URI for authentication'
         required: false
         type: string
+      api_build_configuration:
+        description: 'Build configuration for the API project'
+        required: true
+        type: string
+        default: 'Release'
 
 jobs:
   build:
@@ -100,7 +105,7 @@ jobs:
       - name: Build .NET API
         if: matrix.project == 'Services/API/Todo.API'
         working-directory: ${{ matrix.project }}
-        run: dotnet publish -c Release -o ./publish
+        run: dotnet publish -c ${{ inputs.api_build_configuration }} -o ./publish
 
       - name: Upload API artifact
         if: matrix.project == 'Services/API/Todo.API'

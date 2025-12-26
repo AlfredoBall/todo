@@ -1,8 +1,16 @@
-resource "azurerm_service_plan" "service_plan" {
-  name                = var.service_plan_name
+resource "azurerm_service_plan" "service_plan_linux" {
+  name                = var.service_plan_linux_name
   location            = var.location
   resource_group_name = var.resource_group_name
   os_type             = "Linux"
+  sku_name            = "F1"
+}
+
+resource "azurerm_service_plan" "service_plan_windows" {
+  name                = var.service_plan_windows_name
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  os_type             = "Windows"
   sku_name            = "B1"
 }
 
@@ -19,8 +27,10 @@ module "api" {
   sign_in_audience          = var.sign_in_audience
   location                  = var.location
   resource_group_name       = var.resource_group_name
-  service_plan_id           = azurerm_service_plan.service_plan.id
+  service_plan_id           = azurerm_service_plan.service_plan_windows.id
   frontend_default_hostname = module.frontend.frontend_default_hostname
+  api_build_configuration   = var.api_build_configuration
+  visual_studio_version     = var.visual_studio_version
 }
 
 module "frontend" {
@@ -29,7 +39,7 @@ module "frontend" {
   sign_in_audience               = var.sign_in_audience
   location                       = var.location
   resource_group_name            = var.resource_group_name
-  service_plan_id                = azurerm_service_plan.service_plan.id
+  service_plan_id                = azurerm_service_plan.service_plan_linux.id
   api_app_registration_client_id = module.api.api_app_registration_client_id
   api_scope_uri                  = module.api.api_scope_uri
   api_scope_uuid                 = module.api.api_scope_uuid
