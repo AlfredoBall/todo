@@ -43,7 +43,6 @@ variable "resource_tags" {
   type        = map(string)
   default = {
     project = "todo"
-    environment = "${ var.target_env }"
   }
 }
 
