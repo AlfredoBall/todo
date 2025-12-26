@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       # Define the output named 'services'
-      target-env: ${{ steps.gen-target-env-matrix.outputs.target-envs }}
+      target_env: ${{ steps.gen-target-env-matrix.outputs.target_envs }}
     steps:
       - name: Generate Matrix
         id: gen-target-env-matrix
@@ -19,7 +19,7 @@ jobs:
           # Define your values as a JSON array
           TARGET_ENVS_JSON='[ "production" ]'
           # Output the JSON to GITHUB_OUTPUT, making it available as a job output
-          echo "target-envs=$TARGET_ENVS_JSON" >> "$GITHUB_OUTPUT"
+          echo "target_env=$TARGET_ENVS_JSON" >> "$GITHUB_OUTPUT"
 
   terraform:
     name: Provision Infrastructure
@@ -30,7 +30,7 @@ jobs:
       contents: read
     strategy:
       matrix:
-        target_env: ${{ fromJson(needs.generate-matrix.outputs.target-envs) }}
+        target_env: ${{ fromJson(needs.generate-matrix.outputs.target_env) }}
     with:
       target_env: ${{ matrix.target_env }}
 
@@ -41,7 +41,7 @@ jobs:
     secrets: inherit
     strategy:
       matrix:
-        target_env: ${{ fromJson(needs.generate-matrix.outputs.target-envs) }}
+        target_env: ${{ fromJson(needs.generate-matrix.outputs.target_env) }}
     with:
       target_env: ${{ matrix.target_env }}
       api_url: ${{ needs.terraform.outputs.api_url }}
@@ -61,7 +61,7 @@ jobs:
       contents: read
     strategy:
       matrix:
-        target_env: ${{ fromJson(needs.generate-matrix.outputs.target-envs) }}
+        target_env: ${{ fromJson(needs.generate-matrix.outputs.target_env) }}
     with:
       target_env: ${{ matrix.target_env }}
       api_url: ${{ needs.terraform.outputs.api_url }}

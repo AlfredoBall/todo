@@ -46,5 +46,3 @@ module "frontend" {
   api_scope_uuid                 = module.api.api_scope_uuid
   api_service_principal_id       = module.api.api_service_principal_id
 }
-
-data "azuread_client_config" "current" {}
