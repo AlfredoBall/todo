@@ -24,6 +24,9 @@ on:
       api_scope_uri:
         description: "API OAuth Scope URI"
         value: ${{ jobs.terraform.outputs.api_scope_uri }}
+      api_build_configuration:
+        description: 'Build configuration for the API project'
+        value: ${{ inputs.api_build_configuration }}
   workflow_dispatch:
     inputs:
       api_build_configuration:
@@ -109,9 +112,11 @@ jobs:
           API_CLIENT_ID=$(terraform output -raw api_app_registration_app_id)
           TENANT_ID=${{ secrets.AZURE_TENANT_ID }}
           API_SCOPE_URI=$(terraform output -raw api_scope_uri)
+          API_BUILD_CONFIGURATION=${{ inputs.api_build_configuration }}
           echo "api_url=$API_URL" >> $GITHUB_OUTPUT
           echo "frontend_url=$FRONTEND_URL" >> $GITHUB_OUTPUT
           echo "frontend_client_id=$FRONTEND_CLIENT_ID" >> $GITHUB_OUTPUT
           echo "api_client_id=$API_CLIENT_ID" >> $GITHUB_OUTPUT
           echo "tenant_id=$TENANT_ID" >> $GITHUB_OUTPUT
           echo "api_scope_uri=$API_SCOPE_URI" >> $GITHUB_OUTPUT
+          echo "api_build_configuration=$API_BUILD_CONFIGURATION" >> $GITHUB_OUTPUT
