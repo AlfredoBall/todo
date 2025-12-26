@@ -38,4 +38,5 @@ jobs:
       id-token: write
       contents: read
     with:
+      target_env: 'development'
       api_url: ${{ needs.terraform.outputs.api_url }}
