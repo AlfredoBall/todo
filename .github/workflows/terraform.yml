@@ -3,11 +3,10 @@ name: Terraform Infrastructure
 on:
   workflow_call:
     inputs:
-      api_build_configuration:
-        description: 'Build configuration for the API project'
+      target_env:
+        description: 'Target environment'
         required: true
         type: string
-        default: 'Release'
     outputs:
       api_url:
         description: "API App Service URL"
@@ -24,26 +23,22 @@ on:
       api_scope_uri:
         description: "API OAuth Scope URI"
         value: ${{ jobs.terraform.outputs.api_scope_uri }}
-      api_build_configuration:
-        description: 'Build configuration for the API project'
-        value: ${{ inputs.api_build_configuration }}
   workflow_dispatch:
     inputs:
-      api_build_configuration:
-        description: 'Build configuration for the API project'
+      target_env:
+        description: 'Target environment'
         required: true
         type: string
-        default: 'Release'
 jobs:
   terraform:
     runs-on: ubuntu-latest
-    environment: development
+    environment: ${{ inputs.target_env }}
     permissions:
       id-token: write
       contents: read
     env:
       TERRAFORM_DIR: DevOps/Infrastructure/Terraform
-      TF_VAR_API_BUILD_CONFIGURATION: ${{ inputs.api_build_configuration }}
+      TF_VAR_API_BUILD_CONFIGURATION: ${{ vars.API_BUILD_CONFIGURATION }}
     outputs:
       tenant_id: ${{ steps.terraform_output.outputs.tenant_id }}
       api_url: ${{ steps.terraform_output.outputs.api_url }}
