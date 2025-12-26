@@ -3,6 +3,11 @@ name: Deploy API, React, and Angular
 on:
   workflow_call:
     inputs:
+      target_env:
+        description: 'Target environment'
+        required: false
+        type: string
+        default: 'development'
       api_url:
         description: 'API base URL from Terraform'
         required: false
@@ -22,7 +27,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: development
+    environment: ${{ inputs.target_env }}
     permissions:
       id-token: write
       contents: read
