@@ -1,4 +1,4 @@
-resource "azurerm_linux_web_app" "api" {
+resource "azurerm_windows_web_app" "api" {
   name                = var.api_app_service_name
   location            = var.location
   resource_group_name = var.resource_group_name
@@ -12,7 +12,11 @@ resource "azurerm_linux_web_app" "api" {
     application_stack {
       dotnet_version = "10.0"
     }
-    always_on = false
+    # remote_debugging_enabled = var.api_build_configuration == "Debug" ? true : false
+    # remote_debugging_version = var.visual_studio_version
+    health_check_path = "/healthz"
+    health_check_eviction_time_in_min = 1
+    always_on = true
   }
 
   app_settings = {
@@ -20,6 +24,7 @@ resource "azurerm_linux_web_app" "api" {
     "FRONTEND_URL"             = "https://${var.frontend_default_hostname}"
     "WEBSITES_DISABLE_APP_SERVICE_AUTHENTICATION" = "true"
     # Azure AD configuration for token validation
+    "AzureAd__TenantId" = data.azuread_client_config.current.tenant_id
     "AzureAd__ClientId" = azuread_application.api_app_registration.client_id
     "AzureAd__Audience" = "api://${azuread_application.api_app_registration.client_id}"
     "AzureAd__Instance" = "https://login.microsoftonline.com/"
@@ -29,3 +34,5 @@ resource "azurerm_linux_web_app" "api" {
     "APPLICATIONINSIGHTS_CONNECTION_STRING" = azurerm_application_insights.api.connection_string
   }
 }
+
+data "azuread_client_config" "current" {}

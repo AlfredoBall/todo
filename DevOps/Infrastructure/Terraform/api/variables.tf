@@ -31,3 +31,13 @@ variable "service_plan_id" {
   type        = string
   description = "ID of the Azure App Service Plan"
 }
+
+variable "api_build_configuration" {
+  description = "Build configuration for the API project"
+  type        = string
+}
+
+variable "visual_studio_version" {
+  description = "Version of Visual Studio to use for building the projects"
+  type        = string
+}
