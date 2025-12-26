@@ -55,7 +55,7 @@ builder.Services.AddCors(options =>
     {
         policy.WithOrigins(
             builder.Environment.IsDevelopment() ?
-                                    new[] { builder.Configuration["REACT_URL"]!, builder.Configuration["REACT_URL"]! } :
+                                    new[] { builder.Configuration["REACT_URL"]!, builder.Configuration["ANGULAR_URL"]! } :
                                     new[] { builder.Configuration["FRONTEND_URL"]! })
             .AllowAnyHeader()
             .AllowAnyMethod()
