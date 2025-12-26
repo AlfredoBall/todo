@@ -6,29 +6,51 @@ on:
     branches: [ main ]
 
 jobs:
+  # Job 1: Generates the matrix configuration
+  generate-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      # Define the output named 'services'
+      target-env: ${{ steps.gen-target-env-matrix.outputs.target-envs }}
+    steps:
+      - name: Generate Matrix
+        id: gen-target-env-matrix
+        run: |
+          # Define your values as a JSON array
+          TARGET_ENVS_JSON='[ "production" ]'
+          # Output the JSON to GITHUB_OUTPUT, making it available as a job output
+          echo "target-envs=$TARGET_ENVS_JSON" >> "$GITHUB_OUTPUT"
+
   terraform:
     name: Provision Infrastructure
     uses: ./.github/workflows/terraform.yml
-    with:
-      target_env: 'development'
     secrets: inherit
     permissions:
       id-token: write
       contents: read
+    strategy:
+      matrix:
+        target_env: ${{ fromJson(needs.generate-matrix.outputs.target-envs) }}
+    with:
+      target_env: ${{ matrix.target_env }}
 
   build:
     name: Build Applications
     needs: terraform
     uses: ./.github/workflows/build.yml
     secrets: inherit
+    strategy:
+      matrix:
+        target_env: ${{ fromJson(needs.generate-matrix.outputs.target-envs) }}
     with:
-      target_env: 'development'
+      target_env: ${{ matrix.target_env }}
       api_url: ${{ needs.terraform.outputs.api_url }}
       angular_url: ${{ needs.terraform.outputs.frontend_url }}/todo/angular
       react_url: ${{ needs.terraform.outputs.frontend_url }}/todo/react
       frontend_client_id: ${{ needs.terraform.outputs.frontend_client_id }}
       api_client_id: ${{ needs.terraform.outputs.api_client_id }}
       api_scope_uri: ${{ needs.terraform.outputs.api_scope_uri }}
+
   deploy:
     name: Deploy Applications
     needs: [terraform, build]
@@ -37,6 +59,9 @@ jobs:
     permissions:
       id-token: write
       contents: read
+    strategy:
+      matrix:
+        target_env: ${{ fromJson(needs.generate-matrix.outputs.target-envs) }}
     with:
-      target_env: 'development'
+      target_env: ${{ matrix.target_env }}
       api_url: ${{ needs.terraform.outputs.api_url }}

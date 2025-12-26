@@ -39,6 +39,7 @@ jobs:
     env:
       TERRAFORM_DIR: DevOps/Infrastructure/Terraform
       TF_VAR_api_build_configuration: ${{ vars.API_BUILD_CONFIGURATION }}
+      TF_VAR_target_env: ${{ inputs.target_env }}
     outputs:
       tenant_id: ${{ steps.terraform_output.outputs.tenant_id }}
       api_url: ${{ steps.terraform_output.outputs.api_url }}
@@ -64,15 +65,11 @@ jobs:
         with:
           terraform_version: 1.14.2
           terraform_wrapper: false
+          cli_config_credentials_token: ${{ secrets.TF_HCP_API_TOKEN }}
 
       - name: Terraform Init
         working-directory: ${{ env.TERRAFORM_DIR }}
-        run: |
-          terraform init \
-            -backend-config="resource_group_name=${{ vars.AZURE_RESOURCE_GROUP }}" \
-            -backend-config="storage_account_name=${{ vars.TF_STORAGE_ACCOUNT_NAME }}" \
-            -backend-config="container_name=${{ vars.TF_CONTAINER_NAME }}" \
-            -backend-config="key=${{ vars.TF_STATE_KEY }}"
+        run: terraform init
 
       - name: Import Resource Group (if not in state)
         working-directory: ${{ env.TERRAFORM_DIR }}
@@ -107,11 +104,9 @@ jobs:
           API_CLIENT_ID=$(terraform output -raw api_app_registration_app_id)
           TENANT_ID=${{ secrets.AZURE_TENANT_ID }}
           API_SCOPE_URI=$(terraform output -raw api_scope_uri)
-          API_BUILD_CONFIGURATION=${{ vars.API_BUILD_CONFIGURATION }}
           echo "api_url=$API_URL" >> $GITHUB_OUTPUT
           echo "frontend_url=$FRONTEND_URL" >> $GITHUB_OUTPUT
           echo "frontend_client_id=$FRONTEND_CLIENT_ID" >> $GITHUB_OUTPUT
           echo "api_client_id=$API_CLIENT_ID" >> $GITHUB_OUTPUT
           echo "tenant_id=$TENANT_ID" >> $GITHUB_OUTPUT
           echo "api_scope_uri=$API_SCOPE_URI" >> $GITHUB_OUTPUT
-          echo "api_build_configuration=$API_BUILD_CONFIGURATION" >> $GITHUB_OUTPUT
