@@ -18,10 +18,13 @@ jobs:
           # Define your values as a JSON array
           TARGET_ENVS_JSON='[ "production" ]'
           # Output the JSON to GITHUB_OUTPUT, making it available as a job output
-          echo "target_envs=$TARGET_ENVS_JSON" >> "$GITHUB_OUTPUT"
+          echo 'target_envs=$TARGET_ENVS_JSON' >> "$GITHUB_OUTPUT"
 
   terraform:
     name: Provision Infrastructure
+    needs: [generate-matrix]
+    # The "if" guard prevents fromJson from running on an empty/null value
+    if: ${{ needs.generate-matrix.outputs.target_envs != '' && needs.generate-matrix.outputs.target_envs != '[]' }}
     uses: ./.github/workflows/terraform.yml
     secrets: inherit
     permissions:
