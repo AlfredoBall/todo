@@ -29,6 +29,7 @@ jobs:
     concurrency:
       group: '${{ matrix.target_env }}'
     strategy:
+      max-parallel: 1
       matrix:
         target_env: ${{ fromJson(needs.generate-matrix.outputs.target_envs) }}
     with:
