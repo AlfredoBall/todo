@@ -7,9 +7,9 @@ resource "azurerm_service_plan" "service_plan_linux" {
 }
 
 resource "azurerm_service_plan" "service_plan_windows" {
-  name                = var.service_plan_windows_name
+  name                = "${ var.service_plan_windows_name }-${ var.target_env }"
   location            = var.location
-  resource_group_name = var.resource_group_name
+  resource_group_name = "${ var.resource_group_name }-${ var.target_env }"
   os_type             = "Windows"
   sku_name            = "B1"
 }
