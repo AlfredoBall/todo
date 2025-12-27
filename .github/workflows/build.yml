@@ -108,7 +108,7 @@ jobs:
         run: |
           dotnet publish ${{ matrix.project }} \
             -c ${{ vars.API_BUILD_CONFIGURATION }} \
-            - "./publish-output"
+            -o "./publish-output"
 
 # Upload Artifact
 
