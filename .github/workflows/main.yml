@@ -14,16 +14,12 @@ jobs:
     steps:
       - name: Generate Matrix
         id: gen-target-env-matrix
-        run: |
-          # Define your values as a JSON array
-          TARGET_ENVS_JSON='[ "production" ]'
-          # Output the JSON to GITHUB_OUTPUT, making it available as a job output
-          echo 'target_envs=$TARGET_ENVS_JSON' >> "$GITHUB_OUTPUT"
+        run: echo 'target_envs=["Development", "Production"]' >> "$GITHUB_OUTPUT"
 
   terraform:
     name: Provision Infrastructure
     needs: [generate-matrix]
-    # The "if" guard prevents fromJson from running on an empty/null value
+        # The "if" guard prevents fromJson from running on an empty/null value
     if: ${{ needs.generate-matrix.outputs.target_envs != '' && needs.generate-matrix.outputs.target_envs != '[]' }}
     uses: ./.github/workflows/terraform.yml
     secrets: inherit
