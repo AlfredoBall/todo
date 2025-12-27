@@ -39,20 +39,20 @@ jobs:
       - name: Download API artifact
         uses: actions/download-artifact@v4
         with:
-          name: api
+          name: api-${{ inputs.target_env }}
           path: api_artifact
 
-      - name: Download Angular artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: angular
-          path: angular_artifact
+      # - name: Download Angular artifact
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: angular
+      #     path: angular_artifact
 
-      - name: Download React artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: react
-          path: react_artifact
+      # - name: Download React artifact
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: react
+      #     path: react_artifact
 
       - name: Azure Login (OIDC)
         uses: azure/login@v2
@@ -63,23 +63,23 @@ jobs:
           enable-AzPSSession: false
           allow-no-subscriptions: true
 
-      - name: Prepare combined frontend package
-        run: |
-          mkdir -p frontend_package/todo/angular
-          mkdir -p frontend_package/todo/react
-          cp -r angular_artifact/todo/browser/* frontend_package/todo/angular/
-          cp -r react_artifact/* frontend_package/todo/react/
+      # - name: Prepare combined frontend package
+      #   run: |
+      #     mkdir -p frontend_package/todo/angular
+      #     mkdir -p frontend_package/todo/react
+      #     cp -r angular_artifact/todo/browser/* frontend_package/todo/angular/
+      #     cp -r react_artifact/* frontend_package/todo/react/
 
       - name: Deploy API to Azure Web App (Linux)
         uses: azure/webapps-deploy@v3
         with:
-          app-name: ${{ vars.AZURE_API_APP_SERVICE_NAME }}
-          package: api_artifact
+          app-name: "${{ vars.AZURE_API_APP_SERVICE_NAME }}-${{ inputs.target_env }}"
+          package: api_artifact/api-${{inputs.target_env}}.zip
           clean: true
 
-      - name: Deploy combined frontend to Azure Web App (Linux)
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: ${{ vars.AZURE_FRONTEND_APP_SERVICE_NAME }}
-          package: frontend_package
-          clean: true
+      # - name: Deploy combined frontend to Azure Web App (Linux)
+      #   uses: azure/webapps-deploy@v3
+      #   with:
+      #     app-name: ${{ vars.AZURE_FRONTEND_APP_SERVICE_NAME }}
+      #     package: frontend_package
+      #     clean: true

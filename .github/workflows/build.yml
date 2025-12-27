@@ -69,60 +69,69 @@ jobs:
         run: |
           npm ci
 
-      - name: Build React app
-        if: matrix.project == 'Services/Web/React/todo'
-        working-directory: ${{ matrix.project }}
-        env:
-          VITE_API_BASE_URL: ${{ inputs.api_url }}/api
-          VITE_CLIENT_ID: ${{ inputs.frontend_client_id }}
-          VITE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-          VITE_REDIRECT_URI: ${{ inputs.react_url }}
-          VITE_POST_LOGOUT_REDIRECT_URI: ${{ inputs.react_url }}
-          VITE_API_SCOPE_URI: ${{ inputs.api_scope_uri }}
-        run: npm run build
+# Build Projects
 
-      - name: Generate Angular environment.ts file
-        if: matrix.project == 'Services/Web/Angular/todo'
-        working-directory: ${{ matrix.project }}
-        run: |
-          cat <<EOF > src/environments/environment.ts
-          export const environment = {
-            NG_APP_API_BASE_URL: '${{ inputs.api_url }}/api',
-            NG_APP_AzureAd__ClientID: '${{ inputs.frontend_client_id }}',
-            NG_APP_AzureAd__TenantId: '${{ secrets.AZURE_TENANT_ID }}',
-            NG_APP_RedirectUri: '${{ inputs.angular_url }}',
-            NG_APP_PostLogoutRedirectUri: '${{ inputs.angular_url }}',
-            NG_APP_apiScopes: '${{ inputs.api_scope_uri }}'
-          };
-          EOF
+      # - name: Build React app
+      #   if: matrix.project == 'Services/Web/React/todo'
+      #   working-directory: ${{ matrix.project }}
+      #   env:
+      #     VITE_API_BASE_URL: ${{ inputs.api_url }}/api
+      #     VITE_CLIENT_ID: ${{ inputs.frontend_client_id }}
+      #     VITE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      #     VITE_REDIRECT_URI: ${{ inputs.react_url }}
+      #     VITE_POST_LOGOUT_REDIRECT_URI: ${{ inputs.react_url }}
+      #     VITE_API_SCOPE_URI: ${{ inputs.api_scope_uri }}
+      #   run: npm run build
 
-      - name: Build Angular app
-        if: matrix.project == 'Services/Web/Angular/todo'
-        working-directory: ${{ matrix.project }}
-        run: npm run build -- --configuration production
+      # - name: Generate Angular environment.ts file
+      #   if: matrix.project == 'Services/Web/Angular/todo'
+      #   working-directory: ${{ matrix.project }}
+      #   run: |
+      #     cat <<EOF > src/environments/environment.ts
+      #     export const environment = {
+      #       NG_APP_API_BASE_URL: '${{ inputs.api_url }}/api',
+      #       NG_APP_AzureAd__ClientID: '${{ inputs.frontend_client_id }}',
+      #       NG_APP_AzureAd__TenantId: '${{ secrets.AZURE_TENANT_ID }}',
+      #       NG_APP_RedirectUri: '${{ inputs.angular_url }}',
+      #       NG_APP_PostLogoutRedirectUri: '${{ inputs.angular_url }}',
+      #       NG_APP_apiScopes: '${{ inputs.api_scope_uri }}'
+      #     };
+      #     EOF
+
+      # - name: Build Angular app
+      #   if: matrix.project == 'Services/Web/Angular/todo'
+      #   working-directory: ${{ matrix.project }}
+      #   run: npm run build -- --configuration production
 
       - name: Build .NET API
         if: matrix.project == 'Services/API/Todo.API'
-        working-directory: ${{ matrix.project }}
-        run: dotnet publish -c ${{ vars.API_BUILD_CONFIGURATION }} -o ./publish
+        run: |
+          dotnet publish ${{ matrix.project }} \
+            -c ${{ vars.API_BUILD_CONFIGURATION }} \
+            - "./publish-output"
 
-      - name: Upload API artifact
+# Upload Artifact
+
+# In a matrix strategy, every single matrix variation runs on a completely separate, fresh runner (virtual machine).
+# Because of this isolation, differentiation happens naturally.
+
+      - name: Upload API Artifact
         if: matrix.project == 'Services/API/Todo.API'
         uses: actions/upload-artifact@v4
         with:
-          name: api
-          path: Services/API/Todo.API/publish
+          name: api-${{ inputs.target_env }}
+          path: "publish-output"
 
-      - name: Upload React artifact
-        if: matrix.project == 'Services/Web/React/todo'
-        uses: actions/upload-artifact@v4
-        with:
-          name: react
-          path: Services/Web/React/todo/dist
+      # - name: Upload React artifact
+      #   if: matrix.project == 'Services/Web/React/todo'
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: react
+      #     path: "${{ matrix.project }}/dist/${{ inputs.target_env }}"
 
-      - name: Upload Angular artifact
-        if: matrix.project == 'Services/Web/Angular/todo'
-        uses: actions/upload-artifact@v4
-        with:
-          name: angular
-          path: Services/Web/Angular/todo/dist
+      # - name: Upload Angular artifact
+      #   if: matrix.project == 'Services/Web/Angular/todo'
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: angular
+      #     path: "${{ matrix.project }}/dist/${{ inputs.target_env }}"
