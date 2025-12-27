@@ -26,6 +26,8 @@ jobs:
     permissions:
       id-token: write
       contents: read
+    concurrency:
+      group: '${{ matrix.target_env }}'
     strategy:
       matrix:
         target_env: ${{ fromJson(needs.generate-matrix.outputs.target_envs) }}
@@ -34,10 +36,12 @@ jobs:
 
   build:
     name: Build Applications
-    needs: terraform
+    needs: [generate-matrix, terraform]
     if: ${{ needs.generate-matrix.outputs.target_envs != '' && needs.generate-matrix.outputs.target_envs != '[]' }}
     uses: ./.github/workflows/build.yml
     secrets: inherit
+    concurrency:
+      group: '${{ matrix.target_env }}'
     strategy:
       matrix:
         target_env: ${{ fromJson(needs.generate-matrix.outputs.target_envs) }}
@@ -52,13 +56,15 @@ jobs:
 
   deploy:
     name: Deploy Applications
-    needs: [terraform, build]
+    needs: [generate-matrix, terraform, build]
     if: ${{ needs.generate-matrix.outputs.target_envs != '' && needs.generate-matrix.outputs.target_envs != '[]' }}
     uses: ./.github/workflows/deploy.yml
     secrets: inherit
     permissions:
       id-token: write
       contents: read
+    concurrency:
+      group: '${{ matrix.target_env }}'
     strategy:
       matrix:
         target_env: ${{ fromJson(needs.generate-matrix.outputs.target_envs) }}
