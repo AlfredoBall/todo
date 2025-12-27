@@ -74,7 +74,7 @@ jobs:
         uses: azure/webapps-deploy@v3
         with:
           app-name: "${{ vars.AZURE_API_APP_SERVICE_NAME }}-${{ inputs.target_env }}"
-          package: api_artifact/api-${{inputs.target_env}}.zip
+          package: api_artifact
           clean: true
 
       # - name: Deploy combined frontend to Azure Web App (Linux)
