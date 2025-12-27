@@ -39,9 +39,9 @@ jobs:
     env:
       TERRAFORM_DIR: DevOps/Infrastructure/Terraform
       TF_VAR_api_build_configuration: ${{ vars.API_BUILD_CONFIGURATION }}
-      TF_VAR_target_env: ${{ inputs.target_env }}
-      TF_VAR_tenant_id: ${{ secrets.AZURE_TENANT_ID }}
-      TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      # TF_VAR_target_env: ${{ inputs.target_env }}
+      # TF_VAR_tenant_id: ${{ secrets.AZURE_TENANT_ID }}
+      # TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
     outputs:
       tenant_id: ${{ steps.terraform_output.outputs.tenant_id }}
       api_url: ${{ steps.terraform_output.outputs.api_url }}
@@ -87,10 +87,18 @@ jobs:
 
       - name: Terraform Plan
         working-directory: ${{ env.TERRAFORM_DIR }}
+        env:
+          TF_VAR_target_env: ${{ inputs.target_env }}
+          TF_VAR_tenant_id: ${{ secrets.AZURE_TENANT_ID }}
+          TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         run: terraform plan
 
       - name: Terraform Apply
         working-directory: ${{ env.TERRAFORM_DIR }}
+        env:
+          TF_VAR_target_env: ${{ inputs.target_env }}
+          TF_VAR_tenant_id: ${{ secrets.AZURE_TENANT_ID }}
+          TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         run: terraform apply -auto-approve
 
       - name: Capture Terraform Outputs
