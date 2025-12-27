@@ -44,9 +44,9 @@ jobs:
     env:
       TERRAFORM_DIR: DevOps/Infrastructure/Terraform
       TF_VAR_api_build_configuration: ${{ vars.API_BUILD_CONFIGURATION }}
-      # TF_VAR_target_env: ${{ inputs.target_env }}
-      # TF_VAR_tenant_id: ${{ secrets.AZURE_TENANT_ID }}
-      # TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      TF_VAR_target_env: ${{ inputs.target_env }}
+      TF_VAR_tenant_id: ${{ secrets.AZURE_TENANT_ID }}
+      TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
     outputs:
       tenant_id: ${{ steps.terraform_output.outputs.tenant_id }}
       api_url: ${{ steps.terraform_output.outputs.api_url }}
@@ -58,6 +58,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Debug Variables
+        run: |
+          echo "Target Env: ${{ inputs.target_env }}"
+          echo "Tenant ID exists: ${{ secrets.AZURE_TENANT_ID != '' }}"
+          echo "Subscription ID exists: ${{ secrets.AZURE_SUBSCRIPTION_ID != '' }}"
 
       - name: Azure Login (OIDC)
         uses: azure/login@v2
