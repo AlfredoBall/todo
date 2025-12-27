@@ -82,9 +82,11 @@ jobs:
 
       - name: Terraform Init
         working-directory: ${{ env.TERRAFORM_DIR }}
+        env:
+          # This environment variable overrides the workspace selection automatically
+          TF_WORKSPACE: "todo-${{ inputs.target_env }}"
         run: |
           terraform init
-          terraform workspace select todo-${{ inputs.target_env }}
 
       # - name: Import Resource Group (if not in state)
       #   working-directory: ${{ env.TERRAFORM_DIR }}
