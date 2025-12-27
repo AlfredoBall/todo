@@ -13,7 +13,7 @@ output "api_scope_uri" {
 }
 
 output "api_scope_uuid" {
-  value = azuread_application.api_app_registration.api[0].oauth2_permission_scope[0].id
+  value = tolist(azuread_application.api_app_registration.api[0].oauth2_permission_scope)[0].id
   description = "The UUID (GUID) of the API scope for delegated permission. Used for Azure AD wiring and automation."
 }
 
