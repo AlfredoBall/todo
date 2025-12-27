@@ -82,7 +82,9 @@ jobs:
 
       - name: Terraform Init
         working-directory: ${{ env.TERRAFORM_DIR }}
-        run: terraform init
+        run: |
+          terraform init
+          terraform workspace select todo-${{ inputs.target_env }}
 
       # - name: Import Resource Group (if not in state)
       #   working-directory: ${{ env.TERRAFORM_DIR }}

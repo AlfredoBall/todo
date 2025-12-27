@@ -2,7 +2,8 @@ terraform {
   cloud {
 	organization = "amiasea"
 	workspaces {
-		name = "todo"
+	  project = "todo"
+	  tags = ["environment"]
 	}
   }
 }
