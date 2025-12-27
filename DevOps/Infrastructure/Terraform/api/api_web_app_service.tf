@@ -1,8 +1,8 @@
 resource "azurerm_windows_web_app" "api" {
-  name                = "${var.api_app_service_name}-${var.target_env}"
+  name                = var.api_app_service_name
   location            = var.location
-  resource_group_name = "${var.resource_group_name}-${var.target_env}"
-  service_plan_id     = "${var.service_plan_id}-${var.target_env}"
+  resource_group_name = var.resource_group_name
+  service_plan_id     = var.service_plan_id
 
   identity {
     type = "SystemAssigned"
