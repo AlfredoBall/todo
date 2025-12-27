@@ -73,17 +73,17 @@ jobs:
         working-directory: ${{ env.TERRAFORM_DIR }}
         run: terraform init
 
-      - name: Import Resource Group (if not in state)
-        working-directory: ${{ env.TERRAFORM_DIR }}
-        continue-on-error: true
-        run: |
-          # Check if resource group is in state
-          if ! terraform state list | grep -q "azurerm_resource_group.rg"; then
-            echo "Resource group not in state, importing..."
-            terraform import azurerm_resource_group.rg "/subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/${{ vars.AZURE_RESOURCE_GROUP }}"
-          else
-            echo "Resource group already in state, skipping import"
-          fi
+      # - name: Import Resource Group (if not in state)
+      #   working-directory: ${{ env.TERRAFORM_DIR }}
+      #   continue-on-error: true
+      #   run: |
+      #     # Check if resource group is in state
+      #     if ! terraform state list | grep -q "azurerm_resource_group.rg"; then
+      #       echo "Resource group not in state, importing..."
+      #       terraform import azurerm_resource_group.rg "/subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/${{ vars.AZURE_RESOURCE_GROUP }}"
+      #     else
+      #       echo "Resource group already in state, skipping import"
+      #     fi
 
       - name: Terraform Plan
         working-directory: ${{ env.TERRAFORM_DIR }}
