@@ -40,10 +40,10 @@ module "api" {
 
 module "frontend" {
   source                         = "./frontend"
-  frontend_app_service_name      = "${var.frontend_app_service_name}-${lower(var.target_env)}"
+  frontend_app_service_name      = "${var.frontend_app_service_name}-${var.target_env}"
   sign_in_audience               = var.sign_in_audience
   location                       = var.location
-  resource_group_name            = "${var.resource_group_name}-${lower(var.target_env)}"
+  resource_group_name            = "${var.resource_group_name}-${var.target_env}"
   service_plan_id                = azurerm_service_plan.service_plan_linux.id
   api_app_registration_client_id = module.api.api_app_registration_client_id
   api_scope_uri                  = module.api.api_scope_uri
