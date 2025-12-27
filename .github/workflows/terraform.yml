@@ -7,6 +7,11 @@ on:
         description: 'Target environment'
         required: true
         type: string
+    secrets:
+      AZURE_TENANT_ID:
+        required: true
+      AZURE_SUBSCRIPTION_ID:
+        required: true
     outputs:
       api_url:
         description: "API App Service URL"
