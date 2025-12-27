@@ -14,7 +14,7 @@ jobs:
     steps:
       - name: Generate Matrix
         id: gen-target-env-matrix
-        run: echo 'target_envs=["development","production"]' >> "$GITHUB_OUTPUT"
+        run: echo 'target_envs=["development", "production"]' >> "$GITHUB_OUTPUT"
 
   terraform:
     name: Provision Infrastructure
