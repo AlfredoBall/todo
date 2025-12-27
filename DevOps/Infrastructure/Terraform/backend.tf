@@ -4,5 +4,6 @@ terraform {
 	workspaces {
 		name = "todo"
 	}
+	execution_mode = "local"
   }
 }
