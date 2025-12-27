@@ -85,14 +85,14 @@ jobs:
 
       - name: Terraform Plan
         working-directory: ${{ env.TERRAFORM_DIR }}
-        run: terraform plan -out=tfplan
+        run: terraform plan
         env:
           TF_VAR_tenant_id: ${{ secrets.AZURE_TENANT_ID }}
           TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Terraform Apply
         working-directory: ${{ env.TERRAFORM_DIR }}
-        run: terraform apply -auto-approve tfplan
+        run: terraform apply -auto-approve
 
       - name: Capture Terraform Outputs
         id: terraform_output
