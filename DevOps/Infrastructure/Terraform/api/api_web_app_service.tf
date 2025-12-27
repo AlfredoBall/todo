@@ -1,8 +1,8 @@
 resource "azurerm_windows_web_app" "api" {
-  name                = var.api_app_service_name
+  name                = "${var.api_app_service_name}-${var.target_env}"
   location            = var.location
-  resource_group_name = var.resource_group_name
-  service_plan_id     = var.service_plan_id
+  resource_group_name = "${var.resource_group_name}-${var.target_env}"
+  service_plan_id     = "${var.service_plan_id}-${var.target_env}"
 
   identity {
     type = "SystemAssigned"
@@ -34,8 +34,7 @@ resource "azurerm_windows_web_app" "api" {
   # Only add this map if target_env is production
   var.target_env == "production" ? {
     "APPLICATIONINSIGHTS_CONNECTION_STRING" = azurerm_application_insights.api[0].connection_string
-  } : {}
-)
+  } : {})
 }
 
 data "azuread_client_config" "current" {}

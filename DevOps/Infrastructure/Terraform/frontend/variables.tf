@@ -42,3 +42,8 @@ variable "api_service_principal_id" {
   type        = string
   description = "Object ID of the API service principal"
 }
+
+variable "target_env" {
+  type        = string
+  description = "Environment (e.g., Development, Staging, Production)"
+}
