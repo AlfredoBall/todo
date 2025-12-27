@@ -7,7 +7,7 @@ resource "azurerm_resource_group" "rg" {
 resource "azurerm_service_plan" "service_plan_linux" {
   name                = "${var.service_plan_linux_name}-${var.target_env}"
   location            = var.location
-  resource_group_name = "${var.resource_group_name}-${var.target_env}"
+  resource_group_name = azurerm_resource_group.rg.name
   os_type             = "Linux"
   sku_name            = "F1"
 
@@ -17,7 +17,7 @@ resource "azurerm_service_plan" "service_plan_linux" {
 resource "azurerm_service_plan" "service_plan_windows" {
   name                = "${var.service_plan_windows_name}-${var.target_env}"
   location            = var.location
-  resource_group_name = "${var.resource_group_name}-${var.target_env}"
+  resource_group_name = azurerm_resource_group.rg.name
   os_type             = "Windows"
   sku_name            = "B1"
 
@@ -30,7 +30,7 @@ module "api" {
   api_app_registration_name = "${var.api_app_registration_name}-${var.target_env}"
   sign_in_audience          = var.sign_in_audience
   location                  = var.location
-  resource_group_name       = "${var.resource_group_name}-${var.target_env}"
+  resource_group_name       = azurerm_resource_group.rg.name
   service_plan_id           = azurerm_service_plan.service_plan_windows.id
   frontend_default_hostname = "${var.target_env}-${module.frontend.frontend_default_hostname}"
   api_build_configuration   = var.api_build_configuration
