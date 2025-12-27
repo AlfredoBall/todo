@@ -1,9 +1,8 @@
 terraform {
-  backend "remote" {
+  cloud {
 	organization = "amiasea"
 	workspaces {
 		name = "todo"
 	}
-	execution_mode = "local"
   }
 }
