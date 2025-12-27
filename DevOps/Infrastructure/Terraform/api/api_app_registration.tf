@@ -1,6 +1,9 @@
+resource "random_uuid" "guid" {
+}
+
 // Azure AD App Registration for the API
 resource "azuread_application" "api_app_registration" {
-	display_name            = "To Do API"
+	display_name            = "${ "To Do API"}-${var.target_env}"
 	sign_in_audience        = var.sign_in_audience
 	prevent_duplicate_names = true
 
@@ -13,7 +16,7 @@ resource "azuread_application" "api_app_registration" {
             user_consent_description      = "Allow the application to access the To Do API on your behalf."
             user_consent_display_name     = "Access To Do API"
             enabled                       = true
-            id                            = "b7e7e8e2-8c2a-4e2a-9e2a-123456789abc" # Example static UUID, replace as needed
+            id                            = random_uuid.guid.result
 	    }
 
         requested_access_token_version = 2
