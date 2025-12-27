@@ -9,8 +9,8 @@ resource "azuread_application" "frontend_app" {
 
 	single_page_application {
 		redirect_uris = [
-			"https://${var.target_env}-${azurerm_linux_web_app.frontend.default_hostname}/todo/react",
-			"https://${var.target_env}-${azurerm_linux_web_app.frontend.default_hostname}/todo/angular"
+			"https://${azurerm_linux_web_app.frontend.default_hostname}/todo/react",
+			"https://${azurerm_linux_web_app.frontend.default_hostname}/todo/angular"
 			# Add additional redirect URIs as needed for your Angular/React apps
 		]
 	}

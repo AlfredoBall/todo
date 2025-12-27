@@ -28,7 +28,7 @@ module "api" {
   location                  = var.location
   resource_group_name       = "${var.resource_group_name}-${var.target_env}"
   service_plan_id           = azurerm_service_plan.service_plan_windows.id
-  frontend_default_hostname = module.frontend.frontend_default_hostname
+  frontend_default_hostname = "${var.target_env}-${module.frontend.frontend_default_hostname}"
   api_build_configuration   = var.api_build_configuration
   visual_studio_version     = var.visual_studio_version
   target_env                = var.target_env
