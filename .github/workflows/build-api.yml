@@ -21,7 +21,7 @@ jobs:
             api:
               - 'Services/API/Todo.API/**'
               - '.github/workflows/build-api.yml'
-              
+
   build-api:
     needs: check-changes
     if: needs.check-changes.outputs.api_changed == 'true'
@@ -51,3 +51,4 @@ jobs:
         with:
           name: api-${{ inputs.target_env }}
           path: "publish-output"
+          retention-days: 1

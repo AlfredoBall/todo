@@ -53,8 +53,15 @@ jobs:
         run: |
           mkdir -p frontend_package/todo/angular
           mkdir -p frontend_package/todo/react
-          cp -r angular_artifact/todo/browser/* frontend_package/todo/angular/
-          cp -r react_artifact/* frontend_package/todo/react/
+          
+          # Only copy if the folder actually exists (handles partial builds)
+          if [ -d "angular_artifact" ]; then
+            cp -r angular_artifact/browser/* frontend_package/todo/angular/
+          fi
+          
+          if [ -d "react_artifact" ]; then
+            cp -r react_artifact/* frontend_package/todo/react/
+          fi
 
       - name: Deploy Combined Frontend to Azure Web App (Linux)
         uses: azure/webapps-deploy@v3

@@ -19,7 +19,7 @@ jobs:
   terraform:
     name: Provision Infrastructure
     needs: [generate-matrix]
-    if: ${{ needs.generate-matrix.outputs.target_envs != '' && needs.generate-matrix.outputs.target_envs != '[]' }}
+    if: ${{ needs.generate-matrix.outputs.target_envs != '' }}
     uses: ./.github/workflows/terraform.yml
     secrets: inherit
     permissions:
@@ -37,7 +37,7 @@ jobs:
   build-api:
     name: Build API
     needs: [generate-matrix, terraform]
-    if: ${{ needs.generate-matrix.outputs.target_envs != '' && needs.generate-matrix.outputs.target_envs != '[]' }}
+    if: ${{ needs.generate-matrix.outputs.target_envs != '' }}
     uses: ./.github/workflows/build-api.yml
     concurrency:
       group: '${{ matrix.target_env }}'
@@ -50,7 +50,7 @@ jobs:
   build-angular:
     name: Build Angular
     needs: [generate-matrix, terraform]
-    if: ${{ needs.generate-matrix.outputs.target_envs != '' && needs.generate-matrix.outputs.target_envs != '[]' }}
+    if: ${{ needs.generate-matrix.outputs.target_envs != '' }}
     uses: ./.github/workflows/build-angular.yml
     concurrency:
       group: '${{ matrix.target_env }}'
@@ -68,7 +68,7 @@ jobs:
   build-react:
     name: Build React
     needs: [generate-matrix, terraform]
-    if: ${{ needs.generate-matrix.outputs.target_envs != '' && needs.generate-matrix.outputs.target_envs != '[]' }}
+    if: ${{ needs.generate-matrix.outputs.target_envs != '' }}
     uses: ./.github/workflows/build-react.yml
     concurrency:
       group: '${{ matrix.target_env }}'
@@ -86,7 +86,11 @@ jobs:
   deploy-api:
     name: Deploy Applications
     needs: [generate-matrix, terraform, build-api]
-    if: ${{ needs.generate-matrix.outputs.target_envs != '' && needs.generate-matrix.outputs.target_envs != '[]' }}
+    if: |
+      always() &&
+      needs.build-api.result == 'success' &&
+      needs.generate-matrix.outputs.target_envs != '' && 
+      needs.generate-matrix.outputs.target_envs != '[]'
     uses: ./.github/workflows/deploy-api.yml
     secrets: inherit
     permissions:
@@ -103,7 +107,11 @@ jobs:
   deploy-frontend:
     name: Deploy Applications
     needs: [generate-matrix, terraform, build-angular, build-react]
-    if: ${{  (!failure() && !cancelled()) && needs.generate-matrix.outputs.target_envs != '' && needs.generate-matrix.outputs.target_envs != '[]' }}
+    if: |
+      always() &&
+      (needs.build-angular.result == 'success' || needs.build-react.result == 'success') &&
+      needs.generate-matrix.outputs.target_envs != '' && 
+      needs.generate-matrix.outputs.target_envs != '[]'
     uses: ./.github/workflows/deploy-frontend.yml
     secrets: inherit
     permissions:

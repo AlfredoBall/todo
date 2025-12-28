@@ -42,6 +42,7 @@ jobs:
             web:
               - 'Services/Web/React/todo/**'
               - '.github/workflows/build-react.yml'
+
   build-react:
     needs: check-changes
     if: needs.check-changes.outputs.web_changed == 'true'
@@ -50,6 +51,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Cache Angular Build
+        uses: actions/cache@v4
+        with:
+          path: Services/Web/React/todo/dist
+          key: ${{ runner.os }}-react-${{ hashFiles('Services/Web/React/todo/**') }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -72,3 +79,4 @@ jobs:
         with:
           name: react-${{ inputs.target_env }}
           path: Services/Web/React/todo/dist
+          retention-days: 1

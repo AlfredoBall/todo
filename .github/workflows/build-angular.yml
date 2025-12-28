@@ -41,6 +41,7 @@ jobs:
             web:
               - 'Services/Web/Angular/todo/**'
               - '.github/workflows/build-angular.yml'
+
   build-angular:
     needs: check-changes
     if: needs.check-changes.outputs.web_changed == 'true'
@@ -49,6 +50,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Cache Angular Build
+        uses: actions/cache@v4
+        with:
+          path: Services/Web/Angular/todo/dist
+          key: ${{ runner.os }}-angular-${{ hashFiles('Services/Web/Angular/todo/**') }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -78,3 +85,4 @@ jobs:
         with:
           name: angular-${{ inputs.target_env }}
           path: Services/Web/Angular/todo/dist
+          retention-days: 1
