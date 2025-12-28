@@ -3,7 +3,7 @@ resource "random_uuid" "guid" {
 
 // Azure AD App Registration for the API
 resource "azuread_application" "api_app_registration" {
-	display_name            = "${ "To Do API"} - ${var.target_env}"
+	display_name            = "${ "To Do API"} - ${title(var.target_env)}"
 	sign_in_audience        = var.sign_in_audience
 	prevent_duplicate_names = true
 
