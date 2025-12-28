@@ -51,17 +51,17 @@ jobs:
 
       - name: Prepare Combined Frontend Package
         run: |
+          # Create target structure
           mkdir -p frontend_package/todo/angular
           mkdir -p frontend_package/todo/react
           
-          # Only copy if the folder actually exists (handles partial builds)
-          if [ -d "angular_artifact" ]; then
-            cp -r angular_artifact/browser/* frontend_package/todo/angular/
-          fi
+          # 1. Angular: angular.json + modern builder = dist/todo/browser
+          # Since you upload 'dist', it descends to 'todo/browser'
+          cp -r angular_artifact/todo/browser/* frontend_package/todo/angular/
           
-          if [ -d "react_artifact" ]; then
-            cp -r react_artifact/* frontend_package/todo/react/
-          fi
+          # 2. React: vite.config.ts base /todo/react/ = dist/todo/react
+          # Since you upload 'dist', it descends to 'todo/react'
+          cp -r react_artifact/todo/react/* frontend_package/todo/react/
 
       - name: Deploy Combined Frontend to Azure Web App (Linux)
         uses: azure/webapps-deploy@v3
