@@ -1,0 +1,64 @@
+name: Deploy API, React, and Angular
+
+on:
+  workflow_call:
+    inputs:
+      target_env:
+        description: 'Target environment'
+        required: false
+        type: string
+      api_url:
+        description: 'API base URL from Terraform'
+        required: false
+        type: string
+      angular_url:
+        description: 'Angular Static Web App URL from Terraform'
+        required: false
+        type: string
+      react_url:
+        description: 'React Static Web App URL from Terraform'
+        required: false
+        type: string
+  
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.target_env }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download Angular artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: angular-${{ inputs.target_env }}
+          path: angular_artifact
+
+      - name: Download React artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: react-${{ inputs.target_env }}
+          path: react_artifact
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          enable-AzPSSession: false
+          allow-no-subscriptions: true
+
+      - name: Prepare Combined Frontend Package
+        run: |
+          mkdir -p frontend_package/todo/angular
+          mkdir -p frontend_package/todo/react
+          cp -r angular_artifact/todo/browser/* frontend_package/todo/angular/
+          cp -r react_artifact/* frontend_package/todo/react/
+
+      - name: Deploy Combined Frontend to Azure Web App (Linux)
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: "${{ vars.AZURE_FRONTEND_APP_SERVICE_NAME }}-${{ inputs.target_env }}"
+          package: frontend_package
+          clean: true

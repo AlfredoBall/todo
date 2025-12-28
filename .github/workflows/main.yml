@@ -19,7 +19,6 @@ jobs:
   terraform:
     name: Provision Infrastructure
     needs: [generate-matrix]
-        # The "if" guard prevents fromJson from running on an empty/null value
     if: ${{ needs.generate-matrix.outputs.target_envs != '' && needs.generate-matrix.outputs.target_envs != '[]' }}
     uses: ./.github/workflows/terraform.yml
     secrets: inherit
@@ -35,12 +34,24 @@ jobs:
     with:
       target_env: ${{ matrix.target_env }}
 
-  build:
-    name: Build Applications
+  build-api:
+    name: Build API
     needs: [generate-matrix, terraform]
     if: ${{ needs.generate-matrix.outputs.target_envs != '' && needs.generate-matrix.outputs.target_envs != '[]' }}
-    uses: ./.github/workflows/build.yml
-    secrets: inherit
+    uses: ./.github/workflows/build-api.yml
+    concurrency:
+      group: '${{ matrix.target_env }}'
+    strategy:
+      matrix:
+        target_env: ${{ fromJson(needs.generate-matrix.outputs.target_envs) }}
+    with:
+      target_env: ${{ matrix.target_env }}
+
+  build-angular:
+    name: Build Angular
+    needs: [generate-matrix, terraform]
+    if: ${{ needs.generate-matrix.outputs.target_envs != '' && needs.generate-matrix.outputs.target_envs != '[]' }}
+    uses: ./.github/workflows/build-angular.yml
     concurrency:
       group: '${{ matrix.target_env }}'
     strategy:
@@ -50,16 +61,50 @@ jobs:
       target_env: ${{ matrix.target_env }}
       api_url: ${{ needs.terraform.outputs.api_url }}
       angular_url: ${{ needs.terraform.outputs.frontend_url }}/todo/angular
+      frontend_client_id: ${{ needs.terraform.outputs.frontend_client_id }}
+      api_client_id: ${{ needs.terraform.outputs.api_client_id }}
+      api_scope_uri: ${{ needs.terraform.outputs.api_scope_uri }}
+
+  build-react:
+    name: Build React
+    needs: [generate-matrix, terraform]
+    if: ${{ needs.generate-matrix.outputs.target_envs != '' && needs.generate-matrix.outputs.target_envs != '[]' }}
+    uses: ./.github/workflows/build-react.yml
+    concurrency:
+      group: '${{ matrix.target_env }}'
+    strategy:
+      matrix:
+        target_env: ${{ fromJson(needs.generate-matrix.outputs.target_envs) }}
+    with:
+      target_env: ${{ matrix.target_env }}
+      api_url: ${{ needs.terraform.outputs.api_url }}
       react_url: ${{ needs.terraform.outputs.frontend_url }}/todo/react
       frontend_client_id: ${{ needs.terraform.outputs.frontend_client_id }}
       api_client_id: ${{ needs.terraform.outputs.api_client_id }}
       api_scope_uri: ${{ needs.terraform.outputs.api_scope_uri }}
 
-  deploy:
+  deploy-api:
     name: Deploy Applications
-    needs: [generate-matrix, terraform, build]
+    needs: [generate-matrix, terraform, build-api]
     if: ${{ needs.generate-matrix.outputs.target_envs != '' && needs.generate-matrix.outputs.target_envs != '[]' }}
-    uses: ./.github/workflows/deploy.yml
+    uses: ./.github/workflows/deploy-api.yml
+    secrets: inherit
+    permissions:
+      id-token: write
+      contents: read
+    concurrency:
+      group: '${{ matrix.target_env }}'
+    strategy:
+      matrix:
+        target_env: ${{ fromJson(needs.generate-matrix.outputs.target_envs) }}
+    with:
+      target_env: ${{ matrix.target_env }}
+
+  deploy-frontend:
+    name: Deploy Applications
+    needs: [generate-matrix, terraform, build-angular, build-react]
+    if: ${{  (!failure() && !cancelled()) && needs.generate-matrix.outputs.target_envs != '' && needs.generate-matrix.outputs.target_envs != '[]' }}
+    uses: ./.github/workflows/deploy-frontend.yml
     secrets: inherit
     permissions:
       id-token: write

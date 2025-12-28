@@ -1,0 +1,53 @@
+name: Build & Upload API Artifact
+
+on:
+  workflow_call:
+    inputs:
+      target_env:
+        description: 'Target environment'
+        required: true
+        type: string
+jobs:
+  check-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      api_changed: ${{ steps.filter.outputs.api }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            api:
+              - 'Services/API/Todo.API/**'
+              - '.github/workflows/build-api.yml'
+              
+  build-api:
+    needs: check-changes
+    if: needs.check-changes.outputs.api_changed == 'true'
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.target_env }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore NuGet packages
+        working-directory: Services/API/Todo.API
+        run: dotnet restore
+
+      - name: Build .NET API
+        run: |
+          dotnet publish Services/API/Todo.API \
+            -c ${{ vars.API_BUILD_CONFIGURATION }} \
+            -o "./publish-output"
+
+      - name: Upload API Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-${{ inputs.target_env }}
+          path: "publish-output"

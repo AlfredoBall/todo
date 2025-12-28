@@ -1,0 +1,80 @@
+name: Build & Upload Angualr Artifact
+
+on:
+  workflow_call:
+    inputs:
+      target_env:
+        description: 'Target environment'
+        required: true
+        type: string
+      api_url:
+        description: 'API base URL from Terraform'
+        required: true
+        type: string
+      angular_url:
+        description: 'Angular Static Web App URL from Terraform'
+        required: false
+        type: string
+      frontend_client_id:
+        description: 'Frontend app registration client ID'
+        required: false
+        type: string
+      api_client_id:
+        description: 'API app registration client ID'
+        required: false
+        type: string
+      api_scope_uri:
+        description: 'API scope URI for authentication'
+        required: false
+        type: string
+jobs:
+  check-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      web_changed: ${{ steps.filter.outputs.web }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            web:
+              - 'Services/Web/Angular/todo/**'
+              - '.github/workflows/build-angular.yml'
+  build-angular:
+    needs: check-changes
+    if: needs.check-changes.outputs.web_changed == 'true'
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.target_env }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24.11.1'
+
+      - name: Generate Angular environment.ts file
+        working-directory: Services/Web/Angular/todo
+        run: |
+          cat <<EOF > src/environments/environment.ts
+          export const environment = {
+            NG_APP_API_BASE_URL: '${{ inputs.api_url }}/api',
+            NG_APP_AzureAd__ClientID: '${{ inputs.frontend_client_id }}',
+            NG_APP_AzureAd__TenantId: '${{ secrets.AZURE_TENANT_ID }}',
+            NG_APP_RedirectUri: '${{ inputs.angular_url }}',
+            NG_APP_PostLogoutRedirectUri: '${{ inputs.angular_url }}',
+            NG_APP_apiScopes: '${{ inputs.api_scope_uri }}'
+          };
+          EOF
+
+      - name: Build Angular App
+        working-directory: Services/Web/Angular/todo
+        run: npm run build -- --configuration production
+
+      - name: Upload Angular Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: angular-${{ inputs.target_env }}
+          path: Services/Web/Angular/todo/dist
