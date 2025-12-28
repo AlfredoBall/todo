@@ -28,12 +28,6 @@ on:
       api_scope_uri:
         description: "API OAuth Scope URI"
         value: ${{ jobs.terraform.outputs.api_scope_uri }}
-  workflow_dispatch:
-    inputs:
-      target_env:
-        description: 'Target environment'
-        required: true
-        type: string
 jobs:
   terraform:
     runs-on: ubuntu-latest
