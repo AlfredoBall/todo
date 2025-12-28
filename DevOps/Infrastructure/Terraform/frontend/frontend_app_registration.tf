@@ -1,5 +1,5 @@
 resource "azuread_application" "frontend_app" {
-	display_name            = "${"To Do Frontend App"} - ${var.target_env}"
+	display_name            = "${"To Do Frontend App"} - ${title(var.target_env)}"
 	sign_in_audience        = var.sign_in_audience
 	prevent_duplicate_names = true
 
