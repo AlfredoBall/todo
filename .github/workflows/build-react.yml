@@ -27,6 +27,8 @@ on:
         description: 'API scope URI for authentication'
         required: false
         type: string
+env:
+  WEB_PATH: 'Services/Web/React/todo'
 
 jobs:
   check-changes:
@@ -40,7 +42,7 @@ jobs:
         with:
           filters: |
             web:
-              - 'Services/Web/React/todo/**'
+              - "${{ env.WEB_PATH }}/**"
               - '.github/workflows/build-react.yml'
 
   build-react:
@@ -52,19 +54,26 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Cache Angular Build
+      - name: Cache React Build
         uses: actions/cache@v4
         with:
-          path: Services/Web/React/todo/dist
-          key: ${{ runner.os }}-react-${{ hashFiles('Services/Web/React/todo/**') }}
+          path: "${{ env.WEB_PATH }}/dist"
+          # Hardcoded to avoid critical bug with hashFiles
+          key: ${{ runner.os }}-react-${{ hashFiles(format('{0}/**', 'Services/Web/React/todo/**')) }}
+          restore-keys: |
+            ${{ runner.os }}-react-
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '24.11.1'
+      
+      - name: Install dependencies
+        working-directory: ${{ env.WEB_PATH }}
+        run: npm ci 
 
       - name: Build React app
-        working-directory: 'Services/Web/React/todo'
+        working-directory: ${{ env.WEB_PATH }}
         env:
           VITE_API_BASE_URL: ${{ inputs.api_url }}/api
           VITE_CLIENT_ID: ${{ inputs.frontend_client_id }}
@@ -78,5 +87,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: react-${{ inputs.target_env }}
-          path: Services/Web/React/todo/dist
+          path: ${{ env.WEB_PATH }}/dist
           retention-days: 1

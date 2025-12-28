@@ -27,6 +27,9 @@ on:
         description: 'API scope URI for authentication'
         required: false
         type: string
+env:
+  WEB_PATH: 'Services/Web/Angular/todo'
+
 jobs:
   check-changes:
     runs-on: ubuntu-latest
@@ -39,7 +42,7 @@ jobs:
         with:
           filters: |
             web:
-              - 'Services/Web/Angular/todo/**'
+              - "${{ env.WEB_PATH }}/**"
               - '.github/workflows/build-angular.yml'
 
   build-angular:
@@ -54,16 +57,23 @@ jobs:
       - name: Cache Angular Build
         uses: actions/cache@v4
         with:
-          path: Services/Web/Angular/todo/dist
-          key: ${{ runner.os }}-angular-${{ hashFiles('Services/Web/Angular/todo/**') }}
+          path: "${{ env.WEB_PATH }}/dist"
+          # Hardcoded to avoid critical bug with hashFiles
+          key: ${{ runner.os }}-angular-${{ hashFiles(format('{0}/**', 'Services/Web/Angular/todo/**')) }}
+          restore-keys: |
+            ${{ runner.os }}-angular-
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '24.11.1'
 
+      - name: Install dependencies
+        working-directory: ${{ env.WEB_PATH }}
+        run: npm ci 
+
       - name: Generate Angular environment.ts file
-        working-directory: Services/Web/Angular/todo
+        working-directory: ${{ env.WEB_PATH }}
         run: |
           cat <<EOF > src/environments/environment.ts
           export const environment = {
@@ -77,12 +87,12 @@ jobs:
           EOF
 
       - name: Build Angular App
-        working-directory: Services/Web/Angular/todo
+        working-directory: ${{ env.WEB_PATH }}
         run: npm run build -- --configuration production
 
       - name: Upload Angular Artifact
         uses: actions/upload-artifact@v4
         with:
           name: angular-${{ inputs.target_env }}
-          path: Services/Web/Angular/todo/dist
+          path: ${{ env.WEB_PATH }}/dist
           retention-days: 1
