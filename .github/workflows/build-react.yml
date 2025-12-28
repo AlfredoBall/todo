@@ -1,0 +1,82 @@
+name: Build & Upload React Artifact
+
+on:
+  workflow_call:
+    inputs:
+      target_env:
+        description: 'Target environment'
+        required: true
+        type: string
+      api_url:
+        description: 'API base URL from Terraform'
+        required: true
+        type: string
+      react_url:
+        description: 'React Static Web App URL from Terraform'
+        required: false
+        type: string
+      frontend_client_id:
+        description: 'Frontend app registration client ID'
+        required: false
+        type: string
+      api_client_id:
+        description: 'API app registration client ID'
+        required: false
+        type: string
+      api_scope_uri:
+        description: 'API scope URI for authentication'
+        required: false
+        type: string
+
+jobs:
+  check-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      web_changed: ${{ steps.filter.outputs.web }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            web:
+              - 'Services/Web/React/todo/**'
+              - '.github/workflows/build-react.yml'
+
+  build-react:
+    needs: check-changes
+    if: needs.check-changes.outputs.web_changed == 'true'
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.target_env }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Cache Angular Build
+        uses: actions/cache@v4
+        with:
+          path: Services/Web/React/todo/dist
+          key: ${{ runner.os }}-react-${{ hashFiles('Services/Web/React/todo/**') }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24.11.1'
+
+      - name: Build React app
+        working-directory: 'Services/Web/React/todo'
+        env:
+          VITE_API_BASE_URL: ${{ inputs.api_url }}/api
+          VITE_CLIENT_ID: ${{ inputs.frontend_client_id }}
+          VITE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          VITE_REDIRECT_URI: ${{ inputs.react_url }}
+          VITE_POST_LOGOUT_REDIRECT_URI: ${{ inputs.react_url }}
+          VITE_API_SCOPE_URI: ${{ inputs.api_scope_uri }}
+        run: npm run build
+
+      - name: Upload React artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: react-${{ inputs.target_env }}
+          path: Services/Web/React/todo/dist
+          retention-days: 1

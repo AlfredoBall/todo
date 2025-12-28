@@ -7,20 +7,29 @@ on:
       - synchronize
       - reopened
     branches:
-      - 'main' # This action runs when a PR targets the main branch
+      - 'main'
 
 jobs:
   check-allowed-branch:
+    name: Validate Merge Strategy
     runs-on: ubuntu-latest
     env:
-      ALLOWED_BRANCH: 'development' # Replace with your specific allowed branch name
+      ALLOWED_BRANCH: 'development'
     steps:
-      - name: Check if source branch is allowed
-        if: ${{ github.head_ref != env.ALLOWED_BRANCH }}
+      - name: Verify Source Branch
+        shell: bash
         run: |
-          echo "Error: Only the '${ALLOWED_BRANCH}' branch is allowed to merge into 'main'."
-          exit 1
+          echo "Target Branch (Base): ${{ github.base_ref }}"
+          echo "Source Branch (Head): ${{ github.head_ref }}"
+
+          if [[ "${{ github.head_ref }}" != "${{ env.ALLOWED_BRANCH }}" ]]; then
+            # This creates a red error annotation in the GitHub PR File View
+            echo "::error title=Invalid Branch Merge::Only the '${{ env.ALLOWED_BRANCH }}' branch is allowed to merge into 'main'. You attempted to merge from '${{ github.head_ref }}'."
+            exit 1
+          else
+            echo "Validation successful: '${{ github.head_ref }}' is authorized to merge into 'main'."
+          fi
+
       - name: Success
-        if: ${{ github.head_ref == env.ALLOWED_BRANCH }}
-        run: |
-          echo "Source branch is valid. Proceeding with merge checks."
+        # This step only runs if the check above didn't exit 1
+        run: echo "Merge strategy check passed. Proceeding with CI/CD checks."
