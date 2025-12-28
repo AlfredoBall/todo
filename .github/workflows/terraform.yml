@@ -47,6 +47,7 @@ jobs:
       TF_VAR_target_env: ${{ inputs.target_env }}
       TF_VAR_tenant_id: ${{ secrets.AZURE_TENANT_ID }}
       TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      TF_WORKSPACE: "todo-${{ inputs.target_env }}"
     outputs:
       tenant_id: ${{ steps.terraform_output.outputs.tenant_id }}
       api_url: ${{ steps.terraform_output.outputs.api_url }}
@@ -58,12 +59,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Debug Variables
-        run: |
-          echo "Target Env: ${{ inputs.target_env }}"
-          echo "Tenant ID exists: ${{ secrets.AZURE_TENANT_ID != '' }}"
-          echo "Subscription ID exists: ${{ secrets.AZURE_SUBSCRIPTION_ID != '' }}"
 
       - name: Azure Login (OIDC)
         uses: azure/login@v2
@@ -82,38 +77,14 @@ jobs:
 
       - name: Terraform Init
         working-directory: ${{ env.TERRAFORM_DIR }}
-        env:
-          # This environment variable overrides the workspace selection automatically
-          TF_WORKSPACE: "todo-${{ inputs.target_env }}"
-        run: |
-          terraform init
-
-      # - name: Import Resource Group (if not in state)
-      #   working-directory: ${{ env.TERRAFORM_DIR }}
-      #   continue-on-error: true
-      #   run: |
-      #     # Check if resource group is in state
-      #     if ! terraform state list | grep -q "azurerm_resource_group.rg"; then
-      #       echo "Resource group not in state, importing..."
-      #       terraform import azurerm_resource_group.rg "/subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/${{ vars.AZURE_RESOURCE_GROUP }}"
-      #     else
-      #       echo "Resource group already in state, skipping import"
-      #     fi
+        run: terraform init
 
       - name: Terraform Plan
         working-directory: ${{ env.TERRAFORM_DIR }}
-        # env:
-          # TF_VAR_target_env: ${{ inputs.target_env }}
-          # TF_VAR_tenant_id: ${{ secrets.AZURE_TENANT_ID }}
-          # TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         run: terraform plan
 
       - name: Terraform Apply
         working-directory: ${{ env.TERRAFORM_DIR }}
-        # env:
-        #   TF_VAR_target_env: ${{ inputs.target_env }}
-        #   TF_VAR_tenant_id: ${{ secrets.AZURE_TENANT_ID }}
-        #   TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         run: terraform apply -auto-approve
 
       - name: Capture Terraform Outputs
