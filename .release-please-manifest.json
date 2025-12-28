@@ -1,0 +1,5 @@
+{
+  "Services/API": "1.0.0",
+  "Services/Web/Angular/todo": "1.0.0",
+  "Services/Web/React/todo": "1.0.0"
+}
