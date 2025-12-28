@@ -1,4 +1,4 @@
-name: Build & Upload Angualr Artifact
+name: Build & Upload Angular Artifact
 
 on:
   workflow_call:
@@ -27,6 +27,7 @@ on:
         description: 'API scope URI for authentication'
         required: false
         type: string
+
 env:
   WEB_PATH: 'Services/Web/Angular/todo'
 
@@ -47,7 +48,7 @@ jobs:
 
   build-angular:
     needs: check-changes
-    if: needs.check-changes.outputs.web_changed == 'true'
+    # Removed job-level if to ensure cache can be restored even if files didn't change
     runs-on: ubuntu-latest
     environment: ${{ inputs.target_env }}
     steps:
@@ -55,24 +56,28 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Cache Angular Build
+        id: angular-cache
         uses: actions/cache@v4
         with:
           path: "${{ env.WEB_PATH }}/dist"
-          # Hardcoded to avoid critical bug with hashFiles
-          key: ${{ runner.os }}-angular-${{ hashFiles(format('{0}/**', 'Services/Web/Angular/todo/**')) }}
+          # Unique key per environment + file hash
+          key: ${{ runner.os }}-angular-${{ inputs.target_env }}-${{ hashFiles(format('{0}/**', env.WEB_PATH)) }}
           restore-keys: |
-            ${{ runner.os }}-angular-
+            ${{ runner.os }}-angular-${{ inputs.target_env }}-
 
       - name: Set up Node.js
+        if: needs.check-changes.outputs.web_changed == 'true' || steps.angular-cache.outputs.cache-hit != 'true'
         uses: actions/setup-node@v4
         with:
-          node-version: '24.11.1'
+          node-version: '24'
 
       - name: Install dependencies
+        if: needs.check-changes.outputs.web_changed == 'true' || steps.angular-cache.outputs.cache-hit != 'true'
         working-directory: ${{ env.WEB_PATH }}
         run: npm ci 
 
       - name: Generate Angular environment.ts file
+        if: needs.check-changes.outputs.web_changed == 'true' || steps.angular-cache.outputs.cache-hit != 'true'
         working-directory: ${{ env.WEB_PATH }}
         run: |
           cat <<EOF > src/environments/environment.ts
@@ -87,10 +92,13 @@ jobs:
           EOF
 
       - name: Build Angular App
+        # Only build if code changed OR we have no cache to fall back on
+        if: needs.check-changes.outputs.web_changed == 'true' || steps.angular-cache.outputs.cache-hit != 'true'
         working-directory: ${{ env.WEB_PATH }}
         run: npm run build -- --configuration production
 
       - name: Upload Angular Artifact
+        # Always run: uploads either the fresh build or the restored cache content
         uses: actions/upload-artifact@v4
         with:
           name: angular-${{ inputs.target_env }}
