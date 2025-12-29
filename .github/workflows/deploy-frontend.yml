@@ -21,7 +21,30 @@ on:
         type: string
   
 jobs:
+  check-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      frontend_changed: ${{ steps.filter.outputs.frontend }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Check for Frontend Changes
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            frontend:
+              - 'Services/Web/Angular/todo/**'
+              - 'Services/Web/React/todo/**'
+              - '.github/workflows/build-angular.yml'
+              - '.github/workflows/build-react.yml'
+              - '.github/workflows/deploy-frontend.yml'
+
   deploy-frontend:
+    needs: check-changes
+    # Only run if either project or their build/deploy logic has changed
+    if: needs.check-changes.outputs.frontend_changed == 'true'
     runs-on: ubuntu-latest
     environment: ${{ inputs.target_env }}
     steps:
@@ -54,12 +77,10 @@ jobs:
           mkdir -p frontend_package/todo/angular
           mkdir -p frontend_package/todo/react
           
-          # 1. Angular: Uploaded 'dist' contains 'todo/browser' 
-          # Matches your angular.json: "outputPath": "dist/todo"
+          # 1. Angular: Matches dist/todo
           cp -r angular_artifact/todo/browser/* frontend_package/todo/angular/
           
-          # 2. React: Uploaded 'dist' contents are at the root of the artifact
-          # Vite does not create subfolders for 'base' paths; it just names links
+          # 2. React: Flat structure in dist
           cp -r react_artifact/* frontend_package/todo/react/
 
       - name: Deploy Combined Frontend to Azure Web App (Linux)
