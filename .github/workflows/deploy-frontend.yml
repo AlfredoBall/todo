@@ -21,12 +21,12 @@ on:
         type: string
   
 jobs:
-  deploy:
+  deploy-frontend:
     runs-on: ubuntu-latest
     environment: ${{ inputs.target_env }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Download Angular artifact
         uses: actions/download-artifact@v4
