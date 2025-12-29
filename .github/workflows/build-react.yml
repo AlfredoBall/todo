@@ -66,5 +66,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: react-${{ inputs.target_env }}
-          path: ${{ env.WEB_PATH }}/dist/todo/react 
+          path: ${{ env.WEB_PATH }}/dist
           retention-days: 1
