@@ -7,12 +7,12 @@ resource "azurerm_linux_web_app" "frontend" {
 
 	site_config {
 		always_on = false
+		app_command_line = "cp /home/site/wwwroot/todo/nginx.conf /etc/nginx/sites-available/default && cp /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default && service nginx reload"
 		# Add custom site_config as needed (e.g., for static file serving)
 	}
 
 	app_settings = {
 		WEBSITE_RUN_FROM_PACKAGE = 1
-		startup_command = "cp /home/site/wwwroot/todo/nginx.conf /etc/nginx/sites-available/default && cp /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default && service nginx reload"
 		# Add any environment variables needed for your frontend
 		# e.g., "POLICIES_PATH" = "/policies"
 	}
