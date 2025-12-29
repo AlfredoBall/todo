@@ -59,9 +59,6 @@ jobs:
           VITE_API_SCOPE_URI: ${{ inputs.api_scope_uri }}
         run: npm run build
 
-      - name: List Build Files
-        run: find ${{ env.WEB_PATH }}/dist -maxdepth 4
-
       - name: Upload React artifact
         uses: actions/upload-artifact@v4
         with:
