@@ -32,8 +32,22 @@ env:
   WEB_PATH: 'Services/Web/Angular/todo'
 
 jobs:
+  check-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      web_changed: ${{ steps.filter.outputs.web }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            web:
+              - "${{ env.WEB_PATH }}/**"
+              - '.github/workflows/build-angular.yml'
 
   build-angular:
+    needs: check-changes
     runs-on: ubuntu-latest
     environment: ${{ inputs.target_env }}
     steps:
@@ -50,15 +64,18 @@ jobs:
             ${{ runner.os }}-angular-${{ inputs.target_env }}-
 
       - name: Set up Node.js
+        if: needs.check-changes.outputs.web_changed == 'true' || steps.angular-cache.outputs.cache-hit != 'true'
         uses: actions/setup-node@v6
         with:
           node-version: '24'
 
       - name: Install dependencies
+        if: needs.check-changes.outputs.web_changed == 'true' || steps.angular-cache.outputs.cache-hit != 'true'
         working-directory: ${{ env.WEB_PATH }}
         run: npm ci 
 
       - name: Generate Angular environment.ts file
+        if: needs.check-changes.outputs.web_changed == 'true' || steps.angular-cache.outputs.cache-hit != 'true'
         working-directory: ${{ env.WEB_PATH }}
         run: |
           cat <<EOF > src/environments/environment.ts
@@ -73,10 +90,12 @@ jobs:
           EOF
 
       - name: Build Angular App
+        if: needs.check-changes.outputs.web_changed == 'true' || steps.angular-cache.outputs.cache-hit != 'true'
         working-directory: ${{ env.WEB_PATH }}
         run: npm run build -- --configuration production
 
       - name: Upload Angular Artifact
+        # Always run to ensure the artifact exists for the deploy job
         uses: actions/upload-artifact@v4
         with:
           name: angular-${{ inputs.target_env }}
