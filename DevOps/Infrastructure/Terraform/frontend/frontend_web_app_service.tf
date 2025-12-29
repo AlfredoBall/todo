@@ -11,7 +11,8 @@ resource "azurerm_linux_web_app" "frontend" {
 	}
 
 	app_settings = {
-		"WEBSITE_RUN_FROM_PACKAGE" = "1"
+		WEBSITE_RUN_FROM_PACKAGE = 1
+		startup_command = "cp /home/site/wwwroot/todo/nginx.conf /etc/nginx/sites-available/default && cp /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default && service nginx reload"
 		# Add any environment variables needed for your frontend
 		# e.g., "POLICIES_PATH" = "/policies"
 	}
