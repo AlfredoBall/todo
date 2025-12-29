@@ -47,6 +47,7 @@ jobs:
         with:
           dotnet-version: '10.0.x'
           cache: true
+          cache-dependency-path: 'Services/API/Todo.API/packages.lock.json'
 
       - name: Restore NuGet packages
         if: needs.check-changes.outputs.api_changed == 'true' || steps.api-cache.outputs.cache-hit != 'true'
