@@ -9,12 +9,29 @@ on:
         type: string
   
 jobs:
-  deploy:
+  check-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      api_changed: ${{ steps.filter.outputs.api }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            api:
+              - 'Services/API/Todo.API/**'
+              - '.github/workflows/deploy-api.yml'
+              - '.github/workflows/build-api.yml'
+              
+  deploy-api:
+    needs: check-changes
+    if: needs.check-changes.outputs.api_changed == 'true'
     runs-on: ubuntu-latest
     environment: ${{ inputs.target_env }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Download API artifact
         uses: actions/download-artifact@v4
