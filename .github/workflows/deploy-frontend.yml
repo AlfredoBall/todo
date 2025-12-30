@@ -102,4 +102,5 @@ jobs:
             --resource-group ${{ vars.AZURE_RESOURCE_GROUP }}-${{ inputs.target_env }} \
             --name ${{ vars.AZURE_FRONTEND_APP_SERVICE_NAME }}-${{ inputs.target_env }} \
             --src-path ./DevOps/Infrastructure/nginx.conf \
-            --target-path /home/site/wwwroot/nginx.conf
+            --target-path /home/site/wwwroot/nginx.conf \
+            --type static
