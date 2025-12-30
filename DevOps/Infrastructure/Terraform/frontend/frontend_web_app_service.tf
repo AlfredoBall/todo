@@ -15,6 +15,7 @@ resource "azurerm_linux_web_app" "frontend" {
 
 	app_settings = {
 		WEBSITE_RUN_FROM_PACKAGE = 1
+		WEBSITE_ENABLE_SYNC_UPDATE_SITE = true
 		# Add any environment variables needed for your frontend
 		# e.g., "POLICIES_PATH" = "/policies"
 	}
