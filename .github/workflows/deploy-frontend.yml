@@ -41,8 +41,8 @@ jobs:
               - '.github/workflows/build-react.yml'
               - '.github/workflows/deploy-frontend.yml'
               - '.github/workflows/main.yml'
-              - 'frontend_package/**'
               - 'DevOps/Infrastructure/Terraform/frontend/**'
+              - 'DevOps/Infrastructure/nginx.conf'
 
   deploy-frontend:
     needs: check-changes
@@ -101,5 +101,5 @@ jobs:
           az webapp deploy \
             --resource-group ${{ vars.AZURE_RESOURCE_GROUP }}-${{ inputs.target_env }} \
             --name ${{ vars.AZURE_FRONTEND_APP_SERVICE_NAME }}-${{ inputs.target_env }} \
-            --src-path ../DevOps/Infrastructure/nginx.conf \
+            --src-path ./DevOps/Infrastructure/nginx.conf \
             --target-path /home/site/wwwroot/nginx.conf
