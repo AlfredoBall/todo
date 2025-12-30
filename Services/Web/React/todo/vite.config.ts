@@ -12,16 +12,7 @@ console.log('Vite dev server proxy target for /api:', target);
 
 export default defineConfig({
   base: process.env.NODE_ENV === 'development' ? '/' : '/todo/react/',
-  plugins: [
-    react(),
-    viteStaticCopy({
-      targets: [
-        {
-          src: '../../shared/policies', // Path to shared folder
-          dest: '.'                      // Puts it in the root of your build/dev server
-        }
-      ]
-    })],
+  plugins: [react()],
   server: {
     https: process.env.NODE_ENV === 'development' ? {
       key: fs.readFileSync(path.resolve(__dirname, '../../ssl/localhost.key')),
