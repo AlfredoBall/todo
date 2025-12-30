@@ -6,21 +6,25 @@ using Projects;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
-builder.AddExecutable(
-    "copy-shared-policies",
-    "pwsh",
-    builder.AppHostDirectory,
-    "-Command", 
-    $"""
-    $source = '{Path.GetFullPath(Path.Combine(builder.AppHostDirectory, "../../../Services/Web/shared/policies"))}';
-    $angularDest = '{Path.GetFullPath(Path.Combine(builder.AppHostDirectory, "../../../Services/Web/Angular/todo/public/policies"))}';
-    $reactDest = '{Path.GetFullPath(Path.Combine(builder.AppHostDirectory, "../../../Services/Web/React/todo/public/policies"))}';
+// var copyPolicies = builder.AddExecutable(
+//     "copy-shared-policies",
+//     "pwsh",
+//     builder.AppHostDirectory,
+//     "-Command", 
+//     // Use $$$ to allow single { } to be literal PowerShell code
+//     $$$"""
+//     $source = '{{{Path.GetFullPath(Path.Combine(builder.AppHostDirectory, "../../../Services/Web/shared/policies"))}}}';
+//     $angularDest = '{{{Path.GetFullPath(Path.Combine(builder.AppHostDirectory, "../../../Services/Web/Angular/todo/public/policies"))}}}';
+//     $reactDest = '{{{Path.GetFullPath(Path.Combine(builder.AppHostDirectory, "../../../Services/Web/React/todo/public/policies"))}}}';
 
-    # Copy files
-    Copy-Item -Path (Join-Path $source '*') -Destination $angularDest -Recurse -Force;
-    Copy-Item -Path (Join-Path $source '*') -Destination $reactDest -Recurse -Force;
-    """
-);
+//     # Now { } are treated as literal PowerShell script blocks
+//     if (!(Test-Path $angularDest)) { New-Item -ItemType Directory -Path $angularDest -Force }
+//     if (!(Test-Path $reactDest)) { New-Item -ItemType Directory -Path $reactDest -Force }
+
+//     Copy-Item -Path "$source\*" -Destination $angularDest -Recurse -Force;
+//     Copy-Item -Path "$source\*" -Destination $reactDest -Recurse -Force;
+//     """
+// );
 
 // Setup Terraform for development environment
 var terraformDir = Path.GetFullPath(Path.Combine(builder.AppHostDirectory, "../../../DevOps/Infrastructure/Terraform-Dev"));

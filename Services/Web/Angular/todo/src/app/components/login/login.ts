@@ -65,7 +65,7 @@ export class Login implements OnInit, OnDestroy {
   }
 
   login(): void {
-    this.msalService.loginPopup({
+    this.msalService.loginRedirect({
       scopes: AUTH_CONFIG.API_SCOPE_URI
     });
   }

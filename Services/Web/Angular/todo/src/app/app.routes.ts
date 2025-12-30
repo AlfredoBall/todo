@@ -20,16 +20,16 @@ export const routes: Routes = [
     {
         path: 'privacy-policy',
         component: DynamicHtmlLoaderComponent,
-        data: { filePath: './policies/privacy-policy.html' }
+        data: { filePath: 'policies/privacy-policy.html' }
     },
     {
         path: 'terms-of-use',
         component: DynamicHtmlLoaderComponent,
-        data: { filePath: './policies/terms-of-use.html' }
+        data: { filePath: 'policies/terms-of-use.html' }
     },
     {
         path: 'delete-data',
         component: DynamicHtmlLoaderComponent,
-        data: { filePath: './policies/delete-data.html' }
+        data: { filePath: 'policies/delete-data.html' }
     }
 ];
