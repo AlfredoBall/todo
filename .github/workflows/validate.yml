@@ -1,9 +1,9 @@
 name: Validation (Lint & Type Check)
 on:
   push:
-    branches: [ "development", "feature/*" ]
+    branches: ["development", "feature/*"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   changes:
@@ -30,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
@@ -40,7 +40,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: "22"
 
       - name: Validate Angular
         working-directory: services/web/angular/todo
@@ -56,7 +56,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
@@ -68,3 +68,17 @@ jobs:
           bun install
           bun run lint
           bun x tsc --noEmit -p tsconfig.json
+
+  lint-and-typecheck:
+    needs: [changes, angular-check, react-check]
+    if: always() # MUST be always() so it runs even if checks are skipped
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify Results
+        run: |
+          # If any of the needed jobs failed, this job should fail
+          if [[ "${{ needs.angular-check.result }}" == "failure" || "${{ needs.react-check.result }}" == "failure" ]]; then
+            echo "One of the validation jobs failed."
+            exit 1
+          fi
+          echo "All checks passed or were safely skipped."
