@@ -35,9 +35,9 @@ try {
 }
 
 $envVars = @{
-    "NG_APP_AzureAd__ClientID"      = $json.angular_client_id.value
+    "NG_APP_AzureAd__ClientID"      = $json.frontend_app_registration_client_id.value
     "NG_APP_AzureAd__TenantId"      = $json.tenant_id.value
-    "NG_APP_apiScopes"              = $json.api_scope.value
+    "NG_APP_apiScopes"              = $json.api_scope_uri.value
     "NG_APP_AzureAd__Audience"      = $json.api_audience.value
     "NG_APP_AzureAd__Instance"      = "https://login.microsoftonline.com/"
     "NG_APP_RedirectUri"            = "https://localhost:4200"

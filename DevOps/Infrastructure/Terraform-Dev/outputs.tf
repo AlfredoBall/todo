@@ -1,16 +1,26 @@
+output "tenant_id" {
+  description = "Azure AD Tenant ID"
+  value       = data.azuread_client_config.current.tenant_id
+}
+
 output "frontend_app_registration_client_id" {
   description = "Frontend app registration client ID"
-  value       = azuread_application.react_dev.client_id
+  value       = module.frontend.frontend_client_id
+}
+
+output "api_app_registration_client_id" {
+  description = "API app registration client ID"
+  value       = module.api.app_registration_client_id
 }
 
 output "api_scope_uri" {
   description = "API scope for authentication"
-  value       = "api://${azuread_application.api_dev.client_id}/access_as_user"
+  value       = module.api.app_registration_scope_uri
 }
 
 output "api_audience" {
   description = "API audience URI"
-  value       = "api://${azuread_application.api_dev.client_id}"
+  value       = module.api.app_registration_audience
 }
 
 # GitHub OIDC outputs are not applicable for local development
