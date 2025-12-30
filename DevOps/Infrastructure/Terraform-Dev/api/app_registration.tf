@@ -17,6 +17,11 @@ resource "azuread_application" "app_registration" {
     }
     requested_access_token_version = 2
   }
+
+  lifecycle {
+		# Prevents this resource from overwriting the URI managed below
+		ignore_changes = [identifier_uris]
+	}
 }
 
 resource "azuread_application_identifier_uri" "app_registration_uri" {

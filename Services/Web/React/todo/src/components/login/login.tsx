@@ -25,13 +25,8 @@ export default function Login() {
   }, [accounts, instance, isAuthenticated]);
 
   const handleLogin = () => {
-    console.log('Starting login popup with request:', loginRequest);
-    instance.loginPopup(loginRequest)
-      .then((response) => {
-        if (response && response.account) {
-          instance.setActiveAccount(response.account);
-        }
-      })
+    console.log('Starting login redirect with request:', loginRequest);
+    instance.loginRedirect(loginRequest)
       .catch((error) => {
         showSnackbar('Sign-in Failed', { isError: true });
         console.error(error);
