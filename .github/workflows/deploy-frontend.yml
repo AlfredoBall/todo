@@ -41,6 +41,7 @@ jobs:
               - '.github/workflows/build-react.yml'
               - '.github/workflows/deploy-frontend.yml'
               - '.github/workflows/main.yml'
+              - 'frontend_package/**'
 
   deploy-frontend:
     needs: check-changes
