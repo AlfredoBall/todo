@@ -23,6 +23,7 @@ jobs:
               - 'Services/API/Todo.API/**'
               - '.github/workflows/deploy-api.yml'
               - '.github/workflows/build-api.yml'
+              - '.github/workflows/main.yml'
               
   deploy-api:
     needs: check-changes
