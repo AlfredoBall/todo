@@ -1,5 +1,5 @@
 terraform {
-	required_version = "1.14.2"
+	required_version = "1.14.3"
 
 	required_providers {
 		azurerm = {
@@ -17,9 +17,7 @@ terraform {
 	}
 }
 
-provider "azuread" {
-	tenant_id = var.tenant_id
-}
+provider "azuread" {}
 
 /*
 Note: Backend configuration is defined in backend.tf
