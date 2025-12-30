@@ -75,14 +75,17 @@ jobs:
 
       - name: Prepare Combined Frontend Package
         run: |
-          mkdir -p frontend_package/todo/angular
-          mkdir -p frontend_package/todo/react
-          
-          # 1. Angular: Matches dist/todo
-          cp -r angular_artifact/todo/browser/* frontend_package/todo/angular/
-          
-          # 2. React: Flat structure in dist
-          cp -r react_artifact/* frontend_package/todo/react/
+            mkdir -p frontend_package/todo/angular
+            mkdir -p frontend_package/todo/react
+            
+            # 1. Angular: Copy directly from the artifact root (no /browser/)
+            cp -r angular_artifact/todo/* frontend_package/todo/angular/
+            
+            # 2. React: Remains the same
+            cp -r react_artifact/* frontend_package/todo/react/
+
+            # 3. Nginx: Don't forget to copy the config into the package
+            cp path/to/your/nginx.conf frontend_package/todo/nginx.conf
 
       - name: Deploy Combined Frontend to Azure Web App (Linux)
         uses: azure/webapps-deploy@v3
