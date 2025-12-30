@@ -7,7 +7,10 @@ resource "azurerm_linux_web_app" "frontend" {
 
 	site_config {
 		always_on = false
-		# Add custom site_config as needed (e.g., for static file serving)
+		
+		application_stack {
+      		node_version = "20-lts"
+    	}
 	}
 
 	app_settings = {
