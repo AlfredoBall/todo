@@ -42,6 +42,7 @@ jobs:
               - '.github/workflows/deploy-frontend.yml'
               - '.github/workflows/main.yml'
               - 'frontend_package/**'
+              - 'DevOps/Infrastructure/Terraform/frontend/**'
 
   deploy-frontend:
     needs: check-changes
