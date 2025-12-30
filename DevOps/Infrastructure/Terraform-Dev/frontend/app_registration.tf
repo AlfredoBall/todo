@@ -1,7 +1,7 @@
 # React App Registration (Development)
 resource "azuread_application" "app_registration" {
-  display_name = "todo-react-dev"
-  owners       = [data.azuread_client_config.current.object_id]
+  display_name = "todo-frontend-dev"
+  owners       = [var.azuread_client_config_id]
   sign_in_audience = var.sign_in_audience
 
   api {
@@ -36,7 +36,7 @@ resource "azuread_application" "app_registration" {
 
 resource "azuread_service_principal" "service_principal" {
   client_id   = azuread_application.app_registration.client_id
-  owners      = [data.azuread_client_config.current.object_id]
+  owners      = [var.azuread_client_config_id]
 }
 
 # Grant admin consent for API access_as_user to frontend service principal
