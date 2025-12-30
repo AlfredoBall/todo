@@ -97,6 +97,7 @@ jobs:
           EOF
 
       - name: Build Angular App
+        working-directory: ${{ env.WEB_PATH }}
         if: needs.check-changes.outputs.web_changed == 'true' || steps.angular-cache.outputs.cache-hit != 'true'
         run: bun run build -- --configuration production
 
