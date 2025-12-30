@@ -63,16 +63,22 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-angular-${{ inputs.target_env }}-
 
-      - name: Set up Node.js
+      - name: Set up Bun
+        if: needs.check-changes.outputs.web_changed == 'true' || steps.angular-cache.outputs.cache-hit != 'true'
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Set up Node.js (Fallback for Angular CLI)
         if: needs.check-changes.outputs.web_changed == 'true' || steps.angular-cache.outputs.cache-hit != 'true'
         uses: actions/setup-node@v6
         with:
-          node-version: '24'
+          node-version: '24' # Using stable 24 for 2025 production builds
 
       - name: Install dependencies
         if: needs.check-changes.outputs.web_changed == 'true' || steps.angular-cache.outputs.cache-hit != 'true'
         working-directory: ${{ env.WEB_PATH }}
-        run: npm ci 
+        run: bun install --frozen-lockfile
 
       - name: Generate Angular environment.ts file
         if: needs.check-changes.outputs.web_changed == 'true' || steps.angular-cache.outputs.cache-hit != 'true'
@@ -92,10 +98,9 @@ jobs:
       - name: Build Angular App
         if: needs.check-changes.outputs.web_changed == 'true' || steps.angular-cache.outputs.cache-hit != 'true'
         working-directory: ${{ env.WEB_PATH }}
-        run: npm run build -- --configuration production
+        run: bun run build -- --configuration production
 
       - name: Upload Angular Artifact
-        # Always run to ensure the artifact exists for the deploy job
         uses: actions/upload-artifact@v4
         with:
           name: angular-${{ inputs.target_env }}

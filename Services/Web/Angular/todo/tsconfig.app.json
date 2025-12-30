@@ -1,7 +1,10 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "outDir": "./out-tsc/app"
+    "outDir": "./out-tsc/app",
+    "moduleResolution": "Bundler", // Recommended for Angular 21 + Vite
+    "preserveSymlinks": true,      // Helps TS follow pnpm's symlinks
+    "skipLibCheck": true
   },
   "include": [
     "src/**/*.ts"
