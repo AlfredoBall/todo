@@ -29,7 +29,7 @@ on:
         type: string
 
 env:
-  WEB_PATH: 'Services/Web/Angular/todo'
+  WEB_PATH: 'extra/levels/todo/Services/Web/Angular/todo'
 
 jobs:
   check-changes:
@@ -97,8 +97,7 @@ jobs:
           EOF
 
       - name: Build Angular App
-
-        working-directory: ${{ env.WEB_PATH }}
+        if: needs.check-changes.outputs.web_changed == 'true' || steps.angular-cache.outputs.cache-hit != 'true'
         run: bun run build -- --configuration production
 
       - name: List files for debugging
@@ -115,6 +114,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: angular-${{ inputs.target_env }}
-          path: ${{ env.WEB_PATH }}/dist/todo
+          path: ${{ env.WEB_PATH }}/dist/
           include-hidden-files: true
           retention-days: 1
