@@ -7,7 +7,7 @@ resource "azurerm_linux_web_app" "frontend" {
 
 	site_config {
 		always_on = false
-		app_command_line = "cp /home/site/wwwroot/nginx.conf /etc/nginx/sites-available/default && ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default && service nginx reload"
+		app_command_line = "cp /home/site/wwwroot/nginx.conf /etc/nginx/sites-available/default && ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default && nginx -t && service nginx reload"
 		# Add custom site_config as needed (e.g., for static file serving)
 	}
 
