@@ -84,8 +84,8 @@ jobs:
             # 2. React: Remains the same
             cp -r react_artifact/* frontend_package/todo/react/
 
-            # 3. Nginx: Don't forget to copy the config into the package
-            cp path/to/your/nginx.conf frontend_package/todo/nginx.conf
+            # 3. This matches: /home/site/wwwroot/todo/nginx.conf
+            mv frontend_package/nginx.conf frontend_package/todo/nginx.conf
 
       - name: Deploy Combined Frontend to Azure Web App (Linux)
         uses: azure/webapps-deploy@v3
