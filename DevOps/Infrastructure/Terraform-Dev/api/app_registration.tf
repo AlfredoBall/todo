@@ -1,7 +1,7 @@
 # API App Registration (Development)
 resource "azuread_application" "app_registration" {
   display_name = "todo-api-dev"
-  owners       = [data.azuread_client_config.current.object_id]
+  owners       = [var.azuread_client_config_id]
   sign_in_audience = var.sign_in_audience
 
   api {
@@ -26,7 +26,7 @@ resource "azuread_application_identifier_uri" "app_registration_uri" {
 
 resource "azuread_service_principal" "app_registration_sp" {
   client_id   = azuread_application.app_registration.client_id
-  owners      = [data.azuread_client_config.current.object_id]
+  owners      = [var.azuread_client_config_id]
   use_existing = true
   depends_on  = [azuread_application_identifier_uri.app_registration_uri]
 }

@@ -80,7 +80,7 @@ var api = builder.AddProject<Todo_API>("API")
 
        Console.WriteLine("✓ Terraform outputs available, configuring API...");
        context.EnvironmentVariables["AzureAd__ClientId"] = cachedOutputs.ApiClientId;
-       context.EnvironmentVariables["AzureAd__TenantId"] = cachedOutputs.TenantId;
+       context.EnvironmentVariables["AzureAd__TenantId"] = tenantId;
        context.EnvironmentVariables["AzureAd__Audience"] = cachedOutputs.ApiAudience;
        context.EnvironmentVariables["AzureAD__Instance"] = "https://login.microsoftonline.com/";
        // Required for CORS since they are differen't ports than the API
@@ -88,7 +88,7 @@ var api = builder.AddProject<Todo_API>("API")
        context.EnvironmentVariables["REACT_URL"] = "https://localhost:5173/";
    });
 
-// Generate .env for Angular from Terraform outputs before building/serving Angular app
+// Generate environment.development.ts for Angular from Terraform outputs before building/serving Angular app
 var generateAngularEnv = builder.AddExecutable(
     "generate-angular-env",
     "pwsh",
@@ -114,8 +114,8 @@ builder.AddNpmApp("Todo-React", "../../Web/React/todo", "dev")
   .WaitFor(api)
   .WithEnvironment(async context =>
   {
-      context.EnvironmentVariables["VITE_CLIENT_ID"] = cachedOutputs.ReactClientId;
-      context.EnvironmentVariables["VITE_TENANT_ID"] = cachedOutputs.TenantId;
+      context.EnvironmentVariables["VITE_CLIENT_ID"] = cachedOutputs.FrontendClientId;
+      context.EnvironmentVariables["VITE_TENANT_ID"] = tenantId;
       context.EnvironmentVariables["VITE_API_SCOPE_URI"] = $"[\"{cachedOutputs.ApiScopeUri}\"]";
       context.EnvironmentVariables["VITE_REDIRECT_URI"] = "https://localhost:5173";
       context.EnvironmentVariables["VITE_POST_LOGOUT_REDIRECT_URI"] = "https://localhost:5173";
@@ -131,10 +131,8 @@ static async Task<TerraformOutputs> GetTerraformOutputs(string terraformDir)
 
     return new TerraformOutputs
     {
-        ApiClientId = json["api_client_id"]!["value"]!.GetValue<string>(),
-        ReactClientId = json["react_client_id"]!["value"]!.GetValue<string>(),
-        AngularClientId = json["angular_client_id"]!["value"]!.GetValue<string>(),
-        TenantId = json["tenant_id"]!["value"]!.GetValue<string>(),
+        ApiClientId = json["api_app_registration_client_id"]!["value"]!.GetValue<string>(),
+        FrontendClientId = json["frontend_app_registration_client_id"]!["value"]!.GetValue<string>(),
         ApiScopeUri = json["api_scope_uri"]!["value"]!.GetValue<string>(),
         ApiAudience = json["api_audience"]!["value"]!.GetValue<string>()
     };
@@ -175,9 +173,7 @@ static async Task<string> RunCommand(string fileName, string arguments, string? 
 record TerraformOutputs
 {
     public required string ApiClientId { get; init; }
-    public required string ReactClientId { get; init; }
-    public required string AngularClientId { get; init; }
-    public required string TenantId { get; init; }
+    public required string FrontendClientId { get; init; }
     public required string ApiScopeUri { get; init; }
     public required string ApiAudience { get; init; }
 }
