@@ -40,6 +40,15 @@
                 "base": "dist/todo",
                 "browser": ""
               },
+              "assets": [
+                "src/favicon.ico",
+                "src/assets",
+                {
+                  "glob": "**/*",
+                  "input": "../../../../services/web/shared/policies", 
+                  "output": "/policies/" 
+                }
+              ],
               "budgets": [
                 {
                   "type": "initial",
