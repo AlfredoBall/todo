@@ -29,7 +29,7 @@ on:
         type: string
 
 env:
-  WEB_PATH: 'extra/levels/todo/Services/Web/Angular/todo'
+  WEB_PATH: 'Services/Web/Angular/todo'
 
 jobs:
   check-changes:
@@ -99,16 +99,6 @@ jobs:
       - name: Build Angular App
         if: needs.check-changes.outputs.web_changed == 'true' || steps.angular-cache.outputs.cache-hit != 'true'
         run: bun run build -- --configuration production
-
-      - name: List files for debugging
-        run: ls -R ${{ env.WEB_PATH }}/dist/
-
-      - name: Verify Policies Accessibility
-        working-directory: ${{ env.WEB_PATH }}
-        run: |
-          echo "Current dir: $(pwd)"
-          echo "Testing relative path access to shared policies:"
-          ls -la ../../shared/policies || echo "CRITICAL: Shared policies folder NOT accessible from here"
 
       - name: Upload Angular Artifact
         uses: actions/upload-artifact@v4

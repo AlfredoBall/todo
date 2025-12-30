@@ -77,12 +77,15 @@ jobs:
         run: |
             mkdir -p frontend_package/todo/angular
             mkdir -p frontend_package/todo/react
+            mkdir -p frontend_package/todo/policies
             
             # 1. Angular: Copy directly from the artifact root (no /browser/)
             cp -r angular_artifact/todo/* frontend_package/todo/angular/
             
             # 2. React: Remains the same
             cp -r react_artifact/* frontend_package/todo/react/
+
+            cp -r Services/Web/shared/policies/* frontend_package/todo/policies/
 
             # 3. This matches: /home/site/wwwroot/todo/nginx.conf
             mv frontend_package/nginx.conf frontend_package/todo/nginx.conf
