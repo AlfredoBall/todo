@@ -23,8 +23,10 @@
             "assets": [
               {
                 "glob": "**/*",
-                "input": "public"
-              }
+                "input": "../../../../services/web/shared/policies",
+                "output": "/policies/"
+              },
+              "src/favicon.ico"
             ],
             "styles": [
               "src/custom-theme.scss",
@@ -45,8 +47,7 @@
                   "maximumError": "8kB"
                 }
               ],
-              "outputHashing": "all",
-              "baseHref": "/"
+              "outputHashing": "all"
             },
             "development": {
               "optimization": false,
@@ -58,7 +59,7 @@
                   "with": "src/environments/environment.development.ts"
                 }
               ],
-              "baseHref": "/todo/angular/"
+              "baseHref": "/"
             }
           },
           "defaultConfiguration": "production"

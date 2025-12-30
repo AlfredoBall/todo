@@ -1,0 +1,9 @@
+p, li { line-height: 1.7; }
+ul { padding-left: 1.2rem; }
+.delete-data-page .container { max-width: 700px; margin: auto; background: #fff; padding: 2rem 2.5rem; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); }
+.delete-data-page h1 { color: #2d6cdf; margin-bottom: 0.5rem; }
+.delete-data-page h2 { color: #444; margin-top: 2rem; }
+.delete-data-page p, .delete-data-page li { line-height: 1.7; }
+.delete-data-page ul { padding-left: 1.2rem; }
+.delete-data-page .meta { color: #888; font-size: 0.95em; margin-bottom: 2rem; }
+.delete-data-page .contact { margin-top: 2rem; font-size: 1.05em; }

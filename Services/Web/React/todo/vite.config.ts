@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { viteStaticCopy } from 'vite-plugin-static-copy';
 import fs from 'fs'
 import path from 'path'
 
@@ -11,8 +12,17 @@ console.log('Vite dev server proxy target for /api:', target);
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: '/todo/react/',
-  plugins: [react()],
+  base: process.env.NODE_ENV === 'development' ? '/' : '/todo/react/',
+  plugins: [
+    react(),
+    viteStaticCopy({
+      targets: [
+        {
+          src: '../../shared/policies', // Path to shared folder
+          dest: '.'                      // Puts it in the root of your build/dev server
+        }
+      ]
+    })],
   server: {
     https: process.env.NODE_ENV === 'development' ? {
       key: fs.readFileSync(path.resolve(__dirname, '../../ssl/localhost.key')),
@@ -29,6 +39,12 @@ export default defineConfig({
         // optional: rewrite the path if needed (e.g., remove /api from the backend request)
         // rewrite: (path) => path.replace(/^\/api/, ''), 
       },
-    }
+    },
+      fs: {
+        allow: [
+          '.', // search in the current directory
+          '../../shared/policies' // allow serving files from the shared folder
+        ]
+      }
   }
 })
