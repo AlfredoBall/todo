@@ -101,6 +101,9 @@ jobs:
         working-directory: ${{ env.WEB_PATH }}
         run: bun run build -- --configuration production
 
+      - name: List files for debugging
+        run: ls -R ${{ env.WEB_PATH }}/dist/
+
       - name: Upload Angular Artifact
         uses: actions/upload-artifact@v4
         with:
