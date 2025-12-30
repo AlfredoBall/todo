@@ -97,9 +97,8 @@ jobs:
           EOF
 
       - name: Build Angular App
-
-        working-directory: ${{ env.WEB_PATH }}
-        run: bun run build -- --configuration production
+        if: needs.check-changes.outputs.web_changed == 'true' || steps.angular-cache.outputs.cache-hit != 'true'
+        run: bun run build --project todo --configuration production
 
       - name: List files for debugging
         run: ls -R ${{ env.WEB_PATH }}/dist/
