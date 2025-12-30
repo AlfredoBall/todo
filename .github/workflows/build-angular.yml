@@ -105,5 +105,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: angular-${{ inputs.target_env }}
-          path: ${{ env.WEB_PATH }}/dist
+          path: ${{ env.WEB_PATH }}/dist/** 
+          include-hidden-files: true
           retention-days: 1
