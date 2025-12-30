@@ -36,6 +36,7 @@ jobs:
   build-api:
     name: Build API
     needs: [generate-matrix, terraform]
+    secrets: inherit
     if: ${{ needs.generate-matrix.outputs.target_envs != '' }}
     uses: ./.github/workflows/build-api.yml
     concurrency:
@@ -49,6 +50,7 @@ jobs:
   build-angular:
     name: Build Angular
     needs: [generate-matrix, terraform]
+    secrets: inherit
     if: ${{ needs.generate-matrix.outputs.target_envs != '' }}
     uses: ./.github/workflows/build-angular.yml
     concurrency:
@@ -67,6 +69,7 @@ jobs:
   build-react:
     name: Build React
     needs: [generate-matrix, terraform]
+    secrets: inherit
     if: ${{ needs.generate-matrix.outputs.target_envs != '' }}
     uses: ./.github/workflows/build-react.yml
     concurrency:
