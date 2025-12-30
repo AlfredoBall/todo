@@ -22,6 +22,7 @@ jobs:
             api:
               - 'Services/API/Todo.API/**'
               - '.github/workflows/build-api.yml'
+              - '.github/workflows/main.yml'
 
   build-api:
     needs: check-changes
