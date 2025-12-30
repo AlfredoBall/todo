@@ -86,7 +86,7 @@ jobs:
       api_scope_uri: ${{ needs.terraform.outputs.api_scope_uri }}
 
   deploy-api:
-    name: Deploy Applications
+    name: Deploy API Application
     needs: [generate-matrix, terraform, build-api]
     if: |
       always() &&
@@ -106,7 +106,7 @@ jobs:
       target_env: ${{ matrix.target_env }}
 
   deploy-frontend:
-    name: Deploy Applications
+    name: Deploy Frontend Applications
     needs: [generate-matrix, terraform, build-angular, build-react]
     if: |
       always() &&
