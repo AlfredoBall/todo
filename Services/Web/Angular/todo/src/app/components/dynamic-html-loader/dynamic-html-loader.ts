@@ -3,6 +3,7 @@ import { Component, OnInit, input } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { AsyncPipe } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-dynamic-html-loader',
@@ -22,8 +23,13 @@ export class DynamicHtmlLoaderComponent implements OnInit {
   }
 
   private async loadHtmlContent(url: string): Promise<SafeHtml> {
-    const htmlString = await this.http.get(url, { responseType: 'text' }).toPromise();
-    // Sanitize the HTML to prevent XSS attacks
-    return this.sanitizer.bypassSecurityTrustHtml(htmlString || '');
+    try {
+      // 2. Replace .toPromise() with firstValueFrom()
+      const htmlString = await firstValueFrom(this.http.get(url, { responseType: 'text' }));
+      return this.sanitizer.bypassSecurityTrustHtml(htmlString || '');
+    } catch (error) {
+      console.error('Failed to load policy HTML:', error);
+      return this.sanitizer.bypassSecurityTrustHtml('<p>Error loading document.</p>');
+    }
   }
 }

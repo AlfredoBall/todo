@@ -35,9 +35,9 @@ function App({ msalInstance }: AppProps) {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/about" element={<About />} />
-              <Route path="/privacy-policy" element={<DynamicHtmlLoader filePath="policies/privacy-policy.html" />} />
-              <Route path="/terms-of-use" element={<DynamicHtmlLoader filePath="policies/terms-of-use.html" />} />
-              <Route path="/delete-data" element={<DynamicHtmlLoader filePath="policies/delete-data.html" />} />
+              <Route path="/privacy-policy" element={<DynamicHtmlLoader filePath="/todo/policies/privacy-policy.html" />} />
+              <Route path="/terms-of-use" element={<DynamicHtmlLoader filePath="/todo/policies/terms-of-use.html" />} />
+              <Route path="/delete-data" element={<DynamicHtmlLoader filePath="/todo/policies/delete-data.html" />} />
             </Routes>
           </div>
           <footer className="footer">
