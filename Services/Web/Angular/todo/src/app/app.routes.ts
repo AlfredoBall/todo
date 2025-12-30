@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { Home } from './pages/home/home';
 import { About } from './pages/about/about';
+import { DynamicHtmlLoaderComponent } from './components/dynamic-html-loader/dynamic-html-loader';
 
 export const routes: Routes = [
     {
@@ -18,14 +19,17 @@ export const routes: Routes = [
     ,
     {
         path: 'privacy-policy',
-        loadComponent: () => import('./pages/privacy-policy/privacy-policy').then(m => m.PrivacyPolicyComponent)
+        component: DynamicHtmlLoaderComponent,
+        data: { filePath: './policies/privacy-policy.html' }
     },
     {
         path: 'terms-of-use',
-        loadComponent: () => import('./pages/terms-of-use/terms-of-use').then(m => m.TermsOfUseComponent)
+        component: DynamicHtmlLoaderComponent,
+        data: { filePath: './policies/terms-of-use.html' }
     },
     {
         path: 'delete-data',
-        loadComponent: () => import('./pages/delete-data/delete-data').then(m => m.DeleteDataComponent)
+        component: DynamicHtmlLoaderComponent,
+        data: { filePath: './policies/delete-data.html' }
     }
 ];
