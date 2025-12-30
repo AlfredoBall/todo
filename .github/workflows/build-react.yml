@@ -45,6 +45,7 @@ jobs:
             web:
               - "${{ env.WEB_PATH }}/**"
               - '.github/workflows/build-react.yml'
+              - '.github/workflows/main.yml'
 
   build-react:
     needs: check-changes

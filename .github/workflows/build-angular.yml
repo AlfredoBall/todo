@@ -45,6 +45,7 @@ jobs:
             web:
               - "${{ env.WEB_PATH }}/**"
               - '.github/workflows/build-angular.yml'
+              - '.github/workflows/main.yml'
 
   build-angular:
     needs: check-changes
