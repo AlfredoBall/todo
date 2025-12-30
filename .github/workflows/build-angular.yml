@@ -97,17 +97,24 @@ jobs:
           EOF
 
       - name: Build Angular App
-        if: needs.check-changes.outputs.web_changed == 'true' || steps.angular-cache.outputs.cache-hit != 'true'
+
         working-directory: ${{ env.WEB_PATH }}
         run: bun run build -- --configuration production
 
       - name: List files for debugging
         run: ls -R ${{ env.WEB_PATH }}/dist/
 
+      - name: Verify Policies Accessibility
+        working-directory: ${{ env.WEB_PATH }}
+        run: |
+          echo "Current dir: $(pwd)"
+          echo "Testing relative path access to shared policies:"
+          ls -la ../../shared/policies || echo "CRITICAL: Shared policies folder NOT accessible from here"
+
       - name: Upload Angular Artifact
         uses: actions/upload-artifact@v4
         with:
           name: angular-${{ inputs.target_env }}
-          path: ${{ env.WEB_PATH }}/dist/** 
+          path: ${{ env.WEB_PATH }}/dist/todo
           include-hidden-files: true
           retention-days: 1
