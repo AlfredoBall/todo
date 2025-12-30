@@ -1,0 +1,70 @@
+name: Validation (Lint & Type Check)
+on:
+  push:
+    branches: [ "development", "feature/*" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      angular: ${{ steps.filter.outputs.angular }}
+      react: ${{ steps.filter.outputs.react }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            angular:
+              - 'services/web/angular/todo/**'
+              - 'services/web/shared/policies/**'
+            react:
+              - 'services/web/react/todo/**'
+
+  angular-check:
+    needs: changes
+    # Runs ONLY if Angular files changed; otherwise finishes in ~1s
+    if: ${{ needs.changes.outputs.angular == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      # Keep Node if Angular CLI scripts require a fallback binary
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Validate Angular
+        working-directory: services/web/angular/todo
+        run: |
+          bun install
+          bun run lint
+          bun x tsc --noEmit -p tsconfig.json
+
+  react-check:
+    needs: changes
+    # Runs ONLY if React files changed
+    if: ${{ needs.changes.outputs.react == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Validate React
+        working-directory: services/web/react/todo
+        run: |
+          bun install
+          bun run lint
+          bun x tsc --noEmit -p tsconfig.json
