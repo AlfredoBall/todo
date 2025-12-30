@@ -86,25 +86,25 @@ var generateAngularEnv = builder.AddExecutable(
 // even though the API waits for completion of the terraformApply resource and the Web App's resource waits for the API.
 // WaitFor only means it waits for the API resource to be configured, not that the terraformApply resource itself has completed.
 
-builder.AddNpmApp("Todo-Angular", "../../Web/Angular/todo")
+builder.AddJavaScriptApp("Todo-Angular", "../../Web/Angular/todo", "start").WithPnpm()
     .WithReference(api)
     .WaitForCompletion(terraformApply)
     .WaitFor(api)
     .WaitForCompletion(generateAngularEnv);
 
-builder.AddNpmApp("Todo-React", "../../Web/React/todo", "dev")
-  .WithReference(api)
-  .WaitForCompletion(terraformApply)
-  .WaitFor(api)
-  .WithEnvironment(async context =>
-  {
-      context.EnvironmentVariables["VITE_CLIENT_ID"] = cachedOutputs.FrontendClientId;
-      context.EnvironmentVariables["VITE_TENANT_ID"] = tenantId;
-      context.EnvironmentVariables["VITE_API_SCOPE_URI"] = $"[\"{cachedOutputs.ApiScopeUri}\"]";
-      context.EnvironmentVariables["VITE_REDIRECT_URI"] = "https://localhost:5173";
-      context.EnvironmentVariables["VITE_POST_LOGOUT_REDIRECT_URI"] = "https://localhost:5173";
-      context.EnvironmentVariables["VITE_API_BASE_URL"] = "/api";
-  });
+builder.AddJavaScriptApp("Todo-React", "../../Web/React/todo").WithPnpm()
+    .WithReference(api)
+    .WaitForCompletion(terraformApply)
+    .WaitFor(api)
+    .WithEnvironment(async context =>
+    {
+        context.EnvironmentVariables["VITE_CLIENT_ID"] = cachedOutputs.FrontendClientId;
+        context.EnvironmentVariables["VITE_TENANT_ID"] = tenantId;
+        context.EnvironmentVariables["VITE_API_SCOPE_URI"] = $"[\"{cachedOutputs.ApiScopeUri}\"]";
+        context.EnvironmentVariables["VITE_REDIRECT_URI"] = "https://localhost:5173";
+        context.EnvironmentVariables["VITE_POST_LOGOUT_REDIRECT_URI"] = "https://localhost:5173";
+        context.EnvironmentVariables["VITE_API_BASE_URL"] = "/api";
+    });
 
 await builder.Build().RunAsync();
 

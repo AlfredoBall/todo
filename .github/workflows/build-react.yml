@@ -63,16 +63,22 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-react-${{ inputs.target_env }}-
 
+      - name: Set up Bun
+        if: needs.check-changes.outputs.web_changed == 'true' || steps.react-cache.outputs.cache-hit != 'true'
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
       - name: Set up Node.js
         if: needs.check-changes.outputs.web_changed == 'true' || steps.react-cache.outputs.cache-hit != 'true'
         uses: actions/setup-node@v6
         with:
-          node-version: '24'
+          node-version: '24' # Maintained Node 24 (LTS as of 2025)
 
       - name: Install dependencies
         if: needs.check-changes.outputs.web_changed == 'true' || steps.react-cache.outputs.cache-hit != 'true'
         working-directory: ${{ env.WEB_PATH }}
-        run: npm ci 
+        run: bun install --frozen-lockfile
 
       - name: Build React app
         if: needs.check-changes.outputs.web_changed == 'true' || steps.react-cache.outputs.cache-hit != 'true'
@@ -84,10 +90,9 @@ jobs:
           VITE_REDIRECT_URI: ${{ inputs.react_url }}
           VITE_POST_LOGOUT_REDIRECT_URI: ${{ inputs.react_url }}
           VITE_API_SCOPE_URI: ${{ inputs.api_scope_uri }}
-        run: npm run build
+        run: bun run build
 
       - name: Upload React artifact
-        # Always run so the artifact exists for the deployment job even if build was skipped
         uses: actions/upload-artifact@v4
         with:
           name: react-${{ inputs.target_env }}
