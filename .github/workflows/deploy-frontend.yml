@@ -96,12 +96,6 @@ jobs:
           package: frontend_package
           clean: true
       
-      - name: Debug paths
-        run: |
-          pwd
-          ls -R .
-          ls ../DevOps/Infrastructure
-
       - name: Deploy nginx.conf to Azure Web App
         run: |
           az webapp deploy \
