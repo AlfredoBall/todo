@@ -34,7 +34,12 @@
             ]
           },
           "configurations": {
-            "production": {
+              "production": {
+              "baseHref": "/todo/angular/",
+              "outputPath": {
+                "base": "dist/todo",
+                "browser": ""
+              },
               "budgets": [
                 {
                   "type": "initial",
