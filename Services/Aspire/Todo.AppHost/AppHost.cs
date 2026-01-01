@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Net.Mime;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using Aspire.Hosting;
@@ -22,39 +23,14 @@ var terraformApply = builder.AddExecutable("terraform-setup", "terraform", terra
     .WaitForCompletion(terraformInit)
     .WithEnvironment("TF_CLI_ARGS", "-no-color");
 
-// Note: GitHub OIDC variables are NOT needed for local development
-// GitHub Actions integration is configured in the production Terraform directory
-
-// TODO Get this to work, it's complaining that it can't understand the .tfstate format, maybe it's outdated? Reverse engineer the source code.
-// var inframap = builder.AddContainer("inframap", "cycloid/inframap:latest")
-//                         .WithEntrypoint("/bin/sh")
-//                         .WithBindMount(terraformDir, "/opt")
-//                         .WithArgs("-c", "./inframap generate /opt/terraform.tfstate");
-
-var cache = builder.AddRedis("cache")
-   .WithRedisCommander();
-
-var redisInsight = cache.WithRedisInsight(x =>
-{
-    x.OnResourceReady((r, evt, ct) =>
-    {
-        Task.Delay(TimeSpan.FromSeconds(20))
-        .ContinueWith(t => System.Diagnostics.Process.Start(new ProcessStartInfo
-        {
-            FileName = "cmd.exe",
-            Arguments = $"/c start chrome {r.PrimaryEndpoint.Url}",
-            UseShellExecute = true
-        }));
-
-        return Task.CompletedTask;
-    });
-});
-
 TerraformOutputs? cachedOutputs = null;
 
-var api = builder.AddProject<Todo_API>("API")
-   .WithReference(cache)
-   .WaitFor(cache)
+var api = builder.AddProject<Todo_API>("API").OnResourceEndpointsAllocated(async (r, evt, ct) =>
+    {
+        Console.WriteLine($"✓ API is running at: {r.GetEndpoint("https").Url}");
+    })
+//    .WithReference(cache)
+//    .WaitFor(cache)
    .WaitForCompletion(terraformApply, 0) // Wait for terraform to complete
    .WithEnvironment(async context =>
    {
@@ -86,24 +62,50 @@ var generateAngularEnv = builder.AddExecutable(
 // even though the API waits for completion of the terraformApply resource and the Web App's resource waits for the API.
 // WaitFor only means it waits for the API resource to be configured, not that the terraformApply resource itself has completed.
 
-builder.AddJavaScriptApp("Todo-Angular", "../../Web/Angular/todo", "start").WithPnpm()
+var angular = builder.AddJavaScriptApp("Todo-Angular", "../../Web/Angular/todo", "build").WithPnpm().WithBuildScript("watch")
     .WithReference(api)
     .WaitForCompletion(terraformApply)
     .WaitFor(api)
     .WaitForCompletion(generateAngularEnv);
 
-builder.AddJavaScriptApp("Todo-React", "../../Web/React/todo").WithPnpm()
+var react = builder.AddJavaScriptApp("Todo-React", "../../Web/React/todo", "build").WithPnpm().WithBuildScript("watch")
     .WithReference(api)
     .WaitForCompletion(terraformApply)
     .WaitFor(api)
     .WithEnvironment(async context =>
     {
+        // context.EnvironmentVariables["OUTPUT_DIR"] = Path.GetFullPath(Path.Combine(builder.AppHostDirectory, "../../../DevOps/Container/react"));
         context.EnvironmentVariables["VITE_CLIENT_ID"] = cachedOutputs.FrontendClientId;
         context.EnvironmentVariables["VITE_TENANT_ID"] = tenantId;
         context.EnvironmentVariables["VITE_API_SCOPE_URI"] = $"[\"{cachedOutputs.ApiScopeUri}\"]";
         context.EnvironmentVariables["VITE_REDIRECT_URI"] = "https://localhost:5173";
         context.EnvironmentVariables["VITE_POST_LOGOUT_REDIRECT_URI"] = "https://localhost:5173";
         context.EnvironmentVariables["VITE_API_BASE_URL"] = "/api";
+    });
+
+var frontend = builder.AddDockerfile("todo-frontend", "../../../DevOps/Infrastructure", "Dockerfile.local")
+    .WithHttpEndpoint(targetPort: 8080)
+    .WithBindMount("../../Web/Angular/todo/dist", "/usr/share/nginx/html/angular")
+    .WithBindMount("../../Web/React/todo/dist", "/usr/share/nginx/html/react")
+    .WithBindMount("../../Web/shared/policies", "/usr/share/nginx/html/shared/policies")
+    .WithBindMount("../../../DevOps/Infrastructure/nginx.template.conf", "/etc/nginx/nginx.template.conf")
+    .WithEnvironment(async context =>
+    {  
+        context.EnvironmentVariables["API_BASE_URL"] = api.GetEndpoint("https").Url;
+        context.EnvironmentVariables["ASPNETCORE_ENVIRONMENT"] = builder.Environment;
+    })
+    .WaitForCompletion(angular).WaitForCompletion(react).WaitFor(api).WithReference(api)
+    .OnResourceReady((r, evt, ct) =>
+    {
+        Task.Delay(TimeSpan.FromSeconds(5))
+        .ContinueWith(t => System.Diagnostics.Process.Start(new ProcessStartInfo
+        {
+            FileName = "cmd.exe",
+            Arguments = $"/c start chrome {r.GetEndpoint("http").Url}/todo/react/",
+            UseShellExecute = true
+        }));
+
+        return Task.CompletedTask;
     });
 
 await builder.Build().RunAsync();
