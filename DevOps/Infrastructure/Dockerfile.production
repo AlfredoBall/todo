@@ -1,0 +1,11 @@
+FROM nginx:1.25-alpine
+
+# Copy NGINX config
+COPY nginx/default.conf /etc/nginx/conf.d/default.conf
+
+# Copy built apps
+COPY react/dist /usr/share/nginx/html/react
+COPY angular/dist /usr/share/nginx/html/angular
+
+# Copy shared policies
+COPY shared/policies /usr/share/nginx/html/shared/policies
