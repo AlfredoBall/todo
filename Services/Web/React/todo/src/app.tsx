@@ -24,7 +24,8 @@ function ScrollToTop() {
 }
 
 function App({ msalInstance }: AppProps) {
-  const basename = import.meta.env.DEV ? "/" : "/todo/react";
+  const basename = "/todo/react";
+
   return (
     <MsalProvider instance={msalInstance}>
       <SnackbarProvider>
@@ -35,9 +36,9 @@ function App({ msalInstance }: AppProps) {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/about" element={<About />} />
-              <Route path="/privacy-policy" element={<DynamicHtmlLoader filePath="/todo/policies/privacy-policy.html" />} />
-              <Route path="/terms-of-use" element={<DynamicHtmlLoader filePath="/todo/policies/terms-of-use.html" />} />
-              <Route path="/delete-data" element={<DynamicHtmlLoader filePath="/todo/policies/delete-data.html" />} />
+              <Route path="/privacy-policy" element={<DynamicHtmlLoader filePath="/policies/privacy-policy.html" />} />
+              <Route path="/terms-of-use" element={<DynamicHtmlLoader filePath="/policies/terms-of-use.html" />} />
+              <Route path="/delete-data" element={<DynamicHtmlLoader filePath="/policies/delete-data.html" />} />
             </Routes>
           </div>
           <footer className="footer">
@@ -48,7 +49,7 @@ function App({ msalInstance }: AppProps) {
         </BrowserRouter>
       </SnackbarProvider>
     </MsalProvider>
-  )
+  );
 }
 
 export default App
