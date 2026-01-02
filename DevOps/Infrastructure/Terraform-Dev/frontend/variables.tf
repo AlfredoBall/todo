@@ -8,13 +8,8 @@ variable "api_app_registration_service_principal_id" {
   type        = string
 }
 
-variable "react_redirect_uri" {
-  description = "React app redirect URI for local development"
-  type        = string
-}
-
-variable "angular_redirect_uri" {
-  description = "Angular app redirect URI for local development"
+variable "redirect_uri" {
+  description = "Frontend app redirect URI for local development"
   type        = string
 }
 

@@ -37,6 +37,8 @@ jobs:
       TF_VAR_tenant_id: ${{ secrets.AZURE_TENANT_ID }}
       TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       TF_WORKSPACE: "todo-${{ inputs.target_env }}"
+      TF_VAR_dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+      TV_VAR_frontend_image: ${{ vars.frontend_image }}
     outputs:
       tenant_id: ${{ steps.terraform_output.outputs.tenant_id }}
       api_url: ${{ steps.terraform_output.outputs.api_url }}

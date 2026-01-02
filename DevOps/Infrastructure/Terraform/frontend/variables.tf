@@ -43,7 +43,22 @@ variable "api_service_principal_id" {
   description = "Object ID of the API service principal"
 }
 
+variable "api_base_url" {
+  type        = string
+  description = "Base URL of the API for the frontend to call"
+}
+
 variable "target_env" {
   type        = string
   description = "Environment (e.g., Development, Staging, Production)"
+}
+
+variable "dockerhub_username" {
+  type       = string
+  description = "Docker Hub username for pulling the frontend image"
+}
+
+variable "frontend_image" {
+  type        = string
+  description = "Docker image name for the Todo frontend"
 }

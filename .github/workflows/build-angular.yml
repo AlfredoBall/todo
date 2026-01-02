@@ -100,11 +100,3 @@ jobs:
         working-directory: ${{ env.WEB_PATH }}
         if: needs.check-changes.outputs.web_changed == 'true' || steps.angular-cache.outputs.cache-hit != 'true'
         run: bun run build -- --configuration production
-
-      - name: Upload Angular Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: angular-${{ inputs.target_env }}
-          path: ${{ env.WEB_PATH }}/dist/
-          include-hidden-files: true
-          retention-days: 1

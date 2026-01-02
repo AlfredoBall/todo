@@ -174,7 +174,6 @@ var terraformInit = builder.AddExecutable("terraform-init", "terraform", terrafo
 var terraformApply = builder.AddExecutable("terraform-setup", "terraform", terraformDir, "apply", "-auto-approve")
     .WaitForCompletion(terraformInit)
     .WithEnvironment("TF_VAR_tenant_id", tenantId)
-    .WithEnvironment("TF_VAR_api_redirect_uri", "https://localhost:7258/")
     .WithEnvironment("TF_VAR_react_redirect_uri", "https://localhost:5173/")
     .WithEnvironment("TF_VAR_angular_redirect_uri", "https://localhost:4200/");
 ```
