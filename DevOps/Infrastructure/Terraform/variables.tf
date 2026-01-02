@@ -13,11 +13,6 @@ variable "api_app_service_name" {
   type        = string
 }
 
-variable "api_base_url" {
-  type        = string
-  description = "Base URL of the API for the frontend to call"
-}
-
 variable "location" {
   description = "Azure location for resources"
   type        = string
