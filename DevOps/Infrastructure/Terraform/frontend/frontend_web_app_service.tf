@@ -8,7 +8,10 @@ resource "azurerm_linux_web_app" "frontend" {
 	site_config {
 		always_on = false
 		
-		linux_fx_version = "DOCKER|${var.dockerhub_username}/${var.frontend_image}"
+		application_stack {
+			docker_image_name = "${var.dockerhub_username}/${var.frontend_image}"
+    		docker_registry_url = "index.docker.io"
+		}
 	}
 
 	app_settings = {
