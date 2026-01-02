@@ -48,3 +48,4 @@ resource "azuread_application_identifier_uri" "api_identifier_uri" {
 
 	depends_on = [azuread_service_principal.api_sp]
 }
+

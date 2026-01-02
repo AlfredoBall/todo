@@ -1,6 +1,6 @@
 output "api_app_service_default_url" {
   description = "Default URL for the API App Service"
-  value       = module.api.api_app_service_default_url
+  value       = "https://${azurerm_windows_web_app.api.default_hostname}"
 }
 
 output "resource_group_name" {
@@ -13,27 +13,23 @@ output "resource_group_location" {
   description = "Location of the todo resource group"
 }
 
+
 output "api_app_registration_app_id" {
   description = "The Application (client) ID for the API app registration"
-  value       = module.api.api_app_registration_client_id
+  value       = azuread_application.api_app_registration.client_id
 }
 
 output "api_app_service_principal_id" {
   description = "Object ID of the service principal for the API app registration"
-  value       = module.api.api_service_principal_id
+  value       = azuread_service_principal.api_sp.object_id
 }
 
 output "frontend_app_service_default_url" {
   description = "Default URL for the combined frontend App Service (Angular + React)"
-  value       = module.frontend.frontend_app_service_default_url
-}
-
-output "frontend_app_id" {
-  description = "The Application (client) ID for the Frontend app registration"
-  value       = module.frontend.frontend_app_registration_client_id
+  value       = "https://${azurerm_linux_web_app.frontend.default_hostname}"
 }
 
 output "api_scope_uri" {
   description = "API scope URI for authentication (format: api://client-id/scope)"
-  value       = module.api.api_scope_uri
+  value       = "api://${azuread_application.api_app_registration.client_id}/access_as_user"
 }

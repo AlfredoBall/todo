@@ -1,4 +1,4 @@
-  # Create 1 instance if production, 0 if development
+# Create 1 instance if production, 0 if development
 
 resource "azurerm_log_analytics_workspace" "api" {
   count               = var.target_env == "production" ? 1 : 0

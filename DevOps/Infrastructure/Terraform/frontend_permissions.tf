@@ -12,7 +12,7 @@ data "azuread_service_principal" "microsoft_graph" {
 # Grant admin consent for API access_as_user to the frontend app service principal
 resource "azuread_service_principal_delegated_permission_grant" "frontend_api_access_as_user" {
 	service_principal_object_id          = azuread_service_principal.frontend_sp.object_id
-	resource_service_principal_object_id = var.api_service_principal_id
+	resource_service_principal_object_id = azuread_service_principal.api_sp.object_id
 	claim_values                         = ["access_as_user"]
 }
 
