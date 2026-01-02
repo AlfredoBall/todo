@@ -77,7 +77,7 @@ jobs:
         run: |
           docker build \
             -t ${{ secrets.DOCKERHUB_USERNAME }}/todo-frontend:latest \
-            -f Dockerfile.production .
+            -f DevOps/Infrastructure/Dockerfile.production .
 
       - name: Push Docker Image
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/todo-frontend:latest
