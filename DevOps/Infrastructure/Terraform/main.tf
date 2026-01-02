@@ -49,7 +49,6 @@ module "frontend" {
   api_scope_uri                  = module.api.api_scope_uri
   api_scope_uuid                 = module.api.api_scope_uuid
   api_service_principal_id       = module.api.api_service_principal_id
-  api_base_url                   = module.api.api_app_service_default_url
   target_env                     = var.target_env
   dockerhub_username             = var.dockerhub_username
   frontend_image                 = var.frontend_image
