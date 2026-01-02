@@ -1,7 +1,8 @@
-variable "frontend_default_hostname" {
-  type        = string
+variable "allowed_origins" {
+  type        = list(string)
   description = "Default hostname of the frontend web app for CORS and URLs"
 }
+
 variable "api_app_service_name" {
   type        = string
   description = "Name of the Azure App Service for the Todo API"
