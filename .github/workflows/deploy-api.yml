@@ -24,7 +24,7 @@ jobs:
               - '.github/workflows/deploy-api.yml'
               - '.github/workflows/build-api.yml'
               - '.github/workflows/main.yml'
-              - 'DevOps/Infrastructure/Terraform/api/**'
+              - 'DevOps/Infrastructure/**'
               
   deploy-api:
     needs: check-changes
