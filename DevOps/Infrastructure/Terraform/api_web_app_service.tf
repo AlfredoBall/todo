@@ -2,7 +2,7 @@ resource "azurerm_windows_web_app" "api" {
   name                = var.api_app_service_name
   location            = var.location
   resource_group_name = var.resource_group_name
-  service_plan_id     = var.service_plan_id
+  service_plan_id     = azurerm_service_plan.service_plan_windows.id
 
   identity {
     type = "SystemAssigned"
@@ -22,7 +22,7 @@ resource "azurerm_windows_web_app" "api" {
   app_settings = merge(
   {
     "ASPNETCORE_ENVIRONMENT"                      = title(var.target_env)
-    "FRONTEND_URL"                                = "https://${var.allowed_origins[0]}"
+    "FRONTEND_URL"                                = "https://${azurerm_linux_web_app.frontend.default_hostname}"
     "WEBSITES_DISABLE_APP_SERVICE_AUTHENTICATION" = "true"
     "AzureAd__TenantId"                           = data.azuread_client_config.current.tenant_id
     "AzureAd__ClientId"                           = azuread_application.api_app_registration.client_id
