@@ -10,8 +10,7 @@ resource "azuread_application" "app_registration" {
 
   single_page_application {
     redirect_uris = [
-      var.react_redirect_uri,
-      var.angular_redirect_uri
+      var.redirect_uri
     ]
   }
 

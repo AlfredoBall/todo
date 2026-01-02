@@ -8,15 +8,11 @@ resource "azurerm_linux_web_app" "frontend" {
 	site_config {
 		always_on = false
 		
-		application_stack {
-      		node_version = "22-lts"
-    	}
+		linux_fx_version = "DOCKER|${var.dockerhub_username}/${var.frontend_image}"
 	}
 
 	app_settings = {
-		WEBSITE_RUN_FROM_PACKAGE = 1
-		WEBSITE_ENABLE_SYNC_UPDATE_SITE = true
-		# Add any environment variables needed for your frontend
-		# e.g., "POLICIES_PATH" = "/policies"
+		WEBSITES_PORT = 80
+		API_BASE_URL = var.api_base_url
 	}
 }

@@ -14,38 +14,32 @@ var terraformDir = Path.GetFullPath(Path.Combine(builder.AppHostDirectory, "../.
 var tenantId = builder.Configuration["Azure:TenantId"]
     ?? throw new InvalidOperationException("Azure:TenantId configuration is required. Set it in User Secrets, appsettings.development.json, or environment variables.");
 
+var externalFrontendPort = 8443;
+
 // Initialize Terraform
-var terraformInit = builder.AddExecutable("terraform-init", "terraform", terraformDir, "init")
-    .WithEnvironment("TF_CLI_ARGS", "-no-color");
+var terraformInit = builder.AddExecutable("terraform-init", "terraform", terraformDir, "init");
 
 // Add Terraform as an executable resource with environment variables
 var terraformApply = builder.AddExecutable("terraform-setup", "terraform", terraformDir, "apply", "-auto-approve")
     .WaitForCompletion(terraformInit)
-    .WithEnvironment("TF_CLI_ARGS", "-no-color");
+    .WithEnvironment("TF_VAR_redirect_uri", $"https://localhost:{externalFrontendPort.ToString()}/");
 
 TerraformOutputs? cachedOutputs = null;
 
-var api = builder.AddProject<Todo_API>("API").OnResourceEndpointsAllocated(async (r, evt, ct) =>
-    {
-        Console.WriteLine($"✓ API is running at: {r.GetEndpoint("https").Url}");
-    })
+var api = builder.AddProject<Todo_API>("API")
 //    .WithReference(cache)
 //    .WaitFor(cache)
    .WaitForCompletion(terraformApply, 0) // Wait for terraform to complete
    .WithEnvironment(async context =>
    {
-       Console.WriteLine("⏳ API starting, waiting for Terraform outputs...");
-
        cachedOutputs ??= await GetTerraformOutputs(terraformDir);
 
-       Console.WriteLine("✓ Terraform outputs available, configuring API...");
        context.EnvironmentVariables["AzureAd__ClientId"] = cachedOutputs.ApiClientId;
        context.EnvironmentVariables["AzureAd__TenantId"] = tenantId;
        context.EnvironmentVariables["AzureAd__Audience"] = cachedOutputs.ApiAudience;
        context.EnvironmentVariables["AzureAD__Instance"] = "https://login.microsoftonline.com/";
        // Required for CORS since they are differen't ports than the API
-       context.EnvironmentVariables["ANGULAR_URL"] = "https://localhost:4200/";
-       context.EnvironmentVariables["REACT_URL"] = "https://localhost:5173/";
+       context.EnvironmentVariables["FRONTEND_URL"] = $"https://localhost:{externalFrontendPort}";
    });
 
 // Generate environment.development.ts for Angular from Terraform outputs before building/serving Angular app
@@ -74,17 +68,16 @@ var react = builder.AddJavaScriptApp("Todo-React", "../../Web/React/todo", "buil
     .WaitFor(api)
     .WithEnvironment(async context =>
     {
-        // context.EnvironmentVariables["OUTPUT_DIR"] = Path.GetFullPath(Path.Combine(builder.AppHostDirectory, "../../../DevOps/Container/react"));
         context.EnvironmentVariables["VITE_CLIENT_ID"] = cachedOutputs.FrontendClientId;
         context.EnvironmentVariables["VITE_TENANT_ID"] = tenantId;
         context.EnvironmentVariables["VITE_API_SCOPE_URI"] = $"[\"{cachedOutputs.ApiScopeUri}\"]";
-        context.EnvironmentVariables["VITE_REDIRECT_URI"] = "https://localhost:5173";
-        context.EnvironmentVariables["VITE_POST_LOGOUT_REDIRECT_URI"] = "https://localhost:5173";
+        context.EnvironmentVariables["VITE_REDIRECT_URI"] = $"https://localhost:{externalFrontendPort}";
+        context.EnvironmentVariables["VITE_POST_LOGOUT_REDIRECT_URI"] = $"https://localhost:{externalFrontendPort}";
         context.EnvironmentVariables["VITE_API_BASE_URL"] = "/api";
     });
 
-var frontend = builder.AddDockerfile("todo-frontend", "../../../DevOps/Infrastructure", "Dockerfile.local")
-    .WithHttpEndpoint(targetPort: 8080)
+var frontend = builder.AddDockerfile("todo-frontend", "../../../", "DevOps/Infrastructure/Dockerfile.local")
+    .WithHttpsEndpoint(externalFrontendPort, 443)
     .WithBindMount("../../Web/Angular/todo/dist", "/usr/share/nginx/html/angular")
     .WithBindMount("../../Web/React/todo/dist", "/usr/share/nginx/html/react")
     .WithBindMount("../../Web/shared/policies", "/usr/share/nginx/html/shared/policies")
@@ -94,7 +87,7 @@ var frontend = builder.AddDockerfile("todo-frontend", "../../../DevOps/Infrastru
         context.EnvironmentVariables["API_BASE_URL"] = api.GetEndpoint("https").Url;
         context.EnvironmentVariables["ASPNETCORE_ENVIRONMENT"] = builder.Environment;
     })
-    .WaitForCompletion(angular).WaitForCompletion(react).WaitFor(api).WithReference(api)
+    .WaitFor(api).WithReference(api)
     .OnResourceReady((r, evt, ct) =>
     {
         Task.Delay(TimeSpan.FromSeconds(5))
