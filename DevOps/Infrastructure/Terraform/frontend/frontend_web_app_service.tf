@@ -16,5 +16,6 @@ resource "azurerm_linux_web_app" "frontend" {
 
 	app_settings = {
 		WEBSITES_PORT = 80
+		DOCKER_ENABLE_CI = "true"
 	}
 }
