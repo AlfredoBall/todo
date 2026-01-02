@@ -62,6 +62,9 @@ dist-ssr/
 build/
 *.local
 
+!Dockerfile.local
+!*.local.conf
+
 # Environment variables
 .env
 .env.local

@@ -81,7 +81,7 @@ var frontend = builder.AddDockerfile("todo-frontend", "../../../", "DevOps/Infra
     .WithBindMount("../../Web/Angular/todo/dist", "/usr/share/nginx/html/angular")
     .WithBindMount("../../Web/React/todo/dist", "/usr/share/nginx/html/react")
     .WithBindMount("../../Web/shared/policies", "/usr/share/nginx/html/shared/policies")
-    .WithBindMount("../../../DevOps/Infrastructure/nginx.template.conf", "/etc/nginx/nginx.template.conf")
+    .WithBindMount("../../../DevOps/Infrastructure/nginx.template.local.conf", "/etc/nginx/nginx.template.local.conf")
     .WithEnvironment(async context =>
     {  
         context.EnvironmentVariables["API_BASE_URL"] = api.GetEndpoint("https").Url;
