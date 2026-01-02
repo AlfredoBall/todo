@@ -29,10 +29,9 @@ jobs:
             frontend:
               - 'Services/Web/Angular/todo/**'
               - 'Services/Web/React/todo/**'
-              - 'DevOps/Infrastructure/nginx.template.conf'
-              - 'DevOps/Infrastructure/Dockerfile.production'
+              - 'DevOps/Infrastructure/**
+              - '.github/workflows/main.yml'
               - '.github/workflows/deploy-frontend.yml'
-              
 
   deploy-frontend:
     needs: check-changes
