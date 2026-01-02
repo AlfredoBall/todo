@@ -29,7 +29,7 @@ jobs:
             frontend:
               - 'Services/Web/Angular/todo/**'
               - 'Services/Web/React/todo/**'
-              - 'DevOps/Infrastructure/**
+              - 'DevOps/Infrastructure/**'
               - '.github/workflows/main.yml'
               - '.github/workflows/deploy-frontend.yml'
 
