@@ -13,6 +13,5 @@ resource "azurerm_linux_web_app" "frontend" {
 
 	app_settings = {
 		WEBSITES_PORT = 80
-		API_BASE_URL = var.api_base_url
 	}
 }
