@@ -12,7 +12,11 @@ variable "api_app_service_name" {
   description = "Name of the Azure App Service for the Todo API"
   type        = string
 }
-// Centralized Terraform variables for the Todo infrastructure
+
+variable "api_base_url" {
+  type        = string
+  description = "Base URL of the API for the frontend to call"
+}
 
 variable "location" {
   description = "Azure location for resources"
@@ -76,4 +80,14 @@ variable "visual_studio_version" {
 variable "target_env" {
   description = "ASP.NET Core environment (e.g., Development, Staging, Production)"
   type        = string
+}
+
+variable "dockerhub_username" {
+  type        = string
+  description = "Docker Hub username for pulling the frontend image"
+}
+
+variable "frontend_image" {
+  type        = string
+  description = "Docker image name for the Todo frontend"
 }

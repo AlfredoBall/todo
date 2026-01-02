@@ -1,25 +1,17 @@
-name: Deploy API, React, and Angular
+name: Deploy Frontend (Docker)
 
 on:
   workflow_call:
     inputs:
       target_env:
         description: 'Target environment'
-        required: false
+        required: true
         type: string
       api_url:
         description: 'API base URL from Terraform'
-        required: false
+        required: true
         type: string
-      angular_url:
-        description: 'Angular Static Web App URL from Terraform'
-        required: false
-        type: string
-      react_url:
-        description: 'React Static Web App URL from Terraform'
-        required: false
-        type: string
-  
+
 jobs:
   check-changes:
     runs-on: ubuntu-latest
@@ -37,72 +29,55 @@ jobs:
             frontend:
               - 'Services/Web/Angular/todo/**'
               - 'Services/Web/React/todo/**'
-              - '.github/workflows/build-angular.yml'
-              - '.github/workflows/build-react.yml'
+              - 'DevOps/Infrastructure/nginx.template.conf'
+              - 'DevOps/Infrastructure/Dockerfile.production'
               - '.github/workflows/deploy-frontend.yml'
-              - '.github/workflows/main.yml'
-              - 'DevOps/Infrastructure/Terraform/frontend/**'
-              - 'DevOps/Infrastructure/nginx.conf'
 
   deploy-frontend:
     needs: check-changes
-    # Only run if either project or their build/deploy logic has changed
     if: needs.check-changes.outputs.frontend_changed == 'true'
     runs-on: ubuntu-latest
     environment: ${{ inputs.target_env }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
 
-      - name: Download Angular artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: angular-${{ inputs.target_env }}
-          path: angular_artifact
+      # -----------------------------
+      # Build Angular
+      # -----------------------------
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v2
 
-      - name: Download React artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: react-${{ inputs.target_env }}
-          path: react_artifact
-
-      - name: Azure Login (OIDC)
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          enable-AzPSSession: false
-          allow-no-subscriptions: true
-
-      - name: Prepare Combined Frontend Package
+      - name: Build Angular
+        working-directory: Services/Web/Angular/todo
         run: |
-            mkdir -p frontend_package/todo/angular
-            mkdir -p frontend_package/todo/react
-            mkdir -p frontend_package/todo/policies
+          bun install --frozen-lockfile
+          bun run build -- --configuration production
 
-            cp -r DevOps/Infrastructure/nginx.conf frontend_package/nginx.conf
-            
-            # 1. Angular: Copy directly from the artifact root (no /browser/)
-            cp -r angular_artifact/todo/* frontend_package/todo/angular/
-            
-            # 2. React: Remains the same
-            cp -r react_artifact/* frontend_package/todo/react/
+      # -----------------------------
+      # Build React
+      # -----------------------------
+      - name: Build React
+        working-directory: Services/Web/React/todo
+        run: |
+          bun install --frozen-lockfile
+          bun run build -- --mode production
 
-            cp -r Services/Web/shared/policies/* frontend_package/todo/policies/
-
-      - name: Deploy Combined Frontend to Azure Web App (Linux)
-        uses: azure/webapps-deploy@v3
+      # -----------------------------
+      # Build & Push Docker Image
+      # -----------------------------
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
         with:
-          app-name: "${{ vars.AZURE_FRONTEND_APP_SERVICE_NAME }}-${{ inputs.target_env }}"
-          package: frontend_package
-          clean: true
-      
-      # - name: Deploy nginx.conf to Azure Web App
-      #   run: |
-      #     az webapp deploy \
-      #       --resource-group ${{ vars.AZURE_RESOURCE_GROUP }}-${{ inputs.target_env }} \
-      #       --name ${{ vars.AZURE_FRONTEND_APP_SERVICE_NAME }}-${{ inputs.target_env }} \
-      #       --src-path ./DevOps/Infrastructure/nginx.conf \
-      #       --target-path /home/site/wwwroot/nginx.conf \
-      #       --type static
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build Docker Image
+        run: |
+          docker build \
+            -t ${{ secrets.DOCKERHUB_USERNAME }}/todo-frontend:latest \
+            -f Dockerfile.production .
+
+      - name: Push Docker Image
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/todo-frontend:latest

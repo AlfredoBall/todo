@@ -11,7 +11,7 @@ resource "azurerm_service_plan" "service_plan_linux" {
   os_type             = "Linux"
   sku_name            = "F1"
 
-  depends_on = [ azurerm_resource_group.rg ]
+  depends_on = [azurerm_resource_group.rg]
 }
 
 resource "azurerm_service_plan" "service_plan_windows" {
@@ -21,7 +21,7 @@ resource "azurerm_service_plan" "service_plan_windows" {
   os_type             = "Windows"
   sku_name            = "B1"
 
-  depends_on = [ azurerm_resource_group.rg ]
+  depends_on = [azurerm_resource_group.rg]
 }
 
 module "api" {
@@ -49,5 +49,8 @@ module "frontend" {
   api_scope_uri                  = module.api.api_scope_uri
   api_scope_uuid                 = module.api.api_scope_uuid
   api_service_principal_id       = module.api.api_service_principal_id
+  api_base_url                   = module.api.api_app_service_default_url
   target_env                     = var.target_env
+  dockerhub_username             = var.dockerhub_username
+  frontend_image                 = var.frontend_image
 }
