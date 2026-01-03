@@ -82,12 +82,12 @@ jobs:
         id: terraform_output
         working-directory: ${{ env.TERRAFORM_DIR }}
         run: |
-          API_URL=$(terraform output -raw api_app_service_default_url)
-          FRONTEND_URL=$(terraform output -raw frontend_app_service_default_url)
-          FRONTEND_CLIENT_ID=$(terraform output -raw frontend_app_id)
-          API_CLIENT_ID=$(terraform output -raw api_app_registration_app_id)
-          TENANT_ID=${{ secrets.AZURE_TENANT_ID }}
           API_SCOPE_URI=$(terraform output -raw api_scope_uri)
+          API_URL=$(terraform output -raw api_app_service_default_url)
+          API_CLIENT_ID=$(terraform output -raw api_app_registration_client_id)
+          FRONTEND_URL=$(terraform output -raw frontend_app_service_default_url)
+          FRONTEND_CLIENT_ID=$(terraform output -raw frontend_app_registration_client_id)
+          TENANT_ID=${{ secrets.AZURE_TENANT_ID }}
           echo "api_url=$API_URL" >> $GITHUB_OUTPUT
           echo "frontend_url=$FRONTEND_URL" >> $GITHUB_OUTPUT
           echo "frontend_client_id=$FRONTEND_CLIENT_ID" >> $GITHUB_OUTPUT

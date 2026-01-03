@@ -104,6 +104,7 @@ jobs:
         target_env: ${{ fromJson(needs.generate-matrix.outputs.target_envs) }}
     with:
       target_env: ${{ matrix.target_env }}
+      frontend_url: ${{ needs.terraform.outputs.frontend_url }}
 
   deploy-frontend:
     name: Deploy Frontend Applications
@@ -126,4 +127,3 @@ jobs:
     with:
       target_env: ${{ matrix.target_env }}
       api_url: ${{ needs.terraform.outputs.api_url }}
-      

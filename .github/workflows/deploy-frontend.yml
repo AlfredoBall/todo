@@ -77,8 +77,19 @@ jobs:
         run: |
           docker build \
             -t ${{ secrets.DOCKERHUB_USERNAME }}/todo-frontend:latest \
-            --build-arg API_BASE_URL=${{ inputs.api_url }} \
             -f DevOps/Infrastructure/Dockerfile.production .
 
       - name: Push Docker Image
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/todo-frontend:latest
+
+      - name: 'Azure Frontend App Service Settings'
+        uses: Azure/appservice-settings@v1
+        with:
+          app-name: "${{ vars.AZURE_FRONTEND_APP_SERVICE_NAME }}-${{ inputs.target_env }}"
+          app-settings-json: |
+            [
+              {
+                "name": "API_BASE_URL",
+                "value": "${{ inputs.api_url }}",
+              }
+            ]

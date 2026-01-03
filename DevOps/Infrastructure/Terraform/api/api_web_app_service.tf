@@ -22,7 +22,6 @@ resource "azurerm_windows_web_app" "api" {
   app_settings = merge(
   {
     "ASPNETCORE_ENVIRONMENT"                      = title(var.target_env)
-    "FRONTEND_URL"                                = "https://${var.allowed_origins[0]}"
     "WEBSITES_DISABLE_APP_SERVICE_AUTHENTICATION" = "true"
     "AzureAd__TenantId"                           = data.azuread_client_config.current.tenant_id
     "AzureAd__ClientId"                           = azuread_application.api_app_registration.client_id
