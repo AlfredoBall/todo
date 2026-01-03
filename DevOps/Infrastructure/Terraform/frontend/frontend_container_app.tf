@@ -1,4 +1,4 @@
-// App Service for the combined frontend (Angular + React)
+// App container for the combined frontend (Angular + React)
 
 resource "azurerm_container_app_environment" "frontend_environment" {
   name                       = "Environment-${title(var.target_env)}"
@@ -55,27 +55,6 @@ resource "azurerm_container_app" "frontend_app" {
 
   secret {
     name  = "dockerhub-password"
-    value = "${secret.dockerhub_password}"
+    value = "${ var.dockerhub_password }"
   }
 }
-
-# resource "azurerm_linux_web_app" "frontend" {
-# 	name                = var.frontend_container_app_name
-# 	location            = var.location
-# 	resource_group_name = var.resource_group_name
-# 	service_plan_id     = var.service_plan_id
-
-# 	site_config {
-# 		always_on = false
-		
-# 		application_stack {
-# 			docker_image_name = "${var.dockerhub_username}/${var.frontend_image}"
-#     		docker_registry_url = "https://index.docker.io"
-# 		}
-# 	}
-
-# 	app_settings = {
-# 		WEBSITES_PORT = 80
-# 		DOCKER_ENABLE_CI = "true"
-# 	}
-# }
