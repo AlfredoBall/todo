@@ -63,7 +63,7 @@ jobs:
             [
               {
                 "name": "FRONTEND_URL",
-                "value": "${{ inputs.frontend_url }}",
+                "value": "${{ inputs.frontend_url }}"
               }
             ]
 
