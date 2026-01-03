@@ -91,14 +91,11 @@ jobs:
           enable-AzPSSession: false
           allow-no-subscriptions: true
 
-      - name: 'Azure Frontend App Service Settings'
-        uses: Azure/appservice-settings@v1
+      - name: Update Frontend Azure Container App Settings
+        uses: azure/cli@v1
         with:
-          app-name: "${{ vars.AZURE_FRONTEND_APP_SERVICE_NAME }}-${{ inputs.target_env }}"
-          app-settings-json: |
-            [
-              {
-                "name": "API_BASE_URL",
-                "value": "${{ inputs.api_url }}"
-              }
-            ]
+          inlineScript: |
+            az containerapp update \
+              --name "${{ vars.AZURE_FRONTEND_CONTAINER_APP_NAME }}-${{ inputs.target_env }}" \
+              --resource-group "${{ vars.AZURE_RESOURCE_GROUP_NAME }}-${{ inputs.target_env }}" \
+              --set-env-vars API_BASE_URL="${{ inputs.api_url }}"

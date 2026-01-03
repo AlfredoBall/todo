@@ -4,12 +4,16 @@ resource "azurerm_resource_group" "rg" {
   tags     = var.resource_tags
 }
 
-resource "azurerm_service_plan" "service_plan_linux" {
-  name                = "${var.service_plan_linux_name}-${var.target_env}"
+resource "azurerm_app_service_plan" "service_plan_consumption" {
+  name                = "${var.service_plan_consumption_name}-${var.target_env}"
   location            = var.location
   resource_group_name = azurerm_resource_group.rg.name
-  os_type             = "Linux"
-  sku_name            = "F1"
+  kind                = "Consumption" # Must be FunctionApp for consumption plan
+
+  sku {
+    tier = "Dynamic"
+    size = "Y1" # Y1 is the consumption plan size
+  }
 
   depends_on = [azurerm_resource_group.rg]
 }
@@ -32,7 +36,6 @@ module "api" {
   location                  = var.location
   resource_group_name       = azurerm_resource_group.rg.name
   service_plan_id           = azurerm_service_plan.service_plan_windows.id
-  allowed_origins           = [module.frontend.frontend_app_service_default_url]
   api_build_configuration   = var.api_build_configuration
   visual_studio_version     = var.visual_studio_version
   target_env                = var.target_env
@@ -40,11 +43,12 @@ module "api" {
 
 module "frontend" {
   source                         = "./frontend"
-  frontend_app_service_name      = "${var.frontend_app_service_name}-${var.target_env}"
+  frontend_container_app_name    = "${var.frontend_container_app_name}-${var.target_env}"
+  frontend_container_name        = "${var.frontend_container_name}-${var.target_env}"
   sign_in_audience               = var.sign_in_audience
   location                       = var.location
   resource_group_name            = "${var.resource_group_name}-${var.target_env}"
-  service_plan_id                = azurerm_service_plan.service_plan_linux.id
+  service_plan_id                = azurerm_app_service_plan.service_plan_consumption.id
   api_app_registration_client_id = module.api.api_app_registration_client_id
   api_scope_uri                  = module.api.api_scope_uri
   api_scope_uuid                 = module.api.api_scope_uuid

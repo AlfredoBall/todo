@@ -1,5 +1,5 @@
-variable "service_plan_linux_name" {
-  description = "Name of the Linux Azure App Service Plan for the Todo Web App Services"
+variable "service_plan_consumption_name" {
+  description = "Name of the Consumption Azure App Service Plan for the Todo Container App"
   type        = string
 }
 
@@ -50,8 +50,13 @@ variable "api_app_registration_name" {
   default     = "To Do API"
 }
 
-variable "frontend_app_service_name" {
-  description = "Name of the Azure App Service for the combined frontend (Angular + React)"
+variable "frontend_container_app_name" {
+  description = "Name of the Azure Container App for the combined frontend (Angular + React)"
+  type        = string
+}
+
+variable "frontend_container_name" {
+  description = "Name of the Azure Container for the combined frontend (Angular + React)"
   type        = string
 }
 
