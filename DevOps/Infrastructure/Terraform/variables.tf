@@ -1,8 +1,3 @@
-variable "service_plan_consumption_name" {
-  description = "Name of the Consumption Azure App Service Plan for the Todo Container App"
-  type        = string
-}
-
 variable "service_plan_windows_name" {
   description = "Name of the Windows Azure App Service Plan for the Todo Web App Services"
   type        = string

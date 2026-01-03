@@ -42,6 +42,7 @@ jobs:
       TF_VAR_frontend_image: ${{ vars.FRONTEND_IMAGE }}
       TF_VAR_frontend_container_app_name: ${{ vars.AZURE_FRONTEND_CONTAINER_APP_NAME }}
       TF_VAR_frontend_container_name: ${{ vars.AZURE_FRONTEND_CONTAINER_NAME }}
+      TF_VAR_resource_group_name: ${{ vars.AZURE_RESOURCE_GROUP }}-${{ inputs.target_env }}
     outputs:
       tenant_id: ${{ steps.terraform_output.outputs.tenant_id }}
       api_url: ${{ steps.terraform_output.outputs.api_url }}
