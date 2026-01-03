@@ -58,7 +58,7 @@ jobs:
         uses: Azure/appservice-settings@v1
         with:
           app-name: "${{ vars.AZURE_API_APP_SERVICE_NAME }}-${{ inputs.target_env }}"
-          slot-name: staging
+          # slot-name: staging
           app-settings-json: |
             [
               {
@@ -72,17 +72,17 @@ jobs:
         uses: azure/webapps-deploy@v3
         with:
           app-name: "${{ vars.AZURE_API_APP_SERVICE_NAME }}-${{ inputs.target_env }}"
-          slot-name: staging
+          # slot-name: staging
           package: api_artifact
           clean: true
 
-      - name: Swap staging to production
-        uses: azure/cli@v1
-        with:
-          inlineScript: |
-            az webapp deployment slot swap \
-              --resource-group "${{ vars.AZURE_RESOURCE_GROUP }}-${{ inputs.target_env }}" \
-              --name "${{ vars.AZURE_API_APP_SERVICE_NAME }}-${{ inputs.target_env }}" \
-              --slot staging \
-              --target-slot production
+      # - name: Swap staging to production
+      #   uses: azure/cli@v1
+      #   with:
+      #     inlineScript: |
+      #       az webapp deployment slot swap \
+      #         --resource-group "${{ vars.AZURE_RESOURCE_GROUP }}-${{ inputs.target_env }}" \
+      #         --name "${{ vars.AZURE_API_APP_SERVICE_NAME }}-${{ inputs.target_env }}" \
+      #         --slot staging \
+      #         --target-slot production
       
