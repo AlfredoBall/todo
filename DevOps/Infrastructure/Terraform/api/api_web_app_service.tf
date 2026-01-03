@@ -36,4 +36,17 @@ resource "azurerm_windows_web_app" "api" {
   } : {})
 }
 
+resource "azurerm_windows_web_app_slot" "api_staging" {
+  name           = "staging"
+  app_service_id = azurerm_windows_web_app.api.id
+
+  site_config {
+    # container config, startup command, etc.
+  }
+
+  app_settings = {
+    "ENVIRONMENT" = "staging"
+  }
+}
+
 data "azuread_client_config" "current" {}
