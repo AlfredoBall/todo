@@ -24,6 +24,7 @@ resource "azurerm_container_app" "frontend_app" {
     target_port = 8080
     traffic_weight {
       percentage = 100
+      latest_revision  = true
     }
   }
 
