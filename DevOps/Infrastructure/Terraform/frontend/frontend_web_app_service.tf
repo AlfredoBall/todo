@@ -17,6 +17,18 @@ resource "azurerm_linux_web_app" "frontend" {
 	app_settings = {
 		WEBSITES_PORT = 80
 		DOCKER_ENABLE_CI = "true"
-		API_BASE_URL = "todo-api-app-service-development.azurewebsites.net"
 	}
+}
+
+resource "azurerm_linux_web_app_slot" "api_staging" {
+  name           = "staging"
+  app_service_id = azurerm_linux_web_app.api.id
+
+  site_config {
+    # container config, startup command, etc.
+  }
+
+  app_settings = {
+    "ENVIRONMENT" = "staging"
+  }
 }

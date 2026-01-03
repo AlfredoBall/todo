@@ -7,6 +7,10 @@ on:
         description: 'Target environment'
         required: true
         type: string
+      frontend_url:
+        description: 'FRONTEND_URL application setting value'
+        required: true
+        type: string
   
 jobs:
   check-changes:
@@ -50,9 +54,35 @@ jobs:
           enable-AzPSSession: false
           allow-no-subscriptions: true
 
+      - name: 'Azure API App Service Settings'
+        uses: Azure/appservice-settings@v1
+        with:
+          app-name: "${{ vars.AZURE_API_APP_SERVICE_NAME }}-${{ inputs.target_env }}"
+          slot-name: staging
+          app-settings-json: |
+            [
+              {
+                "name": "FRONTEND_URL",
+                "value": "${{ inputs.frontend_url }}",
+              }
+            ]
+
+
       - name: Deploy API to Azure Web App (Linux)
         uses: azure/webapps-deploy@v3
         with:
           app-name: "${{ vars.AZURE_API_APP_SERVICE_NAME }}-${{ inputs.target_env }}"
+          slot-name: staging
           package: api_artifact
           clean: true
+
+      - name: Swap staging to production
+        uses: azure/cli@v1
+        with:
+          inlineScript: |
+            az webapp deployment slot swap \
+              --resource-group "${{ vars.AZURE_RESOURCE_GROUP }}-${{ inputs.target_env }}" \
+              --name "${{ vars.AZURE_API_APP_SERVICE_NAME }}-${{ inputs.target_env }}" \
+              --slot staging \
+              --target-slot production
+      
