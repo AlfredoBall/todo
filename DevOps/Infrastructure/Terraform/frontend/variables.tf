@@ -58,6 +58,12 @@ variable "dockerhub_username" {
   description = "Docker Hub username for pulling the frontend image"
 }
 
+variable "dockerhub_password" {
+  type        = string
+  description = "Docker Hub password for pulling the frontend image"
+  sensitive   = true
+}
+
 variable "frontend_image" {
   type        = string
   description = "Docker image name for the Todo frontend"
