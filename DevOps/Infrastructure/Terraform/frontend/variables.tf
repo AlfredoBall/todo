@@ -1,6 +1,11 @@
-variable "frontend_app_service_name" {
+variable "frontend_container_app_name" {
   type        = string
-  description = "Name of the Azure App Service for the combined frontend (Angular + React)"
+  description = "Name of the Azure Container App for the combined frontend (Angular + React)"
+}
+
+variable "frontend_container_name" {
+  description = "Name of the Azure Container for the combined frontend (Angular + React)"
+  type        = string
 }
 
 variable "sign_in_audience" {

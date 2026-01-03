@@ -1,4 +1,4 @@
-resource "azuread_application" "frontend_app" {
+resource "azuread_application" "frontend_app_registration" {
 	display_name            = "${"To Do Frontend App"} - ${title(var.target_env)}"
 	sign_in_audience        = var.sign_in_audience
 	prevent_duplicate_names = true
@@ -9,8 +9,8 @@ resource "azuread_application" "frontend_app" {
 
 	single_page_application {
 		redirect_uris = [
-			"https://${azurerm_linux_web_app.frontend.default_hostname}/todo/react",
-			"https://${azurerm_linux_web_app.frontend.default_hostname}/todo/angular"
+			"https://${azurerm_container_app.frontend_app.default_hostname}/todo/react",
+			"https://${azurerm_container_app.frontend_app.default_hostname}/todo/angular"
 			# Add additional redirect URIs as needed for your Angular/React apps
 		]
 	}

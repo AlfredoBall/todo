@@ -1,10 +1,10 @@
 output "frontend_app_service_default_url" {
-  description = "Default URL for the combined frontend App Service (Angular + React)"
-  value       = "https://${azurerm_linux_web_app.frontend.name}.azurewebsites.net"
+  description = "Default URL for the combined frontend Container App (Angular + React)"
+  value       = "https://${azurerm_container_app.frontend_app.latest_revision_fqdn}"
 }
 
 output "frontend_app_registration_client_id" {
-  value = azuread_application.frontend_app.client_id
+  value = azuread_application.frontend_app_registration.client_id
 }
 
 output "frontend_service_principal_id" {
