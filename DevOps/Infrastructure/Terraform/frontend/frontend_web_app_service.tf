@@ -19,16 +19,3 @@ resource "azurerm_linux_web_app" "frontend" {
 		DOCKER_ENABLE_CI = "true"
 	}
 }
-
-resource "azurerm_linux_web_app_slot" "api_staging" {
-  name           = "staging"
-  app_service_id = azurerm_linux_web_app.api.id
-
-  site_config {
-    # container config, startup command, etc.
-  }
-
-  app_settings = {
-    "ENVIRONMENT" = "staging"
-  }
-}
