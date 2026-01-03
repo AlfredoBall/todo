@@ -1,5 +1,5 @@
 resource "azuread_service_principal" "frontend_sp" {
-	client_id = azuread_application.frontend_app.client_id
+	client_id = azuread_application.frontend_app_registration.client_id
 	feature_tags {
 		enterprise = false
 	}
