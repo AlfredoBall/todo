@@ -90,6 +90,6 @@ jobs:
             [
               {
                 "name": "API_BASE_URL",
-                "value": "${{ inputs.api_url }}",
+                "value": "${{ inputs.api_url }}"
               }
             ]
