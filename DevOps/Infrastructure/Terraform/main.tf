@@ -14,6 +14,14 @@ resource "azurerm_service_plan" "service_plan_windows" {
   depends_on = [azurerm_resource_group.rg]
 }
 
+resource "azurerm_container_app_environment" "frontend_environment" {
+  name                       = "Environment-${title(var.target_env)}"
+  location                   = var.location
+  resource_group_name        = azurerm_resource_group.rg.name
+
+  depends_on = [azurerm_resource_group.rg]
+}
+
 module "api" {
   source                    = "./api"
   api_app_service_name      = "${var.api_app_service_name}-${var.target_env}"
@@ -29,6 +37,7 @@ module "api" {
 
 module "frontend" {
   source                         = "./frontend"
+  frontend_environment_id        = azurerm_container_app_environment.frontend_environment.id
   frontend_container_app_name    = "${var.frontend_container_app_name}-${var.target_env}"
   frontend_container_name        = "${var.frontend_container_name}-${var.target_env}"
   sign_in_audience               = var.sign_in_audience

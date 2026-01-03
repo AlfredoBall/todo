@@ -1,14 +1,8 @@
 // App container for the combined frontend (Angular + React)
 
-resource "azurerm_container_app_environment" "frontend_environment" {
-  name                       = "Environment-${title(var.target_env)}"
-  location                   = var.location
-  resource_group_name        = var.resource_group_name
-}
-
 resource "azurerm_container_app" "frontend_app" {
   name                         = var.frontend_container_app_name
-  container_app_environment_id = azurerm_container_app_environment.frontend_environment.id
+  container_app_environment_id = var.frontend_environment.id
   resource_group_name          = var.resource_group_name
   revision_mode                = "Single"
 

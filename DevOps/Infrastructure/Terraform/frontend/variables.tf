@@ -63,3 +63,8 @@ variable "frontend_image" {
   type        = string
   description = "Docker image name for the Todo frontend"
 }
+
+variable "frontend_environment_id" {
+  type        = string
+  description = "ID of the Azure Container App Environment for the frontend"
+}
