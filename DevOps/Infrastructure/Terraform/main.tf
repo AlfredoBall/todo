@@ -4,20 +4,6 @@ resource "azurerm_resource_group" "rg" {
   tags     = var.resource_tags
 }
 
-resource "azurerm_app_service_plan" "service_plan_consumption" {
-  name                = "${var.service_plan_consumption_name}-${var.target_env}"
-  location            = var.location
-  resource_group_name = azurerm_resource_group.rg.name
-  kind                = "Consumption" # Must be FunctionApp for consumption plan
-
-  sku {
-    tier = "Dynamic"
-    size = "Y1" # Y1 is the consumption plan size
-  }
-
-  depends_on = [azurerm_resource_group.rg]
-}
-
 resource "azurerm_service_plan" "service_plan_windows" {
   name                = "${var.service_plan_windows_name}-${var.target_env}"
   location            = var.location
