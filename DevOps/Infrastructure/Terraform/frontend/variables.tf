@@ -23,11 +23,6 @@ variable "resource_group_name" {
   description = "Name of the resource group"
 }
 
-variable "service_plan_id" {
-  type        = string
-  description = "ID of the Azure App Service Plan"
-}
-
 variable "api_app_registration_client_id" {
   type        = string
   description = "Client ID of the API app registration"
