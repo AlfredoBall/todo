@@ -42,4 +42,5 @@ module "frontend" {
   target_env                     = var.target_env
   dockerhub_username             = var.dockerhub_username
   frontend_image                 = var.frontend_image
+  dockerhub_password             = var.dockerhub_password
 }
