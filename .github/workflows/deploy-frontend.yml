@@ -97,5 +97,5 @@ jobs:
           inlineScript: |
             az containerapp update \
               --name "${{ vars.AZURE_FRONTEND_CONTAINER_APP_NAME }}-${{ inputs.target_env }}" \
-              --resource-group "${{ vars.AZURE_RESOURCE_GROUP_NAME }}-${{ inputs.target_env }}" \
+              --resource-group "${{ vars.AZURE_RESOURCE_GROUP }}-${{ inputs.target_env }}" \
               --set-env-vars API_BASE_URL="${{ inputs.api_url }}"
