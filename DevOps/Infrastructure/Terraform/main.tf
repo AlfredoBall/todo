@@ -1,5 +1,5 @@
 resource "azurerm_resource_group" "rg" {
-  name     = "${var.resource_group_name}-${var.target_env}"
+  name     = var.resource_group_name
   location = var.location
   tags     = var.resource_tags
 }
@@ -42,7 +42,7 @@ module "frontend" {
   frontend_container_name        = "${var.frontend_container_name}-${var.target_env}"
   sign_in_audience               = var.sign_in_audience
   location                       = var.location
-  resource_group_name            = "${var.resource_group_name}-${var.target_env}"
+  resource_group_name            = var.resource_group_name
   api_app_registration_client_id = module.api.api_app_registration_client_id
   api_scope_uri                  = module.api.api_scope_uri
   api_scope_uuid                 = module.api.api_scope_uuid
