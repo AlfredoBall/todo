@@ -33,19 +33,20 @@ jobs:
     with:
       target_env: ${{ matrix.target_env }}
 
-  build-api:
-    name: Build API
+  api:
+    name: API
     needs: [generate-matrix, terraform]
     secrets: inherit
     if: ${{ needs.generate-matrix.outputs.target_envs != '' }}
-    uses: ./.github/workflows/build-api.yml
+    uses: ./.github/workflows/api.yml
     concurrency:
-      group: build-api-${{ github.workflow }}-${{ matrix.target_env }}-${{ github.run_id }}
+      group: api-${{ github.workflow }}-${{ matrix.target_env }}-${{ github.run_id }}
     strategy:
       matrix:
         target_env: ${{ fromJson(needs.generate-matrix.outputs.target_envs) }}
     with:
       target_env: ${{ matrix.target_env }}
+      frontend_url: ${{ needs.terraform.outputs.frontend_url }}
 
   # build-angular:
   #   name: Build Angular
@@ -85,26 +86,26 @@ jobs:
   #     api_client_id: ${{ needs.terraform.outputs.api_client_id }}
   #     api_scope_uri: ${{ needs.terraform.outputs.api_scope_uri }}
 
-  deploy-api:
-    name: Deploy API Application
-    needs: [generate-matrix, terraform, build-api]
-    if: |
-      always() &&
-      needs.build-api.result == 'success' &&
-      needs.generate-matrix.outputs.target_envs != ''
-    uses: ./.github/workflows/deploy-api.yml
-    secrets: inherit
-    permissions:
-      id-token: write
-      contents: read
-    concurrency:
-      group: deploy-api-${{ github.workflow }}-${{ matrix.target_env }}-${{ github.run_id }}
-    strategy:
-      matrix:
-        target_env: ${{ fromJson(needs.generate-matrix.outputs.target_envs) }}
-    with:
-      target_env: ${{ matrix.target_env }}
-      frontend_url: ${{ needs.terraform.outputs.frontend_url }}
+  # deploy-api:
+  #   name: Deploy API Application
+  #   needs: [generate-matrix, terraform, build-api]
+  #   if: |
+  #     always() &&
+  #     needs.build-api.result == 'success' &&
+  #     needs.generate-matrix.outputs.target_envs != ''
+  #   uses: ./.github/workflows/deploy-api.yml
+  #   secrets: inherit
+  #   permissions:
+  #     id-token: write
+  #     contents: read
+  #   concurrency:
+  #     group: deploy-api-${{ github.workflow }}-${{ matrix.target_env }}-${{ github.run_id }}
+  #   strategy:
+  #     matrix:
+  #       target_env: ${{ fromJson(needs.generate-matrix.outputs.target_envs) }}
+  #   with:
+  #     target_env: ${{ matrix.target_env }}
+  #     frontend_url: ${{ needs.terraform.outputs.frontend_url }}
 
   frontend:
     name: Deploy Frontend Applications
