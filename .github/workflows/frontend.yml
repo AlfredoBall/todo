@@ -4,27 +4,27 @@ on:
   workflow_call:
     inputs:
       target_env:
-        description: 'Target environment'
+        description: "Target environment"
         required: true
         type: string
       api_url:
-        description: 'API base URL'
+        description: "API base URL"
         required: true
         type: string
       frontend_url:
-        description: 'Frontend Static Web App URL from Terraform'
+        description: "Frontend Static Web App URL"
         required: false
         type: string
       frontend_client_id:
-        description: 'Frontend app registration client ID'
+        description: "Frontend app registration client ID"
         required: false
         type: string
       api_client_id:
-        description: 'API app registration client ID'
+        description: "API app registration client ID"
         required: false
         type: string
       api_scope_uri:
-        description: 'API scope URI for authentication'
+        description: "API scope URI for authentication"
         required: false
         type: string
 
@@ -87,8 +87,9 @@ jobs:
         shell: pwsh
         run: |
           $json = @{
-            API_BASE_URL            = "${{ inputs.api_url }}"
-            FRONTEND_POST_LOGOUT_REDIRECT_URI        = "${{ inputs.frontend_url }}"
+            API_BASE_URL                         = "${{ inputs.api_url }}"
+            FRONTEND_REDIRECT_URI                = "${{ inputs.frontend_url }}"  
+            FRONTEND_POST_LOGOUT_REDIRECT_URI    = "${{ inputs.frontend_url }}"
             FRONTEND_APP_REGISTRATION_CLIENT_ID  = "${{ inputs.frontend_client_id }}"
             API_SCOPE_URI       = "${{ inputs.api_scope_uri }}"
             TENANT_ID          = "${{ secrets.AZURE_TENANT_ID }}"
@@ -115,7 +116,7 @@ jobs:
 
       - name: Push Docker Image
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.FRONTEND_IMAGE}}
-        
+
       - name: Azure Login (OIDC)
         uses: azure/login@v2
         with:
