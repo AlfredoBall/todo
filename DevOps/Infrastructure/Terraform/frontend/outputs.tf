@@ -1,6 +1,6 @@
 output "frontend_app_service_default_url" {
   description = "Default URL for the combined frontend Container App (Angular + React)"
-  value       = "https://${azurerm_container_app.frontend_app.fqdn}"
+  value       = "https://${azurerm_container_app.frontend_app.ingress.fqdn}"
 }
 
 output "frontend_app_registration_client_id" {
