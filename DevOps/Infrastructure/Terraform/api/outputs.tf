@@ -1,6 +1,6 @@
 output "api_app_service_default_url" {
   description = "Default URL for the API App Service"
-  value       = "https://${azurerm_container_app.api_app.fqdn}"
+  value       = "https://${azurerm_container_app.api_app.ingress.ingress.fqdn}"
 }
 
 output "api_app_registration_client_id" {
