@@ -23,7 +23,6 @@ module "api" {
   sign_in_audience          = var.sign_in_audience
   location                  = var.location
   resource_group_name       = azurerm_resource_group.rg.name
-  service_plan_id           = azurerm_service_plan.service_plan_windows.id
   visual_studio_version     = var.visual_studio_version
   target_env                = var.target_env
   dockerhub_username        = var.dockerhub_username
