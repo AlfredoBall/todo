@@ -9,8 +9,8 @@ resource "azuread_application" "frontend_app_registration" {
 
 	single_page_application {
 		redirect_uris = [
-			"https://${azurerm_container_app.frontend_app.ingress.fqdn}/todo/react",
-			"https://${azurerm_container_app.frontend_app.ingress.fqdn}/todo/angular"
+			"https://${azurerm_container_app.frontend_app.ingress[0].fqdn}/todo/react",
+			"https://${azurerm_container_app.frontend_app.ingress[0].fqdn}/todo/angular"
 			# Add additional redirect URIs as needed for your Angular/React apps
 		]
 	}
