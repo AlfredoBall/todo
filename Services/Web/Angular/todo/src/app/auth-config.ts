@@ -1,33 +1,39 @@
+function _parseArray(val: any, def: any[] = []) {
+  if (val === undefined || val === null) return def;
+  if (Array.isArray(val)) return val;
+  try {
+    return JSON.parse(String(val));
+  } catch {
+    return String(val).split(',').map((s) => s.trim()).filter(Boolean);
+  }
+}
 
-import { environment } from '../environments/environment';
-/**
- * Azure Entra ID Authentication Configuration
- * 
- * Configuration values are loaded from the environment files:
- * - environment.development.ts for local development
- * - environment.ts for production builds
- * 
- * Values include:
- * - CLIENT_ID: Application (client) ID from Azure app registration
- * - TENANT_ID: Directory (tenant) ID from Azure app registration
- * - REDIRECT_URI: Must match the redirect URI configured in Azure
- * - API_SCOPE_URI: The custom scopes for your .NET API (format: api://<CLIENT_ID>/<scope>)
- * - API_BASE_URL: The base URL for your protected API
- * - POST_LOGOUT_REDIRECT_URI: Where to redirect after logout
- */
+// Could be improved, but this will do for now since env.js is loaded after this file.
+function getEnv() {
+  return (window as any).__ENV__ || {};
+}
 
 export const AUTH_CONFIG = {
-  // Azure AD Configuration (read from environment with fallbacks)
-  CLIENT_ID: environment.NG_APP_AzureAd__ClientID,
-  TENANT_ID: environment.NG_APP_AzureAd__TenantId,
-  REDIRECT_URI: environment.NG_APP_RedirectUri,
+  get CLIENT_ID() {
+    return getEnv().FRONTEND_APP_REGISTRATION_CLIENT_ID;
+  },
+  get TENANT_ID() {
+    return getEnv().TENANT_ID;
+  },
+  get REDIRECT_URI() {
+    return getEnv().FRONTEND_REDIRECT_URI;
+  },
+  get POST_LOGOUT_REDIRECT_URI() {
+    return getEnv().FRONTEND_POST_LOGOUT_REDIRECT_URI;
+  },
 
-  // API Configuration
-  API_BASE_URL: environment.NG_APP_API_BASE_URL,
-  API_SCOPE_URI: environment.NG_APP_apiScopes?.split(',').map((s: string) => s.trim()) || [],
-
-  // Optional: Post logout redirect URI
-  POST_LOGOUT_REDIRECT_URI: environment.NG_APP_PostLogoutRedirectUri
+  // API
+  get API_BASE_URL() {
+    return getEnv().API_BASE_URL;
+  },
+  get API_SCOPE_URI() {
+    return _parseArray(getEnv().API_SCOPE_URI);
+  }
 };
 
 console.log('AUTH_CONFIG:', AUTH_CONFIG);

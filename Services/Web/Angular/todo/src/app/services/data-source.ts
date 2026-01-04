@@ -1,9 +1,8 @@
-
-import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
+import { AUTH_CONFIG } from '../auth-config';
 
-const API_BASE_URL = environment.NG_APP_API_BASE_URL;
+const API_BASE_URL = AUTH_CONFIG.API_BASE_URL + '/api';
 
 @Injectable({
   providedIn: 'root',

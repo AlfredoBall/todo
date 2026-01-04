@@ -64,6 +64,7 @@ build/
 
 !Dockerfile.local
 !*.local.conf
+!DevOps/Build
 
 # Environment variables
 .env
@@ -81,6 +82,7 @@ build/
 # ===================================
 # Local .terraform directories
 **/.terraform/*
+!terraform.local
 
 .terraform.lock.hcl
 
@@ -170,7 +172,7 @@ Services/Web/ssl/
 *.crt
 *.pfx
 
-# Secrets and sensitive config
+# Secrets and config
 environment.development.ts
 appsettings.Development.json
 appsettings.*.json
@@ -178,3 +180,4 @@ appsettings.*.json
 .vscode/*
 !.vscode/launch.json
 .editorconfig
+env.js

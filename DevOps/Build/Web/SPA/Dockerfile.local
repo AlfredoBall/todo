@@ -10,6 +10,5 @@ RUN mkdir -p /usr/share/nginx/html/react \
 COPY Services/Web/shared/ssl/localhost.crt /etc/nginx/shared/ssl/localhost.crt
 COPY Services/Web/shared/ssl/localhost.key /etc/nginx/shared/ssl/localhost.key
 
-
 # Copy NGINX template config
 ENTRYPOINT ["/bin/sh", "-c", "sed \"s|__API_BASE_URL__|$API_BASE_URL|g\" /etc/nginx/nginx.template.local.conf > /etc/nginx/conf.d/default.conf && exec nginx -g 'daemon off;'"]
