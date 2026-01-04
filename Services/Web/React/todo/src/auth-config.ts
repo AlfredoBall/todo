@@ -23,10 +23,10 @@ export const AUTH_CONFIG = {
     return getEnv().TENANT_ID;
   },
   get REDIRECT_URI() {
-    return getEnv().FRONTEND_REDIRECT_URI;
+    return getEnv().FRONTEND_REDIRECT_URI + '/todo/react';
   },
   get POST_LOGOUT_REDIRECT_URI() {
-    return getEnv().FRONTEND_POST_LOGOUT_REDIRECT_URI;
+    return getEnv().FRONTEND_POST_LOGOUT_REDIRECT_URI + '/todo/react';
   },
 
   // API
