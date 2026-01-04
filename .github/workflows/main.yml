@@ -37,6 +37,9 @@ jobs:
     name: API
     needs: [generate-matrix, terraform]
     secrets: inherit
+    permissions:
+      id-token: write
+      contents: read
     if: ${{ needs.generate-matrix.outputs.target_envs != '' }}
     uses: ./.github/workflows/api.yml
     concurrency:
