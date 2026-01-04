@@ -1,19 +1,5 @@
 import { LogLevel } from '@azure/msal-browser';
 
-/**
- * Azure Entra ID Authentication Configuration
- * 
- * TODO: Replace these placeholder values with your actual Azure app registration values:
- * - CLIENT_ID: Application (client) ID from Azure app registration
- * - TENANT_ID: Directory (tenant) ID from Azure app registration
- * - REDIRECT_URI: Must match the redirect URI configured in Azure (e.g., https://localhost:<YOUR_PORT>)
- * - API_SCOPE_URI: The custom scopes for your .NET API (format: api://<CLIENT_ID>/<scope>)
- * - API_BASE_URL: The base URL for your protected API
- * - POST_LOGOUT_REDIRECT_URI: Where to redirect after logout
- */
-
-const _env = (import.meta && (import.meta as any).env) || {};
-
 function _parseArray(val: any, def: any[] = []) {
   if (val === undefined || val === null) return def;
   if (Array.isArray(val)) return val;
@@ -24,18 +10,32 @@ function _parseArray(val: any, def: any[] = []) {
   }
 }
 
+// Could be improved, but this will do for now since env.js is loaded after this file.
+function getEnv() {
+  return (window as any).__ENV__ || {};
+}
+
 export const AUTH_CONFIG = {
-  // Azure AD Configuration (read from Vite env with fallbacks)
-  CLIENT_ID: _env.VITE_CLIENT_ID,
-  TENANT_ID: _env.VITE_TENANT_ID,
-  REDIRECT_URI: _env.VITE_REDIRECT_URI,
+  get CLIENT_ID() {
+    return getEnv().FRONTEND_APP_REGISTRATION_CLIENT_ID;
+  },
+  get TENANT_ID() {
+    return getEnv().TENANT_ID;
+  },
+  get REDIRECT_URI() {
+    return getEnv().FRONTEND_REDIRECT_URI;
+  },
+  get POST_LOGOUT_REDIRECT_URI() {
+    return getEnv().FRONTEND_POST_LOGOUT_REDIRECT_URI;
+  },
 
-  // API Configuration
-  API_BASE_URL: _env.VITE_API_BASE_URL,
-  API_SCOPE_URI: _parseArray(_env.VITE_API_SCOPE_URI),
-
-  // Optional: Post logout redirect URI
-  POST_LOGOUT_REDIRECT_URI: _env.VITE_POST_LOGOUT_REDIRECT_URI,
+  // API
+  get API_BASE_URL() {
+    return getEnv().API_BASE_URL;
+  },
+  get API_SCOPE_URI() {
+    return _parseArray(getEnv().API_SCOPE_URI);
+  }
 };
 
 console.log('AUTH_CONFIG:', AUTH_CONFIG);

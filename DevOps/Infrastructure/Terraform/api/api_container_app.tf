@@ -1,7 +1,9 @@
+data "azuread_client_config" "current" {}
+
 // App container for the combined frontend (Angular + React)
 
-resource "azurerm_container_app" "frontend_app" {
-  name                         = var.frontend_container_app_name
+resource "azurerm_container_app" "api_app" {
+  name                         = var.api_container_app_name
   container_app_environment_id = var.todo_environment_id
   resource_group_name          = var.resource_group_name
   revision_mode                = "Single"
@@ -27,14 +29,14 @@ resource "azurerm_container_app" "frontend_app" {
     max_replicas = 1
 
     container {
-      name   = var.frontend_container_name
-      image  = "${var.dockerhub_username}/${var.frontend_image}"
+      name   = var.api_container_name
+      image  = "${var.dockerhub_username}/${var.api_image}"
       cpu    = 0.25
       memory = "0.5Gi"
       liveness_probe {
         transport = "HTTP"
         port      = 8080
-        path      = "/health"
+        path      = "/healthz"
         interval_seconds = 15
         failure_count_threshold = 3
         timeout = 5
@@ -44,6 +46,41 @@ resource "azurerm_container_app" "frontend_app" {
           name  = "Custom-Header"
           value = "HealthCheck"
         }
+      }
+
+      env {
+        name  = "ASPNETCORE_ENVIRONMENT"
+        value = title(var.target_env)
+      }
+
+      env {
+        name  = "WEBSITES_DISABLE_APP_SERVICE_AUTHENTICATION"
+        value = "true"
+      }
+
+      env {
+        name  = "AzureAd__TenantId"
+        value = data.azuread_client_config.current.tenant_id
+      }
+
+      env {
+        name  = "AzureAd__ClientId"
+        value = azuread_application.api_app_registration.client_id
+      }
+
+      env {
+        name  = "AzureAd__Audience"
+        value = "api://${azuread_application.api_app_registration.client_id}"
+      }
+
+      env {
+        name  = "AzureAd__Instance"
+        value = "https://login.microsoftonline.com/"
+      }
+
+      env {
+        name  = "AzureAd__Scopes"
+        value = "access_as_user"
       }
     }
   }

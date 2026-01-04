@@ -1,11 +1,16 @@
-variable "service_plan_windows_name" {
-  description = "Name of the Windows Azure App Service Plan for the Todo Web App Services"
+variable "api_container_app_name" {
+  type        = string
+  description = "Name of the Azure Container App for the Todo API"
+}
+
+variable "api_container_name" {
+  description = "Name of the Azure Container for the Todo API"
   type        = string
 }
 
-variable "api_app_service_name" {
-  description = "Name of the Azure App Service for the Todo API"
+variable "api_image" {
   type        = string
+  description = "Docker image name for the Todo API"
 }
 
 variable "location" {

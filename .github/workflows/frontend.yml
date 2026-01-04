@@ -11,6 +11,22 @@ on:
         description: 'API base URL from Terraform'
         required: true
         type: string
+      frontend_url:
+        description: 'Frontend Static Web App URL from Terraform'
+        required: false
+        type: string
+      frontend_client_id:
+        description: 'Frontend app registration client ID'
+        required: false
+        type: string
+      api_client_id:
+        description: 'API app registration client ID'
+        required: false
+        type: string
+      api_scope_uri:
+        description: 'API scope URI for authentication'
+        required: false
+        type: string
 
 jobs:
   check-changes:
@@ -31,7 +47,7 @@ jobs:
               - 'Services/Web/React/todo/**'
               - 'DevOps/Infrastructure/**'
               - '.github/workflows/main.yml'
-              - '.github/workflows/deploy-frontend.yml'
+              - '.github/workflows/frontend.yml'
 
   deploy-frontend:
     needs: check-changes
@@ -65,6 +81,24 @@ jobs:
           bun run build -- --mode production
 
       # -----------------------------
+      # Generate SPA env.js
+      # -----------------------------
+      - name: Generate SPA Environment File
+        shell: pwsh
+        run: |
+          $json = @{
+            API_BASE_URL            = "${{ inputs.api_url }}"
+            FRONTEND_POST_LOGOUT_REDIRECT_URI        = "${{ inputs.frontend_url }}"
+            FRONTEND_APP_REGISTRATION_CLIENT_ID  = "${{ inputs.frontend_client_id }}"
+            API_SCOPE_URI       = "${{ inputs.api_scope_uri }}"
+            TENANT_ID          = "${{ secrets.AZURE_TENANT_ID }}"
+          } | ConvertTo-Json -Depth 10
+
+          pwsh -File DevOps/Build/Web/SPA/generate-spa-env.ps1 `
+            -OutputPath "Services/Web/shared/env.js" `
+            -InputJson $json
+
+      # -----------------------------
       # Build & Push Docker Image
       # -----------------------------
       - name: Login to Docker Hub
@@ -77,7 +111,7 @@ jobs:
         run: |
           docker build \
             -t ${{ secrets.DOCKERHUB_USERNAME }}/todo-frontend:latest \
-            -f DevOps/Infrastructure/Dockerfile.production .
+            -f DevOps/Build/Web/SPA/Dockerfile.production .
 
       - name: Push Docker Image
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/todo-frontend:latest

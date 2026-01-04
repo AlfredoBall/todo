@@ -1,6 +1,16 @@
-variable "api_app_service_name" {
+variable "api_container_app_name" {
   type        = string
-  description = "Name of the Azure App Service for the Todo API"
+  description = "Name of the Azure Container App for the Todo API"
+}
+
+variable "api_container_name" {
+  description = "Name of the Azure Container for the Todo API"
+  type        = string
+}
+
+variable "api_image" {
+  type        = string
+  description = "Docker image name for the Todo API"
 }
 
 variable "api_app_registration_name" {
@@ -41,4 +51,20 @@ variable "visual_studio_version" {
 variable "target_env" {
   description = "ASP.NET Core environment (e.g., Development, Staging, Production)"
   type        = string
+}
+
+variable "dockerhub_username" {
+  type       = string
+  description = "Docker Hub username for pulling the API image"
+}
+
+variable "dockerhub_password" {
+  type        = string
+  description = "Docker Hub password for pulling the API image"
+  sensitive   = true
+}
+
+variable "todo_environment_id" {
+  type        = string
+  description = "ID of the Azure Container App Environment"
 }

@@ -2,7 +2,7 @@ import type { IClipboardItem, ITodoItem } from "../types";
 import type { IPublicClientApplication } from "@azure/msal-browser";
 import { AUTH_CONFIG } from "../auth-config";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
+const API_BASE_URL = AUTH_CONFIG.API_BASE_URL + '/api';
 
 export class ApiService {
   private msalInstance: IPublicClientApplication | null = null;

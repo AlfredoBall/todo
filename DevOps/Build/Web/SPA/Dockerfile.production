@@ -15,10 +15,10 @@ COPY Services/Web/Angular/todo/dist/ /usr/share/nginx/html/angular/
 COPY Services/Web/React/todo/dist/ /usr/share/nginx/html/react/
 
 # Copy shared policies
-COPY Services/Web/shared/policies/ /usr/share/nginx/html/shared/policies/
+COPY Services/Web/shared/ /usr/share/nginx/html/shared/
 
 # Copy the NGINX template config
-COPY DevOps/Infrastructure/nginx.template.production.conf /etc/nginx/nginx.template.production.conf
+COPY DevOps/Build/Web/SPA/nginx.template.production.conf /etc/nginx/nginx.template.production.conf
 
 # Runtime config injection + start NGINX
 ENTRYPOINT ["/bin/sh", "-c", "sed \"s|__API_BASE_URL__|$API_BASE_URL|g\" /etc/nginx/nginx.template.production.conf > /etc/nginx/conf.d/default.conf && exec nginx -g 'daemon off;'"]

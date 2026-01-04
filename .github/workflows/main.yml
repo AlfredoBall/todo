@@ -47,43 +47,43 @@ jobs:
     with:
       target_env: ${{ matrix.target_env }}
 
-  build-angular:
-    name: Build Angular
-    needs: [generate-matrix, terraform]
-    secrets: inherit
-    if: ${{ needs.generate-matrix.outputs.target_envs != '' }}
-    uses: ./.github/workflows/build-angular.yml
-    concurrency:
-      group: build-angular-${{ github.workflow }}-${{ matrix.target_env }}-${{ github.run_id }}
-    strategy:
-      matrix:
-        target_env: ${{ fromJson(needs.generate-matrix.outputs.target_envs) }}
-    with:
-      target_env: ${{ matrix.target_env }}
-      api_url: ${{ needs.terraform.outputs.api_url }}
-      angular_url: ${{ needs.terraform.outputs.frontend_url }}/todo/angular
-      frontend_client_id: ${{ needs.terraform.outputs.frontend_client_id }}
-      api_client_id: ${{ needs.terraform.outputs.api_client_id }}
-      api_scope_uri: ${{ needs.terraform.outputs.api_scope_uri }}
+  # build-angular:
+  #   name: Build Angular
+  #   needs: [generate-matrix, terraform]
+  #   secrets: inherit
+  #   if: ${{ needs.generate-matrix.outputs.target_envs != '' }}
+  #   uses: ./.github/workflows/build-angular.yml
+  #   concurrency:
+  #     group: build-angular-${{ github.workflow }}-${{ matrix.target_env }}-${{ github.run_id }}
+  #   strategy:
+  #     matrix:
+  #       target_env: ${{ fromJson(needs.generate-matrix.outputs.target_envs) }}
+  #   with:
+  #     target_env: ${{ matrix.target_env }}
+  #     api_url: ${{ needs.terraform.outputs.api_url }}
+  #     angular_url: ${{ needs.terraform.outputs.frontend_url }}/todo/angular
+  #     frontend_client_id: ${{ needs.terraform.outputs.frontend_client_id }}
+  #     api_client_id: ${{ needs.terraform.outputs.api_client_id }}
+  #     api_scope_uri: ${{ needs.terraform.outputs.api_scope_uri }}
 
-  build-react:
-    name: Build React
-    needs: [generate-matrix, terraform]
-    secrets: inherit
-    if: ${{ needs.generate-matrix.outputs.target_envs != '' }}
-    uses: ./.github/workflows/build-react.yml
-    concurrency:
-      group: build-react-${{ github.workflow }}-${{ matrix.target_env }}-${{ github.run_id }}
-    strategy:
-      matrix:
-        target_env: ${{ fromJson(needs.generate-matrix.outputs.target_envs) }}
-    with:
-      target_env: ${{ matrix.target_env }}
-      api_url: ${{ needs.terraform.outputs.api_url }}
-      react_url: ${{ needs.terraform.outputs.frontend_url }}/todo/react
-      frontend_client_id: ${{ needs.terraform.outputs.frontend_client_id }}
-      api_client_id: ${{ needs.terraform.outputs.api_client_id }}
-      api_scope_uri: ${{ needs.terraform.outputs.api_scope_uri }}
+  # build-react:
+  #   name: Build React
+  #   needs: [generate-matrix, terraform]
+  #   secrets: inherit
+  #   if: ${{ needs.generate-matrix.outputs.target_envs != '' }}
+  #   uses: ./.github/workflows/build-react.yml
+  #   concurrency:
+  #     group: build-react-${{ github.workflow }}-${{ matrix.target_env }}-${{ github.run_id }}
+  #   strategy:
+  #     matrix:
+  #       target_env: ${{ fromJson(needs.generate-matrix.outputs.target_envs) }}
+  #   with:
+  #     target_env: ${{ matrix.target_env }}
+  #     api_url: ${{ needs.terraform.outputs.api_url }}
+  #     react_url: ${{ needs.terraform.outputs.frontend_url }}/todo/react
+  #     frontend_client_id: ${{ needs.terraform.outputs.frontend_client_id }}
+  #     api_client_id: ${{ needs.terraform.outputs.api_client_id }}
+  #     api_scope_uri: ${{ needs.terraform.outputs.api_scope_uri }}
 
   deploy-api:
     name: Deploy API Application
@@ -106,25 +106,29 @@ jobs:
       target_env: ${{ matrix.target_env }}
       frontend_url: ${{ needs.terraform.outputs.frontend_url }}
 
-  deploy-frontend:
+  frontend:
     name: Deploy Frontend Applications
-    needs: [generate-matrix, terraform, build-angular, build-react]
+    needs: [generate-matrix, terraform]
     if: |
       always() &&
       !contains(needs.*.result, 'failure') &&
       !contains(needs.*.result, 'cancelled') &&
       needs.generate-matrix.outputs.target_envs != '[]'
-    uses: ./.github/workflows/deploy-frontend.yml
+    uses: ./.github/workflows/frontend.yml
     secrets: inherit
     permissions:
       id-token: write
       contents: read
     concurrency:
-      group: deploy-frontend-${{ github.workflow }}-${{ matrix.target_env }}-${{ github.run_id }}
+      group: frontend-${{ github.workflow }}-${{ matrix.target_env }}-${{ github.run_id }}
     strategy:
       matrix:
         target_env: ${{ fromJson(needs.generate-matrix.outputs.target_envs) }}
     with:
       target_env: ${{ matrix.target_env }}
       api_url: ${{ needs.terraform.outputs.api_url }}
+      frontend_url: ${{ needs.terraform.outputs.frontend_url }}
+      frontend_client_id: ${{ needs.terraform.outputs.frontend_client_id }}
+      api_client_id: ${{ needs.terraform.outputs.api_client_id }}
+      api_scope_uri: ${{ needs.terraform.outputs.api_scope_uri }}
       
