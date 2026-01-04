@@ -12,7 +12,3 @@ variable "sign_in_audience" {
   description = "Sign-in audience for Azure AD applications"
   type        = string
 }
-
-# GitHub OIDC is NOT configured for local development
-# GitHub Actions integration is only in the production Terraform directory
-# Local development uses Aspire to manage app registrations dynamically

@@ -8,6 +8,11 @@ variable "frontend_container_name" {
   type        = string
 }
 
+variable "frontend_image" {
+  type        = string
+  description = "Docker image name for the Todo frontend"
+}
+
 variable "sign_in_audience" {
   type        = string
   description = "Sign-in audience for Azure AD applications"
@@ -59,12 +64,7 @@ variable "dockerhub_password" {
   sensitive   = true
 }
 
-variable "frontend_image" {
+variable "todo_environment_id" {
   type        = string
-  description = "Docker image name for the Todo frontend"
-}
-
-variable "frontend_environment_id" {
-  type        = string
-  description = "ID of the Azure Container App Environment for the frontend"
+  description = "ID of the Azure Container App Environment"
 }

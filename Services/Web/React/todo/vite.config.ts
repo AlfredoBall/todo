@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react'
 
 // Aspire injects services__API__HTTPS__0 with the actual API endpoint
 // Fallback to standalone API port if running outside Aspire
-const target = process.env.services__API__HTTPS__0 || "https://localhost:7258";
+const target = process.env.API_BASE_URL;
 
 console.log('Vite dev server proxy target for /api:', target);
 

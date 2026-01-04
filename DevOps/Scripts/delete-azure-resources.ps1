@@ -3,16 +3,16 @@
 
 # Resource groups to delete
 $resourceGroups = @(
-    "todo-rg-production",
-    "todo-rg-development"
+    "todo-rg-prod",
+    "todo-rg-dev"
 )
 
 # App registration display names to delete
 $appRegistrations = @(
-    "To Do API - Production",
-    "To Do API - Development",
-    "To Do Frontend App - Production",
-    "To Do Frontend App - Development"
+    "To Do API - Prod",
+    "To Do API - Dev",
+    "To Do Frontend App - Prod",
+    "To Do Frontend App - Dev"
 )
 
 # Delete resource groups
