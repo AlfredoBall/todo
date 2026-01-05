@@ -7,22 +7,6 @@ on:
         description: 'Target environment'
         required: true
         type: string
-    outputs:
-      api_url:
-        description: "API App Service URL"
-        value: ${{ jobs.terraform.outputs.api_url }}
-      frontend_url:
-        description: "Frontend App Service URL"
-        value: ${{ jobs.terraform.outputs.frontend_url }}
-      frontend_client_id:
-        description: "Frontend App Registration Client ID"
-        value: ${{ jobs.terraform.outputs.frontend_client_id }}
-      api_client_id:
-        description: "API App Registration Client ID"
-        value: ${{ jobs.terraform.outputs.api_client_id }}
-      api_scope_uri:
-        description: "API OAuth Scope URI"
-        value: ${{ jobs.terraform.outputs.api_scope_uri }}
 jobs:
   terraform:
     runs-on: ubuntu-latest
@@ -46,13 +30,6 @@ jobs:
       TF_VAR_api_container_app_name: ${{ vars.AZURE_API_CONTAINER_APP_NAME }}
       TF_VAR_api_container_name: ${{ vars.AZURE_API_CONTAINER_NAME }}
       TF_VAR_resource_group_name: ${{ vars.AZURE_RESOURCE_GROUP }}-${{ inputs.target_env }}
-    outputs:
-      tenant_id: ${{ steps.terraform_output.outputs.tenant_id }}
-      api_url: ${{ steps.terraform_output.outputs.api_url }}
-      frontend_url: ${{ steps.terraform_output.outputs.frontend_url }}
-      frontend_client_id: ${{ steps.terraform_output.outputs.frontend_client_id }}
-      api_client_id: ${{ steps.terraform_output.outputs.api_client_id }}
-      api_scope_uri: ${{ steps.terraform_output.outputs.api_scope_uri }}
 
     steps:
       - name: Checkout repository
@@ -84,20 +61,3 @@ jobs:
       - name: Terraform Apply
         working-directory: ${{ env.TERRAFORM_DIR }}
         run: terraform apply -auto-approve
-
-      - name: Capture Terraform Outputs
-        id: terraform_output
-        working-directory: ${{ env.TERRAFORM_DIR }}
-        run: |
-          API_SCOPE_URI=$(terraform output -raw api_scope_uri)
-          API_URL=$(terraform output -raw api_app_service_default_url)
-          API_CLIENT_ID=$(terraform output -raw api_app_registration_client_id)
-          FRONTEND_URL=$(terraform output -raw frontend_app_service_default_url)
-          FRONTEND_CLIENT_ID=$(terraform output -raw frontend_app_registration_client_id)
-          TENANT_ID=${{ secrets.AZURE_TENANT_ID }}
-          echo "api_url=$API_URL" >> $GITHUB_OUTPUT
-          echo "frontend_url=$FRONTEND_URL" >> $GITHUB_OUTPUT
-          echo "frontend_client_id=$FRONTEND_CLIENT_ID" >> $GITHUB_OUTPUT
-          echo "api_client_id=$API_CLIENT_ID" >> $GITHUB_OUTPUT
-          echo "tenant_id=$TENANT_ID" >> $GITHUB_OUTPUT
-          echo "api_scope_uri=$API_SCOPE_URI" >> $GITHUB_OUTPUT
