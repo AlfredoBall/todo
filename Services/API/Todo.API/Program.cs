@@ -72,30 +72,32 @@ if (!string.IsNullOrWhiteSpace(aiConn))
 
 
 // Middleware to log selected headers to Application Insights
-builder.Services.AddSingleton<TelemetryClient>();
+// builder.Services.AddSingleton<TelemetryClient>();
 
 await builder.ConfigureAuth();
+
+builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 
 // Log selected headers (e.g., Authorization) to Application Insights as a trace
-app.Use(async (context, next) =>
-{
-    var telemetryClient = context.RequestServices.GetService<TelemetryClient>();
-    if (telemetryClient != null)
-    {
-        var headersToLog = new[] { "Authorization", "X-Forwarded-For", "X-ARR-LOG-ID" };
-        foreach (var header in headersToLog)
-        {
-            if (context.Request.Headers.TryGetValue(header, out var value))
-            {
-                telemetryClient.TrackTrace($"Header: {header} = {value}",
-                    new Dictionary<string, string> { { "Header", header }, { "Value", value } });
-            }
-        }
-    }
-    await next();
-});
+// app.Use(async (context, next) =>
+// {
+//     var telemetryClient = context.RequestServices.GetService<TelemetryClient>();
+//     if (telemetryClient != null)
+//     {
+//         var headersToLog = new[] { "Authorization", "X-Forwarded-For", "X-ARR-LOG-ID" };
+//         foreach (var header in headersToLog)
+//         {
+//             if (context.Request.Headers.TryGetValue(header, out var value))
+//             {
+//                 telemetryClient.TrackTrace($"Header: {header} = {value}",
+//                     new Dictionary<string, string> { { "Header", header }, { "Value", value } });
+//             }
+//         }
+//     }
+//     await next();
+// });
 
 // 2. Map the health check endpoint and allow anonymous access
 app.MapHealthChecks("/healthz", new HealthCheckOptions
@@ -258,7 +260,7 @@ app.MapPatch("api/item/{id}", async (HttpContext httpContext, ClaimsPrincipal us
 
 #region Clipboard Endpoints
 
-app.MapGet("api/clipboards", async (HttpContext httpContext, TelemetryClient telemetryClient, ClaimsPrincipal user, IDistributedCache cache, ClipboardService clipboardService, Context context) =>
+app.MapGet("api/clipboards", async (HttpContext httpContext, ClaimsPrincipal user, IDistributedCache cache, ClipboardService clipboardService, Context context) =>
 {
     string cacheKey = "clipboards";
     var cachedClipboards = await cache.GetAsync<IList<Todo.Data.Access.Clipboard>>(cacheKey);
@@ -283,7 +285,7 @@ app.MapGet("api/clipboards", async (HttpContext httpContext, TelemetryClient tel
     }
     catch (Exception ex)
     {
-        telemetryClient.TrackException(ex);
+        // telemetryClient.TrackException(ex);
 
         return Results.BadRequest();
     }
