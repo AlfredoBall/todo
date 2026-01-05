@@ -73,7 +73,7 @@ jobs:
         id: tf-outputs
         with:
           organization: amiasea
-          workspace: ${{ inputs.target_env }}
+          workspace: todo-${{ inputs.target_env }}
           token: ${{ secrets.TF_HCP_API_TOKEN }}
 
       - name: Update API Azure Container App Settings
