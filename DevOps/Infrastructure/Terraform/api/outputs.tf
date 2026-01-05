@@ -1,4 +1,4 @@
-output "api_app_service_default_url" {
+output "api_app_fqdn" {
   description = "Default URL for the API App Service"
   value       = "https://${azurerm_container_app.api_app.ingress[0].fqdn}"
 }

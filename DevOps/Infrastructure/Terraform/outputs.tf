@@ -8,9 +8,9 @@ output "resource_group_location" {
   description = "Location of the todo resource group"
 }
 
-output "api_app_service_default_url" {
+output "api_app_fqdn" {
   description = "Default URL for the API App Service"
-  value       = module.api.api_app_service_default_url
+  value       = module.api.api_app_fqdn
 }
 
 output "api_app_registration_client_id" {
@@ -28,9 +28,9 @@ output "api_scope_uri" {
   value       = module.api.api_scope_uri
 }
 
-output "frontend_app_service_default_url" {
+output "frontend_app_fqdn" {
   description = "Default URL for the combined frontend App Service (Angular + React)"
-  value       = module.frontend.frontend_app_service_default_url
+  value       = module.frontend.frontend_app_fqdn
 }
 
 output "frontend_app_registration_client_id" {

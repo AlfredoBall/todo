@@ -75,11 +75,11 @@ jobs:
         run: |
           $json = @{
             TENANT_ID                            = "${{ secrets.AZURE_TENANT_ID }}"
-            API_BASE_URL                         = "${{ fromJSON(steps.tf-outputs.outputs.workspace-outputs-json).api_url }}"
+            API_BASE_URL                         = "${{ fromJSON(steps.tf-outputs.outputs.workspace-outputs-json).api_app_fqdn }}"
             API_SCOPE_URI                        = "${{ fromJSON(steps.tf-outputs.outputs.workspace-outputs-json).api_scope_uri }}"
-            FRONTEND_REDIRECT_URI                = "${{ fromJSON(steps.tf-outputs.outputs.workspace-outputs-json).frontend_url }}"  
-            FRONTEND_POST_LOGOUT_REDIRECT_URI    = "${{ fromJSON(steps.tf-outputs.outputs.workspace-outputs-json).frontend_url }}"
-            FRONTEND_APP_REGISTRATION_CLIENT_ID  = "${{ fromJSON(steps.tf-outputs.outputs.workspace-outputs-json).frontend_client_id }}"
+            FRONTEND_REDIRECT_URI                = "${{ fromJSON(steps.tf-outputs.outputs.workspace-outputs-json).frontend_app_fqdn }}"  
+            FRONTEND_POST_LOGOUT_REDIRECT_URI    = "${{ fromJSON(steps.tf-outputs.outputs.workspace-outputs-json).frontend_app_fqdn }}"
+            FRONTEND_APP_REGISTRATION_CLIENT_ID  = "${{ fromJSON(steps.tf-outputs.outputs.workspace-outputs-json).frontend_app_registration_client_id }}"
           } | ConvertTo-Json -Depth 10
 
           pwsh -File DevOps/Build/Web/SPA/generate-spa-env.ps1 `
@@ -120,4 +120,4 @@ jobs:
             az containerapp update \
               --name "${{ vars.AZURE_FRONTEND_CONTAINER_APP_NAME }}-${{ inputs.target_env }}" \
               --resource-group "${{ vars.AZURE_RESOURCE_GROUP }}-${{ inputs.target_env }}" \
-              --set-env-vars API_BASE_URL="${{ fromJSON(steps.tf-outputs.outputs.workspace-outputs-json).api_url }}"
+              --set-env-vars API_BASE_URL="${{ fromJSON(steps.tf-outputs.outputs.workspace-outputs-json).api_app_fqdn }}"

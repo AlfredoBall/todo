@@ -1,4 +1,4 @@
-output "frontend_app_service_default_url" {
+output "frontend_app_fqdn" {
   description = "Default URL for the combined frontend Container App (Angular + React)"
   value       = "https://${azurerm_container_app.frontend_app.ingress[0].fqdn}"
 }

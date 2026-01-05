@@ -83,5 +83,5 @@ jobs:
             az containerapp update \
               --name "${{ vars.AZURE_API_CONTAINER_APP_NAME }}-${{ inputs.target_env }}" \
               --resource-group "${{ vars.AZURE_RESOURCE_GROUP }}-${{ inputs.target_env }}" \
-              --set-env-vars FRONTEND_URL="${{ fromJSON(steps.tf-outputs.outputs.workspace-outputs-json).frontend_url }}"
+              --set-env-vars FRONTEND_URL="${{ fromJSON(steps.tf-outputs.outputs.workspace-outputs-json).frontend_app_fqdn }}"
       
