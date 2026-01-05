@@ -4,7 +4,6 @@ on:
   workflow_dispatch:
   push:
     branches: [ main ]
-
 jobs:
   # Job 1: Generates the matrix configuration
   generate-matrix:
