@@ -49,7 +49,6 @@ jobs:
         target_env: ${{ fromJson(needs.generate-matrix.outputs.target_envs) }}
     with:
       target_env: ${{ matrix.target_env }}
-      frontend_url: ${{ needs.terraform.outputs.frontend_url }}
 
   frontend:
     name: Deploy Frontend Applications
@@ -71,8 +70,3 @@ jobs:
         target_env: ${{ fromJson(needs.generate-matrix.outputs.target_envs) }}
     with:
       target_env: ${{ matrix.target_env }}
-      api_url: ${{ needs.terraform.outputs.api_url }}
-      frontend_url: ${{ needs.terraform.outputs.frontend_url }}
-      frontend_client_id: ${{ needs.terraform.outputs.frontend_client_id }}
-      api_client_id: ${{ needs.terraform.outputs.api_client_id }}
-      api_scope_uri: ${{ needs.terraform.outputs.api_scope_uri }}

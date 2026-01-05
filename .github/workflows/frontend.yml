@@ -7,27 +7,6 @@ on:
         description: "Target environment"
         required: true
         type: string
-      api_url:
-        description: "API base URL"
-        required: true
-        type: string
-      frontend_url:
-        description: "Frontend Static Web App URL"
-        required: false
-        type: string
-      frontend_client_id:
-        description: "Frontend app registration client ID"
-        required: false
-        type: string
-      api_client_id:
-        description: "API app registration client ID"
-        required: false
-        type: string
-      api_scope_uri:
-        description: "API scope URI for authentication"
-        required: false
-        type: string
-
 jobs:
   check-changes:
     runs-on: ubuntu-latest
@@ -80,6 +59,14 @@ jobs:
           bun install --frozen-lockfile
           bun run build -- --mode production
 
+      - name: Get Terraform Workspace Outputs
+        uses: hashicorp/tfc-workflows-github/actions/workspace-output@v1.3.2
+        id: tf-outputs
+        with:
+          organization: amiasea
+          workspace: ${{ inputs.target_env }}
+          token: ${{ secrets.TF_HCP_API_TOKEN }}
+
       # -----------------------------
       # Generate SPA env.js
       # -----------------------------
@@ -87,12 +74,12 @@ jobs:
         shell: pwsh
         run: |
           $json = @{
-            API_BASE_URL                         = "${{ inputs.api_url }}"
-            FRONTEND_REDIRECT_URI                = "${{ inputs.frontend_url }}"  
-            FRONTEND_POST_LOGOUT_REDIRECT_URI    = "${{ inputs.frontend_url }}"
-            FRONTEND_APP_REGISTRATION_CLIENT_ID  = "${{ inputs.frontend_client_id }}"
-            API_SCOPE_URI       = "${{ inputs.api_scope_uri }}"
-            TENANT_ID          = "${{ secrets.AZURE_TENANT_ID }}"
+            TENANT_ID                            = "${{ secrets.AZURE_TENANT_ID }}"
+            API_BASE_URL                         = "${{ fromJSON(steps.tf-outputs.outputs.workspace-outputs-json).api_url }}"
+            API_SCOPE_URI                        = "${{ fromJSON(steps.tf-outputs.outputs.workspace-outputs-json).api_scope_uri }}"
+            FRONTEND_REDIRECT_URI                = "${{ fromJSON(steps.tf-outputs.outputs.workspace-outputs-json).frontend_url }}"  
+            FRONTEND_POST_LOGOUT_REDIRECT_URI    = "${{ fromJSON(steps.tf-outputs.outputs.workspace-outputs-json).frontend_url }}"
+            FRONTEND_APP_REGISTRATION_CLIENT_ID  = "${{ fromJSON(steps.tf-outputs.outputs.workspace-outputs-json).frontend_client_id }}"
           } | ConvertTo-Json -Depth 10
 
           pwsh -File DevOps/Build/Web/SPA/generate-spa-env.ps1 `
@@ -133,4 +120,4 @@ jobs:
             az containerapp update \
               --name "${{ vars.AZURE_FRONTEND_CONTAINER_APP_NAME }}-${{ inputs.target_env }}" \
               --resource-group "${{ vars.AZURE_RESOURCE_GROUP }}-${{ inputs.target_env }}" \
-              --set-env-vars API_BASE_URL="${{ inputs.api_url }}"
+              --set-env-vars API_BASE_URL="${{ fromJSON(steps.tf-outputs.outputs.workspace-outputs-json).api_url }}"
