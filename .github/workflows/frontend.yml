@@ -66,6 +66,9 @@ jobs:
           organization: amiasea
           workspace: todo-${{ inputs.target_env }}
           token: ${{ secrets.TF_HCP_API_TOKEN }}
+      
+      - name: Debug raw output
+        run: echo "${{ steps.tf_outputs.outputs.outputs }}"
 
       # -----------------------------
       # Generate SPA env.js

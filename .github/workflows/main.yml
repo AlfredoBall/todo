@@ -34,7 +34,7 @@ jobs:
       target_env: ${{ matrix.target_env }}
 
   api:
-    name: API
+    name: Build and Deploy API
     needs: [generate-matrix, terraform]
     secrets: inherit
     permissions:
@@ -51,7 +51,7 @@ jobs:
       target_env: ${{ matrix.target_env }}
 
   frontend:
-    name: Deploy Frontend Applications
+    name: Build and Deploy Frontend
     needs: [generate-matrix, terraform]
     if: |
       always() &&
