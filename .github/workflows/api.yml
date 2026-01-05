@@ -70,7 +70,7 @@ jobs:
 
       - name: Get Terraform Workspace Outputs
         uses: hashicorp/tfc-workflows-github/actions/workspace-output@v1.3.2
-        id: tf-outputs
+        id: tf_outputs
         with:
           organization: amiasea
           workspace: todo-${{ inputs.target_env }}
@@ -83,5 +83,5 @@ jobs:
             az containerapp update \
               --name "${{ vars.AZURE_API_CONTAINER_APP_NAME }}-${{ inputs.target_env }}" \
               --resource-group "${{ vars.AZURE_RESOURCE_GROUP }}-${{ inputs.target_env }}" \
-              --set-env-vars FRONTEND_URL="${{ fromJSON(steps.tf-outputs.outputs.workspace-outputs-json).frontend_app_fqdn }}"
+              --set-env-vars FRONTEND_URL="${{ fromJSON(steps.tf_outputs.outputs.outputs).frontend_app_fqdn }}"
       

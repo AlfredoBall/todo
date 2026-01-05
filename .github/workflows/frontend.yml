@@ -61,7 +61,7 @@ jobs:
 
       - name: Get Terraform Workspace Outputs
         uses: hashicorp/tfc-workflows-github/actions/workspace-output@v1.3.2
-        id: tf-outputs
+        id: tf_outputs
         with:
           organization: amiasea
           workspace: todo-${{ inputs.target_env }}
@@ -74,12 +74,12 @@ jobs:
         shell: pwsh
         run: |
           $json = @{
-            TENANT_ID                            = "${{ secrets.AZURE_TENANT_ID }}"
-            API_BASE_URL                         = "${{ fromJSON(steps.tf-outputs.outputs.workspace-outputs-json).api_app_fqdn }}"
-            API_SCOPE_URI                        = "${{ fromJSON(steps.tf-outputs.outputs.workspace-outputs-json).api_scope_uri }}"
-            FRONTEND_REDIRECT_URI                = "${{ fromJSON(steps.tf-outputs.outputs.workspace-outputs-json).frontend_app_fqdn }}"  
-            FRONTEND_POST_LOGOUT_REDIRECT_URI    = "${{ fromJSON(steps.tf-outputs.outputs.workspace-outputs-json).frontend_app_fqdn }}"
-            FRONTEND_APP_REGISTRATION_CLIENT_ID  = "${{ fromJSON(steps.tf-outputs.outputs.workspace-outputs-json).frontend_app_registration_client_id }}"
+            TENANT_ID = "${{ secrets.AZURE_TENANT_ID }}"
+            API_BASE_URL = "${{ fromJSON(steps.tf_outputs.outputs.outputs).api_app_fqdn }}"
+            API_SCOPE_URI = "${{ fromJSON(steps.tf_outputs.outputs.outputs).api_scope_uri }}"
+            FRONTEND_REDIRECT_URI = "${{ fromJSON(steps.tf_outputs.outputs.outputs).frontend_app_fqdn }}"  
+            FRONTEND_POST_LOGOUT_REDIRECT_URI = "${{ fromJSON(steps.tf_outputs.outputs.outputs).frontend_app_fqdn }}"
+            FRONTEND_APP_REGISTRATION_CLIENT_ID = "${{ fromJSON(steps.tf_outputs.outputs.outputs).frontend_app_registration_client_id }}"
           } | ConvertTo-Json -Depth 10
 
           pwsh -File DevOps/Build/Web/SPA/generate-spa-env.ps1 `
