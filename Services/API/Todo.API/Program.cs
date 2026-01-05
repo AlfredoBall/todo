@@ -63,7 +63,12 @@ builder.Services.AddCors(options =>
 });
 
 // The Connection String is setup in terraform and injected as an environment variable
-builder.Services.AddApplicationInsightsTelemetry();
+var aiConn = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"];
+
+if (!string.IsNullOrWhiteSpace(aiConn))
+{
+    builder.Services.AddApplicationInsightsTelemetry();
+}
 
 
 // Middleware to log selected headers to Application Insights
