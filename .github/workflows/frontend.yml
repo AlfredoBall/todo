@@ -33,7 +33,8 @@ jobs:
     if: needs.check-changes.outputs.frontend_changed == 'true'
     runs-on: ubuntu-latest
     environment: ${{ inputs.target_env }}
-
+    env:
+      API_BASE_URL: ""
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
@@ -66,9 +67,6 @@ jobs:
           organization: amiasea
           workspace: todo-${{ inputs.target_env }}
           token: ${{ secrets.TF_HCP_API_TOKEN }}
-      
-      - name: Debug raw output
-        run: echo "${{ steps.tf_outputs.outputs.outputs }}"
 
       # -----------------------------
       # Generate SPA env.js
@@ -76,14 +74,25 @@ jobs:
       - name: Generate SPA Environment File
         shell: pwsh
         run: |
+          $raw = '${{ steps.tf_outputs.outputs.outputs }}' | ConvertFrom-Json
+
+          # Convert array → map
+          $map = @{}
+          foreach ($item in $raw) {
+            $map[$item.name] = $item.value
+          }
+
+          # Now you can access them normally
           $json = @{
-            TENANT_ID = "${{ secrets.AZURE_TENANT_ID }}"
-            API_BASE_URL = "${{ fromJSON(steps.tf_outputs.outputs.outputs).api_app_fqdn }}"
-            API_SCOPE_URI = "${{ fromJSON(steps.tf_outputs.outputs.outputs).api_scope_uri }}"
-            FRONTEND_REDIRECT_URI = "${{ fromJSON(steps.tf_outputs.outputs.outputs).frontend_app_fqdn }}"  
-            FRONTEND_POST_LOGOUT_REDIRECT_URI = "${{ fromJSON(steps.tf_outputs.outputs.outputs).frontend_app_fqdn }}"
-            FRONTEND_APP_REGISTRATION_CLIENT_ID = "${{ fromJSON(steps.tf_outputs.outputs.outputs).frontend_app_registration_client_id }}"
+            TENANT_ID                           = "${{ secrets.AZURE_TENANT_ID }}"
+            API_BASE_URL                        = $map["api_app_fqdn"]
+            API_SCOPE_URI                       = $map["api_scope_uri"]
+            FRONTEND_REDIRECT_URI               = $map["frontend_app_fqdn"]
+            FRONTEND_POST_LOGOUT_REDIRECT_URI   = $map["frontend_app_fqdn"]
+            FRONTEND_APP_REGISTRATION_CLIENT_ID = $map["frontend_app_registration_client_id"]
           } | ConvertTo-Json -Depth 10
+
+          echo "API_BASE_URL=$($map['api_app_fqdn'])" >> $env:GITHUB_ENV
 
           pwsh -File DevOps/Build/Web/SPA/generate-spa-env.ps1 `
             -OutputPath "Services/Web/shared/env.js" `
@@ -123,4 +132,4 @@ jobs:
             az containerapp update \
               --name "${{ vars.AZURE_FRONTEND_CONTAINER_APP_NAME }}-${{ inputs.target_env }}" \
               --resource-group "${{ vars.AZURE_RESOURCE_GROUP }}-${{ inputs.target_env }}" \
-              --set-env-vars API_BASE_URL="${{ fromJSON(steps.tf_outputs.outputs.outputs).api_app_fqdn }}"
+              --set-env-vars API_BASE_URL="${{ env.API_BASE_URL }}"
