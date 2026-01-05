@@ -76,7 +76,7 @@ if (!string.IsNullOrWhiteSpace(aiConn))
 
 await builder.ConfigureAuth();
 
-builder.Services.AddHealthChecks();
+// builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 
@@ -100,10 +100,10 @@ var app = builder.Build();
 // });
 
 // 2. Map the health check endpoint and allow anonymous access
-app.MapHealthChecks("/healthz", new HealthCheckOptions
-{
-    AllowCachingResponses = false // Optional: ensures fresh results
-}).WithMetadata(new AllowAnonymousAttribute()); // *** Crucial line for anonymous access ***
+// app.MapHealthChecks("/healthz", new HealthCheckOptions
+// {
+//     AllowCachingResponses = false // Optional: ensures fresh results
+// }).WithMetadata(new AllowAnonymousAttribute()); // *** Crucial line for anonymous access ***
 
 // Ensure database is created and seeded
 using (var scope = app.Services.CreateScope())

@@ -29,7 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ inputs.target_env }}
     env:
-      API_BASE_URL: ""
+      FRONTEND_URL: ""
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
@@ -78,7 +78,7 @@ jobs:
           workspace: todo-${{ inputs.target_env }}
           token: ${{ secrets.TF_HCP_API_TOKEN }}
 
-      - name: Set API_BASE_URL Environment Variable
+      - name: Set FRONTEND_URL Environment Variable
         shell: pwsh
         run: |
           $raw = '${{ steps.tf_outputs.outputs.outputs }}' | ConvertFrom-Json
@@ -89,7 +89,7 @@ jobs:
             $map[$item.name] = $item.value
           }
 
-          echo "API_BASE_URL=$($map['api_app_fqdn'])" >> $env:GITHUB_ENV
+          echo "FRONTEND_URL=$($map['frontend_app_fqdn'])" >> $env:GITHUB_ENV
 
       - name: Update API Azure Container App Settings
         uses: azure/cli@v1
@@ -98,5 +98,5 @@ jobs:
             az containerapp update \
               --name "${{ vars.AZURE_API_CONTAINER_APP_NAME }}-${{ inputs.target_env }}" \
               --resource-group "${{ vars.AZURE_RESOURCE_GROUP }}-${{ inputs.target_env }}" \
-              --set-env-vars API_BASE_URL="${{ env.API_BASE_URL }}"
+              --set-env-vars FRONTEND_URL="${{ env.FRONTEND_URL }}"
       
