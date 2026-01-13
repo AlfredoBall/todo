@@ -65,6 +65,7 @@ build/
 !Dockerfile.local
 !*.local.conf
 !DevOps/Build
+!Application.local
 
 # Environment variables
 .env
